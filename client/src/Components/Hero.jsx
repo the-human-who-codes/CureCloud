@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <section id="home" className="hero">
       <h1 className="hero-heading">Welcome to CureCloud</h1>
-
+      <br />
       <div className="hero-content">
         <h2 className="hero-title">Your Health Simplified.</h2>
         <p className="hero-description">

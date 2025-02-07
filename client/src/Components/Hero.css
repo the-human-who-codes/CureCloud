@@ -11,7 +11,8 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(50px);
   border-radius: 10px;
-  width: 95%;
+  width: 100%;
+  margin: 0;
 }
 
 /* Hero Section Heading */

@@ -1,0 +1,16 @@
+/* Footer.css */
+.footer {
+  padding: 1rem;
+  background: #333;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+.footer nav a {
+  margin: 0 0.5rem;
+  color: #fff;
+  text-decoration: none;
+}
+.footer nav a:hover {
+  text-decoration: underline;
+}

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebaseConfig"; // Firebase authentication
 import Navbar from "../Components/NavBar";
 import "./LandingPage.css";
+import "./DashboardPage.css";
 
 const DashboardPage = () => {
   const navigate = useNavigate(); // Hook for navigation

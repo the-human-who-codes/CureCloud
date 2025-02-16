@@ -27,8 +27,7 @@ const Hero = () => {
         <p className="hero-description">
           CureCloud simplifies healthcare management by providing a secure,
           centralized system for hospitals and clinics. Book specialist
-          appointments, track medical history, and access health records
-          seamlessly.
+          appointments, track medical history, and access health records seamlessly.
         </p>
         <button className="google-login" onClick={googleSignIn}>
           <img src={google} alt="Google Logo" className="google-icon" />

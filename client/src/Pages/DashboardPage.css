@@ -1,0 +1,41 @@
+html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Background */
+  .landing-container {
+    position: relative;
+    min-height: 100vh;
+    background: url("../assets/dna3.jpeg") no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    margin: 0;
+  }
+  
+  /* Background Overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 89, 255, 0.1);
+    z-index: -1;
+  }
+  .logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+  
+  .logout-button:hover {
+    background-color: #cc0000;
+  }

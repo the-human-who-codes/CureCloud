@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
 import Appointments from "./Pages/Appointments.jsx";
-import DoctorDashboard from "./Pages/DoctorDashBoard.jsx";
+import DoctorDashboard from "./Pages/DoctorDashboard.jsx";
 import LandingPage from "./Pages/LandingPage.jsx";
 import MedicalRecords from "./Pages/MedicalRecords.jsx";
 import NurseDashboard from "./Pages/NurseDashboard.jsx";

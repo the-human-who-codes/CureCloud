@@ -11,7 +11,7 @@ import {
   faHospitalUser,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import Header from "../Components/Header";
+import Header from "../Components/Header/Header";
 import Sidebar from "../Components/Sidebar";
 
 const getIcon = (key) => {

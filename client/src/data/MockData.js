@@ -281,6 +281,61 @@ export const MockData = {
     bloodSugar: "95 mg/dL",
   },
 
+  mockNotifications: [
+    {
+      id: 1,
+      title: "New Schedule Assignment",
+      description:
+        "You have been assigned to the Emergency Department for next week",
+      type: "shift",
+      priority: "important",
+      read: false,
+      createdAt: "2024-01-20T09:00:00Z",
+      senderName: "Dr. Sarah Wilson",
+    },
+    {
+      id: 2,
+      title: "Department Meeting",
+      description: "Monthly department meeting scheduled for tomorrow at 10 AM",
+      type: "department",
+      priority: "normal",
+      read: true,
+      createdAt: "2024-01-19T15:30:00Z",
+      senderName: "Dr. James Moore",
+    },
+    {
+      id: 3,
+      title: "System Maintenance",
+      description:
+        "System will be down for maintenance on Sunday from 2 AM to 4 AM",
+      type: "system",
+      priority: "urgent",
+      read: false,
+      createdAt: "2024-01-18T11:45:00Z",
+      senderName: "System Admin",
+    },
+    {
+      id: 4,
+      title: "New Protocol Update",
+      description: "Updated COVID-19 protocols are now in effect",
+      type: "department",
+      priority: "important",
+      read: false,
+      createdAt: "2024-01-17T16:20:00Z",
+      senderName: "Dr. Emily Chen",
+    },
+    {
+      id: 5,
+      title: "Training Reminder",
+      description: "Mandatory safety training due by end of week",
+      type: "system",
+      priority: "normal",
+      read: true,
+      createdAt: "2024-01-16T13:15:00Z",
+      senderName: "HR Department",
+    },
+  ],
+
   notifications: [
     {
       id: 1,

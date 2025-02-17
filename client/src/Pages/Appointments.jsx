@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header1 from "../Components/Header";
+import Header1 from "../Components/Header/Header";
 import Sidebar from "../Components/Sidebar";
 import { MockData } from "../data/MockData";
 

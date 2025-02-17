@@ -10,7 +10,8 @@ import PatientRecords from "./Pages/PatientRecords.jsx";
 import Prescriptions from "./Pages/Prescriptions.jsx";
 import RoleSelection from "./Pages/RoleSelection.jsx";
 import StaffSignUp from "./Pages/StaffSignUp.jsx";
-
+import NotificationsPage from "./Pages/NotificationsPage.jsx";
+import Prescription from "./Pages/Prescriptions.jsx";
 const AppRouter = () => {
   return (
     <Router>
@@ -26,6 +27,8 @@ const AppRouter = () => {
         <Route path="/prescriptions" element={<Prescriptions />} />
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route path="/staff-sign-up" element={<StaffSignUp />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/prescription" element={<Prescription />} />
       </Routes>
     </Router>
   );

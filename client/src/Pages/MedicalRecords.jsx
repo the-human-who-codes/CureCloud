@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Sidebar from "../Components/Sidebar";
-import Header from "../Components/Header";
+import Header from "../Components/Header/Header";
 
 function MedicalRecords() {
   const [searchTerm, setSearchTerm] = useState("");

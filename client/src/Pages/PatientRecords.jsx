@@ -1,7 +1,8 @@
 import { useState } from "react";
-import Header1 from "../Components/Header";
+import Header from "../Components/Header/Header";
+
 import Sidebar from "../Components/Sidebar";
-import PatientCard from "../Components/PatientCard";
+import PatientCard from "../Components/PatientCard/PatientCard";
 import { MockData } from "../data/MockData";
 
 function PatientRecords() {
@@ -37,7 +38,7 @@ function PatientRecords() {
     <div className="flex h-screen bg-[#f8faff]">
       <Sidebar activePage="Patient Records" />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header1 onSearch={handleSearch} />
+        <Header onSearch={handleSearch} />
 
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">

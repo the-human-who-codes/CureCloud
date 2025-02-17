@@ -4,17 +4,15 @@ import "prop-types/prop-types";
 import { MockData } from "../data/MockData"; // Import mock data
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUser,
-  faCalendar,
-  faClock,
   faEye,
-  faHospital,
   faTasks,
   faPills,
   faExclamationTriangle,
   faHospitalUser,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
+import Header from "../Components/Header";
+import Sidebar from "../Components/Sidebar";
 
 const getIcon = (key) => {
   switch (key) {
@@ -133,7 +131,9 @@ function NurseDashboard() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
+      <Sidebar userRole="nurse" />
       <div className="flex-1 flex flex-col overflow-hidden">
+        <Header onSearch={handleSearch} />
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex items-center justify-between mb-8">

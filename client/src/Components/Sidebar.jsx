@@ -46,6 +46,15 @@ function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
       { name: "Reports", icon: faFileMedicalAlt },
       { name: "System Settings", icon: faCog },
     ],
+    patient: [
+      // Added patient sidebar options
+      { name: "Dashboard", icon: faChartLine },
+      { name: "Appointments", icon: faCalendarAlt },
+      { name: "Prescriptions", icon: faPrescriptionBottleAlt },
+      { name: "Medical Records", icon: faFileMedicalAlt },
+      { name: "Messages", icon: faComments },
+      { name: "Settings", icon: faCog },
+    ],
   };
 
   const menuItems = menuItemsByRole[userRole] || menuItemsByRole.doctor;
@@ -101,7 +110,7 @@ function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
 
 Sidebar.propTypes = {
   activePage: PropTypes.string,
-  userRole: PropTypes.oneOf(["doctor", "nurse", "admin"]),
+  userRole: PropTypes.oneOf(["doctor", "nurse", "admin", "patient"]),
 };
 
 export default Sidebar;

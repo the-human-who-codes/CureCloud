@@ -12,81 +12,24 @@ import {
   faWeight,
   faTint,
 } from "@fortawesome/free-solid-svg-icons";
+import { MockData } from "../data/MockData";
+import Header from "../Components/Header";
+import Sidebar from "../Components/Sidebar";
 
 function PatientDashBoard() {
-  const mockAppointments = [
-    {
-      id: 1,
-      type: "General Checkup",
-      date: "2025-03-15",
-      time: "10:00 AM",
-      status: "Scheduled",
-    },
-    {
-      id: 2,
-      type: "Follow-up",
-      date: "2025-03-20",
-      time: "2:30 PM",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      type: "Specialist Consult",
-      date: "2025-03-25",
-      time: "11:15 AM",
-      status: "Scheduled",
-    },
-  ];
+  const mockAppointments = MockData.mockAppointments;
 
-  const mockPrescriptions = [
-    {
-      id: 1,
-      medication: "Metformin",
-      dosage: "500mg",
-      frequency: "Twice daily",
-      status: "Active",
-    },
-    {
-      id: 2,
-      medication: "Lisinopril",
-      dosage: "10mg",
-      frequency: "Once daily",
-      status: "Active",
-    },
-    {
-      id: 3,
-      medication: "Atorvastatin",
-      dosage: "20mg",
-      frequency: "Once daily",
-      status: "Active",
-    },
-  ];
+  const mockPrescriptions = MockData.mockPrescriptions;
 
-  const healthStats = {
-    bloodPressure: "120/80",
-    heartRate: "72 bpm",
-    weight: "68 kg",
-    bloodSugar: "95 mg/dL",
-  };
+  const healthStats = MockData.healthStats;
 
-  const notifications = [
-    {
-      id: 1,
-      type: "appointment",
-      message: "Upcoming appointment with Dr. Wilson tomorrow at 10:00 AM",
-      priority: "high",
-    },
-    {
-      id: 2,
-      type: "prescription",
-      message: "Metformin prescription needs refill in 5 days",
-      priority: "medium",
-    },
-  ];
+  const notifications = MockData.notifications;
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
+      <Sidebar userRole="patient" />
       <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex items-center justify-between mb-8">

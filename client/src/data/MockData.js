@@ -221,6 +221,105 @@ export const MockData = {
     criticalAlerts: 1,
   },
 
+  adminStats: {
+    totalDoctors: 45,
+    totalPatients: 1234,
+    activeAppointments: 89,
+    occupancyRate: "85%",
+  },
+
+  staffSchedule: [
+    { doctor: "Dr. James Wilson", shift: "Morning", status: "On Duty" },
+    { doctor: "Dr. Maria Rodriguez", shift: "Evening", status: "On Leave" },
+    { doctor: "Dr. David Kim", shift: "Night", status: "On Duty" },
+  ],
+
+  systemAlerts: [
+    {
+      type: "warning",
+      message: "System maintenance scheduled for tonight",
+      time: "2 hours ago",
+    },
+    {
+      type: "error",
+      message: "Low medical supplies in Storage B",
+      time: "4 hours ago",
+    },
+    {
+      type: "success",
+      message: "New doctor onboarding completed",
+      time: "6 hours ago",
+    },
+  ],
+  mockAppointments: [
+    {
+      id: 1,
+      type: "General Checkup",
+      date: "2025-03-15",
+      time: "10:00 AM",
+      status: "Scheduled",
+    },
+    {
+      id: 2,
+      type: "Follow-up",
+      date: "2025-03-20",
+      time: "2:30 PM",
+      status: "Pending",
+    },
+    {
+      id: 3,
+      type: "Specialist Consult",
+      date: "2025-03-25",
+      time: "11:15 AM",
+      status: "Scheduled",
+    },
+  ],
+  healthStats: {
+    bloodPressure: "120/80",
+    heartRate: "72 bpm",
+    weight: "68 kg",
+    bloodSugar: "95 mg/dL",
+  },
+
+  notifications: [
+    {
+      id: 1,
+      type: "appointment",
+      message: "Upcoming appointment with Dr. Wilson tomorrow at 10:00 AM",
+      priority: "high",
+    },
+    {
+      id: 2,
+      type: "prescription",
+      message: "Metformin prescription needs refill in 5 days",
+      priority: "medium",
+    },
+  ],
+
+  mockPrescriptions: [
+    {
+      id: 1,
+      medication: "Metformin",
+      dosage: "500mg",
+      frequency: "Twice daily",
+      status: "Active",
+    },
+    {
+      id: 2,
+      medication: "Lisinopril",
+      dosage: "10mg",
+      frequency: "Once daily",
+      status: "Active",
+    },
+    {
+      id: 3,
+      medication: "Atorvastatin",
+      dosage: "20mg",
+      frequency: "Once daily",
+      status: "Active",
+    },
+  ],
+
   tasks: [
     {
       id: "t1",

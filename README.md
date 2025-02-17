@@ -6,7 +6,7 @@ A centralized health management system for modernizing healthcare record-keeping
 
 ## **Overview**
 
-CureCloud is an open-source, cloud-based health management system designed for hospitals and clinics. It streamlines patient information storage, specialist bookings, and medical record management, eliminating the need for physical records. The goal is to provide a universal healthcare platform with potential AI-driven insights in future iterations.
+CureCloud is a cloud-based health management system designed for hospitals and clinics. It streamlines patient information storage, specialist bookings, and medical record management, eliminating the need for physical records. The goal is to provide a universal healthcare platform with potential AI-driven insights in future iterations.
 
 ## **Getting Started**
 
@@ -14,10 +14,10 @@ CureCloud is an open-source, cloud-based health management system designed for h
 
 To set up and run the project locally, follow these steps:
 
-1. **Clone the Repository:**
+1. **Clone the Repository (Access Required):**
 
    ```sh
-   git clone [Insert GitHub Repo URL]
+   git clone [Private Repository URL]
    cd CureCloud
    ```
 
@@ -40,18 +40,11 @@ To set up and run the project locally, follow these steps:
 
 This will start the frontend, and you should see the application running on `http://localhost:5173` (or the assigned port).
 
-## **Contributing**
+## **Access & Contributions**
 
-Contributions are welcome! Whether it's fixing bugs, suggesting new features, or improving the UI, feel free to collaborate.
+CureCloud is a private project. Access is restricted to authorized contributors only. If you need access or wish to contribute, please contact the project maintainer.
 
-### **How to Contribute**
-
-1. **Fork the repository** and create a new branch for your changes.
-2. **Open an issue** if you have an idea or found a bug.
-3. **Make your changes**, then commit and push your branch.
-4. **Submit a Pull Request (PR)** to the main repo for review.
-
-### **Deployment**
+## **Deployment**
 
 For testing deployment locally, you can use Firebase Emulator:
 
@@ -68,10 +61,9 @@ For testing deployment locally, you can use Firebase Emulator:
 
 This will simulate how the app will function when deployed.
 
-Once your changes are ready, submit a **Pull Request** to merge your contributions into the main branch.
-
 ## **License**
 
-This project is open-source under the [MIT License](LICENSE).
+This project is proprietary and not open-source. Unauthorized distribution or reproduction of any part of this project is prohibited.
 
 ---
+

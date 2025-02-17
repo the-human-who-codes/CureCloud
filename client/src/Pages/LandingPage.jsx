@@ -8,6 +8,7 @@ import {
   faHeartbeat,
 } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { useState } from "react";
 
 const featuresData = [
   {
@@ -48,36 +49,79 @@ const featuresData = [
   },
 ];
 
-const scrollToSection = (id) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setIsMenuOpen(false);
+  };
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 flex justify-between items-center bg-white/70 backdrop-blur-md shadow-md px-6 py-3 w-full z-10">
+      <h1 className="text-lg font-bold">CureCloud</h1>
+
+      <div className="flex items-center space-x-6">
+        {/* Desktop menu */}
+        <div className="hidden md:flex space-x-6">
+          <button
+            onClick={() => scrollToSection("hero")}
+            className="text-gray-700 hover:text-blue-600"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => scrollToSection("features")}
+            className="text-gray-700 hover:text-blue-600"
+          >
+            Features
+          </button>
+          <button
+            onClick={() => scrollToSection("footer")}
+            className="text-gray-700 hover:text-blue-600"
+          >
+            Contact
+          </button>
+        </div>
+
+        {/* Hamburger Icon for mobile */}
+        <button className="md:hidden text-gray-700" onClick={toggleMenu}>
+          {isMenuOpen ? (
+            <span className="block w-6 h-6 border-t-2 border-b-2 border-gray-700"></span>
+          ) : (
+            <span className="block w-6 h-1 bg-gray-700 mb-1"></span>
+          )}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md">
+          <button
+            onClick={() => scrollToSection("hero")}
+            className="block px-6 py-3 text-gray-700 hover:text-blue-600 w-full text-left"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => scrollToSection("features")}
+            className="block px-6 py-3 text-gray-700 hover:text-blue-600 w-full text-left"
+          >
+            Features
+          </button>
+          <button
+            onClick={() => scrollToSection("footer")}
+            className="block px-6 py-3 text-gray-700 hover:text-blue-600 w-full text-left"
+          >
+            Contact
+          </button>
+        </div>
+      )}
+    </nav>
+  );
 };
-
-const Navbar = () => (
-  <nav className="fixed top-0 left-0 right-0 flex justify-between items-center bg-white/70 backdrop-blur-md shadow-md px-6 py-3 w-full z-10">
-    <h1 className="text-lg font-bold">CureCloud</h1>
-    <div className="space-x-6">
-      <button
-        onClick={() => scrollToSection("hero")}
-        className="text-gray-700 hover:text-blue-600"
-      >
-        Home
-      </button>
-      <button
-        onClick={() => scrollToSection("features")}
-        className="text-gray-700 hover:text-blue-600"
-      >
-        Features
-      </button>
-      <button
-        onClick={() => scrollToSection("footer")}
-        className="text-gray-700 hover:text-blue-600"
-      >
-        Contact
-      </button>
-    </div>
-  </nav>
-);
-
 const HeroSection = () => (
   <div
     id="hero"

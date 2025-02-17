@@ -1,6 +1,45 @@
 "use client";
 import { useState, useEffect } from "react";
 import "prop-types/prop-types";
+import { MockData } from "../data/MockData"; // Import mock data
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEye,
+  faTasks,
+  faPills,
+  faExclamationTriangle,
+  faHospitalUser,
+  faEdit,
+} from "@fortawesome/free-solid-svg-icons";
+import Header from "../Components/Header";
+import Sidebar from "../Components/Sidebar";
+
+const getIcon = (key) => {
+  switch (key) {
+    case "patientsUnderCare":
+      return (
+        <FontAwesomeIcon
+          icon={faHospitalUser}
+          className="text-[#2c4ecf] text-xl"
+        />
+      );
+    case "tasksForToday":
+      return (
+        <FontAwesomeIcon icon={faTasks} className="text-[#2c4ecf] text-xl" />
+      );
+    case "upcomingMedications":
+      return (
+        <FontAwesomeIcon icon={faPills} className="text-[#2c4ecf] text-xl" />
+      );
+    default:
+      return (
+        <FontAwesomeIcon
+          icon={faExclamationTriangle}
+          className="text-[#2c4ecf] text-xl"
+        />
+      );
+  }
+};
 function NurseDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -24,7 +63,7 @@ function NurseDashboard() {
     handoverNotes: "",
     teamMembers: [],
   };
-  const upcomingMedications = dashboardData?.medications || [];
+  // const upcomingMedications = dashboardData?.medications || [];
   const recentAlerts = dashboardData?.alerts || [];
 
   useEffect(() => {
@@ -45,17 +84,11 @@ function NurseDashboard() {
   }, [activeTask]);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    // Simulate fetching mock data
+    const loadMockData = () => {
       try {
-        const response = await fetch("/api/get-dashboard-data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const data = await response.json();
-        setDashboardData(data);
+        // Use MockData directly for testing
+        setDashboardData(MockData);
         setLoading(false);
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
@@ -64,8 +97,8 @@ function NurseDashboard() {
       }
     };
 
-    fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 60000);
+    loadMockData();
+    const interval = setInterval(loadMockData, 60000); // Reload mock data every minute
     return () => clearInterval(interval);
   }, []);
 
@@ -98,7 +131,9 @@ function NurseDashboard() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
+      <Sidebar userRole="nurse" />
       <div className="flex-1 flex flex-col overflow-hidden">
+        <Header onSearch={handleSearch} />
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex items-center justify-between mb-8">
@@ -133,17 +168,7 @@ function NurseDashboard() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
-                          key === "patientsUnderCare"
-                            ? "fa-hospital-user"
-                            : key === "tasksForToday"
-                            ? "fa-tasks"
-                            : key === "upcomingMedications"
-                            ? "fa-pills"
-                            : "fa-exclamation-triangle"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                      {getIcon(key)}
                     </div>
                   </div>
                 </div>
@@ -245,10 +270,10 @@ const AssignedPatientsSection = ({ patients }) => {
               </div>
               <div className="flex space-x-2">
                 <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                  <i className="fas fa-eye"></i>
+                  <FontAwesomeIcon icon={faEye} />
                 </button>
                 <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                  <i className="fas fa-edit"></i>
+                  <FontAwesomeIcon icon={faEdit} />
                 </button>
               </div>
             </div>

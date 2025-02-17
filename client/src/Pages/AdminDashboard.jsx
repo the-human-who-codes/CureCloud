@@ -1,46 +1,29 @@
-// import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserMd,
+  faUsers,
+  faCalendarCheck,
+  faChartPie,
+  faFileMedical,
+  faCog,
+  faExclamationTriangle,
+  faExclamationCircle,
+  faCheckCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { MockData } from "../data/MockData";
+import Header from "../Components/Header";
+import Sidebar from "../Components/Sidebar";
 
 function AdminDashboard() {
-  //   const [searchTerm, setSearchTerm] = useState("");
-
-  const statsData = {
-    totalDoctors: 45,
-    totalPatients: 1234,
-    activeAppointments: 89,
-    occupancyRate: "85%",
-  };
-
-  const staffSchedule = [
-    { doctor: "Dr. James Wilson", shift: "Morning", status: "On Duty" },
-    { doctor: "Dr. Maria Rodriguez", shift: "Evening", status: "On Leave" },
-    { doctor: "Dr. David Kim", shift: "Night", status: "On Duty" },
-  ];
-
-  const systemAlerts = [
-    {
-      type: "warning",
-      message: "System maintenance scheduled for tonight",
-      time: "2 hours ago",
-    },
-    {
-      type: "error",
-      message: "Low medical supplies in Storage B",
-      time: "4 hours ago",
-    },
-    {
-      type: "success",
-      message: "New doctor onboarding completed",
-      time: "6 hours ago",
-    },
-  ];
+  const statsData = MockData.adminStats;
+  const staffSchedule = MockData.staffSchedule;
+  const systemAlerts = MockData.systemAlerts;
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
+      <Sidebar userRole="admin" />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
-
+        <Header />
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex items-center justify-between mb-8">
@@ -65,17 +48,18 @@ function AdminDashboard() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           key.includes("Doctors")
-                            ? "fa-user-md"
+                            ? faUserMd
                             : key.includes("Patients")
-                            ? "fa-users"
+                            ? faUsers
                             : key.includes("Appointments")
-                            ? "fa-calendar-check"
-                            : "fa-chart-pie"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                            ? faCalendarCheck
+                            : faChartPie
+                        }
+                        className="text-[#2c4ecf] text-xl"
+                      />
                     </div>
                   </div>
                 </div>
@@ -99,17 +83,18 @@ function AdminDashboard() {
                         key={action}
                         className="p-4 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff] transition-colors duration-200 flex flex-col items-center"
                       >
-                        <i
-                          className={`fas ${
+                        <FontAwesomeIcon
+                          icon={
                             action.includes("Doctor")
-                              ? "fa-user-md"
+                              ? faUserMd
                               : action.includes("Patient")
-                              ? "fa-user-plus"
+                              ? faUsers
                               : action.includes("Reports")
-                              ? "fa-file-medical"
-                              : "fa-cog"
-                          } mb-2 text-xl`}
-                        ></i>
+                              ? faFileMedical
+                              : faCog
+                          }
+                          className="mb-2 text-xl"
+                        />
                         <span className="text-sm text-center">{action}</span>
                       </button>
                     ))}
@@ -184,15 +169,15 @@ function AdminDashboard() {
                               : "bg-green-100 text-green-800"
                           }`}
                         >
-                          <i
-                            className={`fas ${
+                          <FontAwesomeIcon
+                            icon={
                               alert.type === "warning"
-                                ? "fa-exclamation-triangle"
+                                ? faExclamationTriangle
                                 : alert.type === "error"
-                                ? "fa-exclamation-circle"
-                                : "fa-check-circle"
-                            }`}
-                          ></i>
+                                ? faExclamationCircle
+                                : faCheckCircle
+                            }
+                          />
                         </div>
                         <div className="flex-1">
                           <p className="font-poppins text-sm text-[#4a5568]">

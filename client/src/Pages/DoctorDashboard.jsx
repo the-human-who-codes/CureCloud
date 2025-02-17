@@ -2,7 +2,7 @@ import { useState } from "react";
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
 import PatientCard from "../Components/PatientCard";
-
+import { MockData } from "../data/MockData";
 // Import FontAwesome components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,72 +20,8 @@ function DoctorDashboard() {
     pendingReports: 12,
     activePrescriptions: 89,
   };
-  const mockPatients = [
-    {
-      patientImage: "/patient1.png",
-      patientName: "Sarah Johnson",
-      patientId: "P12345",
-      age: 35,
-      gender: "Female",
-      lastVisit: "2025-02-15",
-      status: "Active",
-    },
-    {
-      patientImage: "/patient2.png",
-      patientName: "Michael Chen",
-      patientId: "P12346",
-      age: 52,
-      gender: "Male",
-      lastVisit: "2025-02-14",
-      status: "Critical",
-    },
-    {
-      patientImage: "/patient3.png",
-      patientName: "Emily Brown",
-      patientId: "P12347",
-      age: 28,
-      gender: "Female",
-      lastVisit: "2025-02-10",
-      status: "Inactive",
-    },
-  ];
-  const mockAppointments = [
-    {
-      id: 1,
-      patientName: "James Wilson",
-      time: "09:00 AM",
-      type: "General Checkup",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      patientName: "Linda Martinez",
-      time: "10:30 AM",
-      type: "Follow-up",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      patientName: "Robert Taylor",
-      time: "02:00 PM",
-      type: "Consultation",
-      status: "Confirmed",
-    },
-    {
-      id: 4,
-      patientName: "Maria Garcia",
-      time: "03:30 PM",
-      type: "Follow-up",
-      status: "Confirmed",
-    },
-    {
-      id: 5,
-      patientName: "David Kim",
-      time: "04:45 PM",
-      type: "General Checkup",
-      status: "Pending",
-    },
-  ];
+  const mockPatients = MockData.patients;
+  const mockAppointments = MockData.appointments;
   const handleSearch = (term) => {
     setSearchTerm(term);
   };

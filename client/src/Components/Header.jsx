@@ -15,6 +15,7 @@ function Header({
   onSearch = () => {},
   notificationCount = 0,
   userName = "Dr. Smith",
+  role = "patient", // Added role prop
 }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,22 +35,25 @@ function Header({
           />
         </div>
 
-        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
-          <div className="relative">
-            <input
-              type="text"
-              name="search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search patients, appointments, records..."
-              className="w-full px-4 py-2 pl-10 bg-[#f8faff] border border-[#e1e8ff] rounded-lg focus:outline-none focus:border-[#2c4ecf] font-poppins"
-            />
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a5568]"
-            />
-          </div>
-        </form>
+        {/* Conditionally render search bar based on role */}
+        {role !== "patient" && (
+          <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
+            <div className="relative">
+              <input
+                type="text"
+                name="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search patients, appointments, records..."
+                className="w-full px-4 py-2 pl-10 bg-[#f8faff] border border-[#e1e8ff] rounded-lg focus:outline-none focus:border-[#2c4ecf] font-poppins"
+              />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a5568]"
+              />
+            </div>
+          </form>
+        )}
 
         <div className="flex items-center space-x-4">
           <div className="relative">
@@ -115,6 +119,7 @@ Header.propTypes = {
   onSearch: PropTypes.func,
   notificationCount: PropTypes.number,
   userName: PropTypes.string,
+  role: PropTypes.string, // can be 'doctor' or 'patient'
 };
 
 export default Header;

@@ -11,7 +11,7 @@ import {
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { MockData } from "../data/MockData";
-import Header from "../Components/Header";
+import Header from "../Components/Header/Header";
 import Sidebar from "../Components/Sidebar";
 
 function AdminDashboard() {

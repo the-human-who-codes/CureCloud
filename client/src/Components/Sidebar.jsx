@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const menuItemsByRole = {
     doctor: [

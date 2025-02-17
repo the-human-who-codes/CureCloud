@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../Components/Sidebar";
-import Header from "../Components/Header";
-import PatientCard from "../Components/PatientCard";
+import Header from "../Components/Header/Header";
+import PatientCard from "../Components/PatientCard/PatientCard";
 import { MockData } from "../data/MockData";
 // Import FontAwesome components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

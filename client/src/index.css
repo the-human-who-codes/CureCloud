@@ -1,8 +1,2 @@
-/* General Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica",
-    "Arial", sans-serif;
-}
+@import "tailwindcss";
+@import "font-awesome/css/font-awesome.min.css";

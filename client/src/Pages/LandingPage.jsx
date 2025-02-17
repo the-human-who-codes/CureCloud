@@ -1,111 +1,180 @@
-"use client"; // For Vite
-import { useState } from "react"; // Import useState for handling loading state
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon component
-import { faHeartbeat } from "@fortawesome/free-solid-svg-icons"; // Import heartbeat icon
-import { faGoogle } from "@fortawesome/free-brands-svg-icons"; // Import Google brand icon
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import doctors from "../assets/doctors.jpg";
-// LandingPage Component
-function LandingPage() {
-  const [isLoading, setIsLoading] = useState(false); // State for managing the loading spinner
-  const navigate = useNavigate(); // Initialize navigate function
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faNotesMedical,
+  faCalendarCheck,
+  faBrain,
+  faExchangeAlt,
+  faUserMd,
+  faHeartbeat,
+} from "@fortawesome/free-solid-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-  // Handle the login (button click) action
-  const handleLogin = async () => {
-    setIsLoading(true); // Set loading to true when login starts
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate a login delay
-      navigate("/role-selection"); // Navigate to RoleSelection page after "successful" login
-    } catch (error) {
-      console.error("Login failed:", error); // Log error if login fails
-      setIsLoading(false); // Reset loading state if error occurs
-    }
-  };
+const featuresData = [
+  {
+    icon: faNotesMedical,
+    title: "Digital Health Records",
+    description:
+      "Securely store and access your medical history anytime, anywhere.",
+  },
+  {
+    icon: faCalendarCheck,
+    title: "Appointment Booking",
+    description:
+      "Book appointments with specialists from the comfort of your home.",
+  },
+  {
+    icon: faBrain,
+    title: "AI-Powered Insights",
+    description:
+      "Get tailored health insights and recommendations with AI integration.",
+  },
+  {
+    icon: faExchangeAlt,
+    title: "Secure Data Sharing",
+    description:
+      "Easily and securely share your medical records with healthcare professionals.",
+  },
+  {
+    icon: faUserMd,
+    title: "Specialist Availability",
+    description:
+      "Check availability and get instant access to specialists based on your needs.",
+  },
+  {
+    icon: faHeartbeat,
+    title: "Health Tracking",
+    description:
+      "Track your vitals, appointments, and progress over time to stay on top of your health.",
+  },
+];
 
+const scrollToSection = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+};
+
+const Navbar = () => (
+  <nav className="fixed top-0 left-0 right-0 flex justify-between items-center bg-white/70 backdrop-blur-md shadow-md px-6 py-3 w-full z-10">
+    <h1 className="text-lg font-bold">CureCloud</h1>
+    <div className="space-x-6">
+      <button
+        onClick={() => scrollToSection("hero")}
+        className="text-gray-700 hover:text-blue-600"
+      >
+        Home
+      </button>
+      <button
+        onClick={() => scrollToSection("features")}
+        className="text-gray-700 hover:text-blue-600"
+      >
+        Features
+      </button>
+      <button
+        onClick={() => scrollToSection("footer")}
+        className="text-gray-700 hover:text-blue-600"
+      >
+        Contact
+      </button>
+    </div>
+  </nav>
+);
+
+const HeroSection = () => (
+  <div
+    id="hero"
+    className="min-h-screen flex flex-col justify-center items-center text-center px-6"
+  >
+    <h2 className="text-4xl md:text-5xl font-bold text-gray-800">
+      Welcome to <span className="text-blue-600">CureCloud</span>
+    </h2>
+    <p className="mt-4 text-xl font-semibold text-gray-900">
+      Your Health Simplified.
+    </p>
+    <p className="mt-3 text-gray-700 max-w-xl mx-auto">
+      CureCloud simplifies healthcare management by providing a secure,
+      centralized system for hospitals and clinics. Book specialist
+      appointments, track medical history, and access health records seamlessly.
+    </p>
+    <button
+      onClick={() => (window.location.href = "/role-selection")}
+      className="mt-6 bg-white text-gray-900 flex items-center px-6 py-3 rounded-full shadow-md hover:bg-gray-100 transition mx-auto"
+    >
+      <FontAwesomeIcon icon={faGoogle} className="w-5 h-5 mr-3 text-blue-600" />
+      Login with Google
+    </button>
+  </div>
+);
+
+const FeaturesSection = () => (
+  <div id="features" className="mt-16 px-6 max-w-6xl mx-auto">
+    <h3 className="text-3xl font-bold text-gray-800 text-center">
+      Key Features
+    </h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      {featuresData.map((feature, index) => (
+        <div
+          key={index}
+          className="bg-white border border-gray-200 p-6 rounded-lg shadow-md flex flex-col items-center text-center max-w-sm mx-auto"
+        >
+          <FontAwesomeIcon
+            icon={feature.icon}
+            className="text-blue-600 text-4xl mb-4"
+          />
+          <h4 className="text-lg font-semibold text-gray-900">
+            {feature.title}
+          </h4>
+          <p className="text-gray-700 text-sm mt-2">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const Footer = () => (
+  <footer
+    id="footer"
+    className="bg-gray-900 text-white text-center py-6 mt-16 w-full"
+  >
+    <p>&copy; {new Date().getFullYear()} CureCloud. All Rights Reserved.</p>
+    <p>Contact us: support@curecloud.com</p>
+    <p className="mt-2 text-sm text-gray-400">
+      This is an open-source project created to demonstrate the potential of a
+      centralized health management system. Currently, the software uses mock
+      data to illustrate its intended functionality.
+    </p>
+    <p className="mt-2 text-sm text-gray-400">
+      Contributors:
+      <br />
+      Founder: <strong>Muano Masiagwala</strong>
+      <br />
+      Contributor: <strong>Levi Mashilo</strong>
+    </p>
+    <p className="mt-2 text-sm text-gray-400">
+      Want to contribute? Check out the repository on GitHub:{" "}
+      <a
+        href="https://github.com/muano-thee-last/CureCloud" // Replace with your actual GitHub link
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:text-blue-600"
+      >
+        CureCloud GitHub Repository
+      </a>
+    </p>
+    <p className="mt-4 text-sm text-gray-400">
+      This project is licensed under the MIT License. See the LICENSE file for
+      details.
+    </p>
+  </footer>
+);
+
+const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8faff] to-[#e6eaff] relative overflow-hidden">
-      {/* Overlay background effect */}
-      <div className="absolute inset-0 bg-[#2c4ecf]/[0.02] mix-blend-multiply"></div>
-
-      {/* Main content container */}
-      <div className="relative z-10 container mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-center min-h-screen">
-        {/* Left content section */}
-        <div className="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
-          <div className="max-w-md mx-auto md:mx-0">
-            <div className="mb-8">
-              {/* Icon for visual interest */}
-              <div className="w-16 h-16 bg-[#2c4ecf]/10 rounded-full flex items-center justify-center mx-auto md:mx-0 mb-6">
-                <FontAwesomeIcon
-                  icon={faHeartbeat}
-                  className="text-2xl text-[#2c4ecf]"
-                />
-              </div>
-              {/* Heading */}
-              <h1 className="font-poppins text-4xl md:text-5xl font-bold text-[#2c4ecf] mb-4">
-                Welcome to CureCloud
-              </h1>
-              {/* Subheading */}
-              <p className="font-poppins text-xl text-[#4a5568]/80">
-                Your Health, Our Priority
-              </p>
-            </div>
-
-            {/* Sign-in box */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#e1e8ff]">
-              <p className="font-poppins text-[#4a5568] mb-6 text-center">
-                Sign in to access your healthcare dashboard
-              </p>
-              {/* Sign in button */}
-              <button
-                onClick={handleLogin} // Trigger handleLogin on click
-                disabled={isLoading} // Disable button if loading
-                className="w-full px-6 py-4 bg-[#2c4ecf]/90 text-white rounded-xl font-poppins hover:bg-[#2c4ecf] transition-colors duration-200 flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
-              >
-                {/* Spinner if loading */}
-                {isLoading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Connecting...</span>
-                  </div>
-                ) : (
-                  <>
-                    <FontAwesomeIcon icon={faGoogle} className="text-lg" />
-                    <span>Continue with Google</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right content section (Image + Decorative SVG) */}
-        <div className="md:w-1/2 flex justify-center items-center">
-          <div className="relative w-full max-w-lg">
-            {/* Decorative blurred circles */}
-            <div className="absolute top-0 left-0 w-40 h-40 bg-[#2c4ecf]/5 rounded-full filter blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#2c4ecf]/5 rounded-full filter blur-3xl"></div>
-            {/* Decorative SVG path */}
-            <svg
-              viewBox="0 0 400 300"
-              className="w-full h-auto relative z-10 text-[#2c4ecf]"
-            >
-              <path
-                fill="currentColor"
-                fillOpacity="0.1"
-                d="M156.4,339.5c31.8-2.5,59.4-26.8,80.2-48.5c28.3-29.5,40.5-47,56.1-85.1c14-34.3,20.7-75.6,2.3-111  c-18.1-34.8-55.7-58-90.4-72.3c-11.7-4.8-24.1-8.8-36.8-11.5l-0.9-0.9l-0.6,0.6c-27.7-5.8-56.6-6-82.4,3c-38.8,13.6-64,48.8-66.8,90.3c-3,43.9,17.8,88.3,33.7,128.8c5.3,13.5,10.4,27.1,14.9,40.9C77.5,309.9,111,343,156.4,339.5z"
-              />
-            </svg>
-            {/* Image of healthcare professionals */}
-            {/* <img
-              src={doctors}
-              alt="Healthcare professionals working together to provide patient care"
-              className="absolute inset-0 w-full h-full object-contain z-20 "
-            /> */}
-          </div>
-        </div>
-      </div>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-[#2c4ecf1a] to-white text-gray-900">
+      <Navbar />
+      <HeroSection />
+      <FeaturesSection />
+      <Footer />
     </div>
   );
-}
+};
 
 export default LandingPage;

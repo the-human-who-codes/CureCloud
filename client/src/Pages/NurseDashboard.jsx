@@ -63,7 +63,7 @@ function NurseDashboard() {
     handoverNotes: "",
     teamMembers: [],
   };
-  const upcomingMedications = dashboardData?.medications || [];
+  // const upcomingMedications = dashboardData?.medications || [];
   const recentAlerts = dashboardData?.alerts || [];
 
   useEffect(() => {

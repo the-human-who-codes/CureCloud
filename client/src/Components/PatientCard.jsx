@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function PatientCard({
-  patientImage = "/default-patient.png",
-  patientName = "John Doe",
+  image = "/default-patient.png",
+  name = "John Doe",
   patientId = "P12345",
   age = 45,
   gender = "Male",
@@ -24,14 +24,14 @@ function PatientCard({
     <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6 hover:shadow-md transition-shadow duration-200 w-[320px]">
       <div className="flex items-start gap-4">
         <img
-          src={patientImage}
-          alt={`Patient ${patientName}`}
+          src={image}
+          alt={`Patient ${name}`}
           className="w-16 h-16 rounded-full object-cover"
         />
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf]">
-              {patientName}
+              {name}
             </h3>
             <span
               className={`${statusColors[status]} w-2 h-2 rounded-full`}
@@ -81,8 +81,8 @@ function PatientCard({
 }
 
 PatientCard.propTypes = {
-  patientImage: PropTypes.string,
-  patientName: PropTypes.string,
+  image: PropTypes.string,
+  name: PropTypes.string,
   patientId: PropTypes.string,
   age: PropTypes.number,
   gender: PropTypes.string,

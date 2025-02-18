@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import { useState, useEffect } from "react";
 import Header from "../Components/Header/Header";
@@ -41,7 +42,7 @@ function NurseDashboard() {
       setDashboardData(MockData);
       setLoading(false);
     } catch (err) {
-      setError("Could not load dashboard data");
+      setError("Could not load dashboard data\nerro:" + err);
       setLoading(false);
     }
   }, []);

@@ -179,11 +179,10 @@ const Footer = () => (
     className="bg-gray-900 text-white text-center py-6 mt-16 w-full"
   >
     <p>&copy; {new Date().getFullYear()} CureCloud. All Rights Reserved.</p>
-    <p>Contact us: support@curecloud.com</p>
+    <p>Contact us: curecloud.@gmail.com</p>
     <p className="mt-2 text-sm text-gray-400">
-      This is an open-source project created to demonstrate the potential of a
-      centralized health management system. Currently, the software uses mock
-      data to illustrate its intended functionality.
+      Currently, the software uses mock data to illustrate its intended
+      functionality.
     </p>
     <p className="mt-2 text-sm text-gray-400">
       Contributors:
@@ -191,21 +190,6 @@ const Footer = () => (
       Founder: <strong>Muano Masiagwala</strong>
       <br />
       Contributor: <strong>Levi Mashilo</strong>
-    </p>
-    <p className="mt-2 text-sm text-gray-400">
-      Want to contribute? Check out the repository on GitHub:{" "}
-      <a
-        href="https://github.com/muano-thee-last/CureCloud" // Replace with your actual GitHub link
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-600"
-      >
-        CureCloud GitHub Repository
-      </a>
-    </p>
-    <p className="mt-4 text-sm text-gray-400">
-      This project is licensed under the MIT License. See the LICENSE file for
-      details.
     </p>
   </footer>
 );

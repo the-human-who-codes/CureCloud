@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
-import Appointments from "./Pages/Appointments.jsx";
+import Appointments from "./Pages/AppointmentsPage.jsx";
 import DoctorDashboard from "./Pages/DoctorDashboard.jsx";
 import LandingPage from "./Pages/LandingPage.jsx";
 import MedicalRecords from "./Pages/MedicalRecords.jsx";
@@ -12,6 +12,8 @@ import RoleSelection from "./Pages/RoleSelection.jsx";
 import StaffSignUp from "./Pages/StaffSignUp.jsx";
 import NotificationsPage from "./Pages/NotificationsPage.jsx";
 import Prescription from "./Pages/Prescriptions.jsx";
+import ProfilePage from "./Pages/ProfilePage.jsx";
+
 const AppRouter = () => {
   return (
     <Router>
@@ -29,6 +31,7 @@ const AppRouter = () => {
         <Route path="/staff-sign-up" element={<StaffSignUp />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/prescription" element={<Prescription />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>
   );

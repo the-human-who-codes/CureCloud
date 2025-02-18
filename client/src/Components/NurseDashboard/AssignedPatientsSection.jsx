@@ -15,7 +15,7 @@ const AssignedPatientsSection = ({ patients }) => (
             <img
               src={patient.image}
               alt={patient.name}
-              className="w-12 h-12 rounded-full"
+              className="w-12 h-12 rounded-full object-cover"
             />
             <div>
               <p className="text-[#2c4ecf] font-medium">{patient.name}</p>

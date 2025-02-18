@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
-import Appointments from "./Pages/Appointments.jsx";
+import Appointments from "./Pages/AppointmentsPage.jsx";
 import DoctorDashboard from "./Pages/DoctorDashboard.jsx";
 import LandingPage from "./Pages/LandingPage.jsx";
 import MedicalRecords from "./Pages/MedicalRecords.jsx";

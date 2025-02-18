@@ -281,6 +281,49 @@ export const MockData = {
     bloodSugar: "95 mg/dL",
   },
 
+  recentLabResults: [
+    {
+      id: 1,
+      patientName: "Sarah Johnson",
+      testType: "Blood Work",
+      date: "2025-02-15",
+      status: "Complete",
+      result: "Abnormal",
+    },
+    {
+      id: 2,
+      patientName: "Michael Chen",
+      testType: "ECG",
+      date: "2025-02-14",
+      status: "Pending",
+      result: "Processing",
+    },
+    {
+      id: 3,
+      patientName: "Emily Brown",
+      testType: "X-Ray",
+      date: "2025-02-10",
+      status: "Complete",
+      result: "Normal",
+    },
+    {
+      id: 4,
+      patientName: "James Wilson",
+      testType: "MRI",
+      date: "2025-02-09",
+      status: "Complete",
+      result: "Normal",
+    },
+    {
+      id: 5,
+      patientName: "Linda Martinez",
+      testType: "CT Scan",
+      date: "2025-02-08",
+      status: "Complete",
+      result: "Abnormal",
+    },
+  ],
+
   mockNotifications: [
     {
       id: 1,

@@ -1,8 +1,19 @@
-"use client";
 import { useState } from "react";
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header/Header";
 import { MockData } from "../data/MockData";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserInjured,
+  faTasks,
+  faPills,
+  faHeartbeat,
+  faFileMedical,
+  faSyncAlt,
+  faBell,
+  faNotesMedical,
+  faPhone,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Prescriptions() {
   const { patients, doctors } = MockData;
@@ -138,17 +149,26 @@ function Prescriptions() {
                         : "bg-red-100"
                     }`}
                   />
-                  <i
-                    className={`fas ${
+                  <FontAwesomeIcon
+                    icon={
                       key === "activePatients"
-                        ? "fa-user-injured text-[#2c4ecf]"
+                        ? faUserInjured
                         : key === "pendingTasks"
-                        ? "fa-tasks text-yellow-600"
+                        ? faTasks
                         : key === "medicationsDue"
-                        ? "fa-pills text-green-600"
-                        : "fa-heartbeat text-red-600"
-                    } text-2xl mb-4`}
-                  ></i>
+                        ? faPills
+                        : faHeartbeat
+                    }
+                    className={`text-2xl mb-4 ${
+                      key === "activePatients"
+                        ? "text-[#2c4ecf]"
+                        : key === "pendingTasks"
+                        ? "text-yellow-600"
+                        : key === "medicationsDue"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  />
                   <h3 className="font-poppins text-lg font-semibold text-[#4a5568]">
                     {key.replace(/([A-Z])/g, " $1").trim()}
                   </h3>
@@ -244,10 +264,10 @@ function Prescriptions() {
                             </td>
                             <td className="px-6 py-4">
                               <button className="text-[#2c4ecf] hover:text-[#1a3baf] mr-3">
-                                <i className="fas fa-file-medical"></i>
+                                <FontAwesomeIcon icon={faFileMedical} />
                               </button>
                               <button className="text-[#2c4ecf] hover:text-[#1a3baf]">
-                                <i className="fas fa-pills"></i>
+                                <FontAwesomeIcon icon={faPills} />
                               </button>
                             </td>
                           </tr>
@@ -304,24 +324,33 @@ function Prescriptions() {
                   Recent Updates
                 </h2>
                 <button className="text-[#2c4ecf]">
-                  <i className="fas fa-sync-alt"></i>
+                  <FontAwesomeIcon icon={faSyncAlt} />
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {recentUpdates.map((update, index) => (
                   <div key={index} className="bg-[#f8faff] p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                      <i
-                        className={`fas fa-${
+                      <FontAwesomeIcon
+                        icon={
                           update.type === "vitals"
-                            ? "heartbeat text-blue-500"
+                            ? faHeartbeat
                             : update.type === "medication"
-                            ? "pills text-green-500"
+                            ? faPills
                             : update.type === "order"
-                            ? "file-medical text-yellow-500"
-                            : "bell text-red-500"
-                        } mr-3`}
-                      ></i>
+                            ? faFileMedical
+                            : faBell
+                        }
+                        className={
+                          update.type === "vitals"
+                            ? "text-blue-500 mr-3"
+                            : update.type === "medication"
+                            ? "text-green-500 mr-3"
+                            : update.type === "order"
+                            ? "text-yellow-500 mr-3"
+                            : "text-red-500 mr-3"
+                        }
+                      />
                       <span className="font-poppins text-sm text-[#4a5568]">
                         {update.time}
                       </span>
@@ -339,23 +368,23 @@ function Prescriptions() {
 
             <div className="fixed bottom-6 right-6 flex flex-col gap-4 md:flex-row">
               <button className="bg-[#2c4ecf] text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-[#1a3baf]">
-                <i className="fas fa-file-medical md:mr-2"></i>
+                <FontAwesomeIcon icon={faFileMedical} className="md:mr-2" />
                 <span className="hidden md:inline font-poppins">
                   Record Vitals
                 </span>
               </button>
               <button className="bg-green-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-green-600">
-                <i className="fas fa-pills md:mr-2"></i>
+                <FontAwesomeIcon icon={faPills} className="md:mr-2" />
                 <span className="hidden md:inline font-poppins">
                   Give Medication
                 </span>
               </button>
               <button className="bg-yellow-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-yellow-600">
-                <i className="fas fa-notes-medical md:mr-2"></i>
+                <FontAwesomeIcon icon={faNotesMedical} className="md:mr-2" />
                 <span className="hidden md:inline font-poppins">Add Notes</span>
               </button>
               <button className="bg-red-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-red-600">
-                <i className="fas fa-phone md:mr-2"></i>
+                <FontAwesomeIcon icon={faPhone} className="md:mr-2" />
                 <span className="hidden md:inline font-poppins">
                   Call Doctor
                 </span>

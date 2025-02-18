@@ -19,18 +19,18 @@ const AppRouter = () => {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/appointments" element={<Appointments />} />
-        <Route path="/doctor" element={<DoctorDashboard />} />
+        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
         <Route path="/medical-records" element={<MedicalRecords />} />
-        <Route path="/nurse" element={<NurseDashboard />} />
-        <Route path="/patient" element={<PatientDashboard />} />
+        <Route path="/nurse/dashboard" element={<NurseDashboard />} />
+        <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/patient-records" element={<PatientRecords />} />
-        <Route path="/prescriptions" element={<Prescriptions />} />
+        <Route path="/patient/prescriptions" element={<Prescriptions />} />
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route path="/staff-sign-up" element={<StaffSignUp />} />
         <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/prescription" element={<Prescription />} />
+        <Route path="/nurse/prescription" element={<Prescription />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>

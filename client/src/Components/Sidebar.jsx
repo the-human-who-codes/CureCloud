@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartLine,
@@ -23,37 +24,52 @@ function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
 
   const menuItemsByRole = {
     doctor: [
-      { name: "Dashboard", icon: faChartLine },
-      { name: "Patient Records", icon: faUsers },
-      { name: "Appointments", icon: faCalendarAlt },
-      { name: "Prescriptions", icon: faPrescriptionBottleAlt },
-      { name: "Reports", icon: faFileMedicalAlt },
-      { name: "Settings", icon: faCog },
+      { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
+      { name: "Patient Records", icon: faUsers, path: "/patient-records" },
+      { name: "Appointments", icon: faCalendarAlt, path: "/appointments" },
+      {
+        name: "Prescriptions",
+        icon: faPrescriptionBottleAlt,
+        path: "/prescriptions",
+      },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
+      { name: "Settings", icon: faCog, path: "/settings" },
     ],
     nurse: [
-      { name: "Dashboard", icon: faChartLine },
-      { name: "My Patients", icon: faProcedures },
-      { name: "Tasks", icon: faTasks },
-      { name: "Medications", icon: faPills },
-      { name: "Reports", icon: faFileMedicalAlt },
-      { name: "Team Chat", icon: faComments },
-      { name: "Settings", icon: faCog },
+      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
+      { name: "My Patients", icon: faProcedures, path: "/my-patients" },
+      { name: "Tasks", icon: faTasks, path: "/tasks" },
+      { name: "Medications", icon: faPills, path: "/medications" },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
+      { name: "Team Chat", icon: faComments, path: "/team-chat" },
+      { name: "Settings", icon: faCog, path: "/settings" },
     ],
     admin: [
-      { name: "Dashboard", icon: faChartLine },
-      { name: "User Management", icon: faUsersCog },
-      { name: "Department Settings", icon: faHospital },
-      { name: "Reports", icon: faFileMedicalAlt },
-      { name: "System Settings", icon: faCog },
+      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
+      { name: "User Management", icon: faUsersCog, path: "/user-management" },
+      {
+        name: "Department Settings",
+        icon: faHospital,
+        path: "/department-settings",
+      },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
+      { name: "System Settings", icon: faCog, path: "/system-settings" },
     ],
     patient: [
-      // Added patient sidebar options
-      { name: "Dashboard", icon: faChartLine },
-      { name: "Appointments", icon: faCalendarAlt },
-      { name: "Prescriptions", icon: faPrescriptionBottleAlt },
-      { name: "Medical Records", icon: faFileMedicalAlt },
-      { name: "Messages", icon: faComments },
-      { name: "Settings", icon: faCog },
+      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
+      { name: "Appointments", icon: faCalendarAlt, path: "/appointments" },
+      {
+        name: "Prescriptions",
+        icon: faPrescriptionBottleAlt,
+        path: "/prescriptions",
+      },
+      {
+        name: "Medical Records",
+        icon: faFileMedicalAlt,
+        path: "/medical-records",
+      },
+      { name: "Messages", icon: faComments, path: "/messages" },
+      { name: "Settings", icon: faCog, path: "/settings" },
     ],
   };
 
@@ -84,21 +100,21 @@ function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.name}>
-                <a
-                  href="#"
-                  className={`flex items-center p-3 rounded-lg transition-all duration-200
-                    ${
-                      activePage === item.name
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg transition-all duration-200 ${
+                      isActive
                         ? "bg-[#2c4ecf] text-white"
                         : "text-[#4a5568] hover:bg-[#e1e8ff]"
-                    }
-                  `}
+                    }`
+                  }
                 >
                   <FontAwesomeIcon icon={item.icon} className="w-5" />
                   {!isCollapsed && (
                     <span className="ml-3 font-poppins">{item.name}</span>
                   )}
-                </a>
+                </NavLink>
               </li>
             ))}
           </ul>

@@ -6,15 +6,15 @@ import {
   faPrescriptionBottle,
   faFileMedical,
   faCommentMedical,
-  faCalendarAlt,
-  faHeart,
-  faHeartbeat,
-  faWeight,
-  faTint,
 } from "@fortawesome/free-solid-svg-icons";
 import { MockData } from "../data/MockData";
 import Header from "../Components/Header/Header";
 import Sidebar from "../Components/Sidebar";
+import QuickActionButton from "../Components/PatientDashboard/QuickActionButton";
+import AppointmentCard from "../Components/PatientDashboard/AppointmentCard";
+import PrescriptionsCard from "../Components/PatientDashboard/PrescriptionsCard";
+import NotificationCard from "../Components/PatientDashboard/NotificationCard";
+import HealthStatsCard from "../Components/PatientDashboard/HealthStatsCard";
 
 function PatientDashBoard() {
   const mockAppointments = MockData.mockAppointments;
@@ -50,35 +50,7 @@ function PatientDashBoard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {Object.entries(healthStats).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-poppins text-[#4a5568] text-sm">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
-                      </p>
-                      <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-                        {value}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <FontAwesomeIcon
-                        icon={
-                          key === "bloodPressure"
-                            ? faHeart
-                            : key === "heartRate"
-                            ? faHeartbeat
-                            : key === "weight"
-                            ? faWeight
-                            : faTint
-                        }
-                        className="text-[#2c4ecf] text-xl"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <HealthStatsCard key={key} statKey={key} value={value} />
               ))}
             </div>
 
@@ -91,28 +63,7 @@ function PatientDashBoard() {
                     </h2>
                     <div className="space-y-4">
                       {mockAppointments.map((apt) => (
-                        <div
-                          key={apt.id}
-                          className="flex items-center justify-between p-3 bg-[#f8faff] rounded-lg"
-                        >
-                          <div>
-                            <p className="font-poppins font-medium text-[#2c4ecf]">
-                              {apt.type}
-                            </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
-                              {apt.date} {apt.time}
-                            </p>
-                          </div>
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                              apt.status === "Scheduled"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {apt.status}
-                          </span>
-                        </div>
+                        <AppointmentCard key={apt.id} appointment={apt} />
                       ))}
                     </div>
                   </div>
@@ -123,17 +74,10 @@ function PatientDashBoard() {
                     </h2>
                     <div className="space-y-4">
                       {mockPrescriptions.map((prescription) => (
-                        <div
+                        <PrescriptionsCard
                           key={prescription.id}
-                          className="p-3 bg-[#f8faff] rounded-lg"
-                        >
-                          <p className="font-poppins font-medium text-[#2c4ecf]">
-                            {prescription.medication}
-                          </p>
-                          <p className="font-poppins text-sm text-[#4a5568]">
-                            {prescription.dosage} - {prescription.frequency}
-                          </p>
-                        </div>
+                          prescription={prescription}
+                        />
                       ))}
                     </div>
                   </div>
@@ -164,13 +108,7 @@ function PatientDashBoard() {
                         icon: faCommentMedical,
                       },
                     ].map((action) => (
-                      <button
-                        key={action.name}
-                        className="w-full px-4 py-3 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff] transition-colors duration-200 flex items-center"
-                      >
-                        <FontAwesomeIcon icon={action.icon} className="mr-2" />
-                        {action.name}
-                      </button>
+                      <QuickActionButton key={action.name} action={action} />
                     ))}
                   </div>
                 </div>
@@ -181,28 +119,10 @@ function PatientDashBoard() {
                   </h2>
                   <div className="space-y-4">
                     {notifications.map((notification) => (
-                      <div
+                      <NotificationCard
                         key={notification.id}
-                        className={`p-4 rounded-lg ${
-                          notification.priority === "high"
-                            ? "bg-red-50"
-                            : "bg-yellow-50"
-                        }`}
-                      >
-                        <div className="flex items-start">
-                          <FontAwesomeIcon
-                            icon={
-                              notification.type === "appointment"
-                                ? faCalendarAlt
-                                : faPrescriptionBottle
-                            }
-                            className="text-[#2c4ecf] mt-1 mr-3"
-                          />
-                          <p className="font-poppins text-sm text-[#4a5568]">
-                            {notification.message}
-                          </p>
-                        </div>
-                      </div>
+                        notification={notification}
+                      />
                     ))}
                   </div>
                 </div>

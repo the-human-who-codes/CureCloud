@@ -6,7 +6,7 @@ import PatientCard from "../Components/PatientCard/PatientCard";
 import { MockData } from "../data/MockData";
 
 function PatientRecords() {
-  const { patients } = MockData();
+  const { patients } = MockData;
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("All");
@@ -69,7 +69,7 @@ function PatientRecords() {
               {currentPatients.map((patient) => (
                 <PatientCard
                   key={patient.id}
-                  patientImage={patient.image}
+                  image={patient.image}
                   patientName={patient.name}
                   patientId={patient.id}
                   age={patient.age}

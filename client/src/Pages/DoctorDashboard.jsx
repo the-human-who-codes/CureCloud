@@ -30,7 +30,7 @@ function DoctorDashboard() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <Sidebar activePage="Dashboard" />
+      <Sidebar userRole="doctor" />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header

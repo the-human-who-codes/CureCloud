@@ -17,59 +17,76 @@ import {
   faHospital,
   faAngleRight,
   faAngleLeft,
+  faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Sidebar({ activePage = "Dashboard", userRole = "doctor" }) {
+function Sidebar({ userRole = "doctor" }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const menuItemsByRole = {
     doctor: [
       { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
-      { name: "Patient Records", icon: faUsers, path: "/patient-records" },
-      { name: "Appointments", icon: faCalendarAlt, path: "/appointments" },
+      {
+        name: "Patient Records",
+        icon: faUsers,
+        path: "/doctor/patient-records",
+      },
+      {
+        name: "Appointments",
+        icon: faCalendarAlt,
+        path: "/doctor/appointments",
+      },
       {
         name: "Prescriptions",
         icon: faPrescriptionBottleAlt,
-        path: "/prescriptions",
+        path: "/doctor/prescriptions",
       },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
-      { name: "Settings", icon: faCog, path: "/settings" },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/doctor/reports" },
+      { name: "Settings", icon: faCog, path: "/doctor/settings" },
     ],
     nurse: [
-      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
-      { name: "My Patients", icon: faProcedures, path: "/my-patients" },
-      { name: "Tasks", icon: faTasks, path: "/tasks" },
-      { name: "Medications", icon: faPills, path: "/medications" },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
-      { name: "Team Chat", icon: faComments, path: "/team-chat" },
-      { name: "Settings", icon: faCog, path: "/settings" },
+      { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
+      { name: "My Patients", icon: faProcedures, path: "/nurse/my-patients" },
+      { name: "Tasks", icon: faTasks, path: "/nurse/tasks" },
+      { name: "Medications", icon: faPills, path: "/nurse/medications" },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/nurse/reports" },
+      { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
+      { name: "Settings", icon: faCog, path: "/nurse/settings" },
     ],
     admin: [
-      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
-      { name: "User Management", icon: faUsersCog, path: "/user-management" },
+      { name: "Dashboard", icon: faChartLine, path: "/admin/dashboard" },
+      {
+        name: "User Management",
+        icon: faUsersCog,
+        path: "/admin/user-management",
+      },
       {
         name: "Department Settings",
         icon: faHospital,
-        path: "/department-settings",
+        path: "/admin/department-settings",
       },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/reports" },
-      { name: "System Settings", icon: faCog, path: "/system-settings" },
+      { name: "Reports", icon: faFileMedicalAlt, path: "/admin/reports" },
+      { name: "System Settings", icon: faCog, path: "/admin/system-settings" },
     ],
     patient: [
-      { name: "Dashboard", icon: faChartLine, path: "/dashboard" },
-      { name: "Appointments", icon: faCalendarAlt, path: "/appointments" },
+      { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
+      {
+        name: "Appointments",
+        icon: faCalendarAlt,
+        path: "/patient/appointments",
+      },
       {
         name: "Prescriptions",
         icon: faPrescriptionBottleAlt,
-        path: "/prescriptions",
+        path: "/patient/prescriptions",
       },
       {
         name: "Medical Records",
-        icon: faFileMedicalAlt,
-        path: "/medical-records",
+        icon: faHistory,
+        path: "/patient/medical-records",
       },
-      { name: "Messages", icon: faComments, path: "/messages" },
-      { name: "Settings", icon: faCog, path: "/settings" },
+      { name: "Messages", icon: faComments, path: "/patient/messages" },
+      { name: "Settings", icon: faCog, path: "/patient/settings" },
     ],
   };
 

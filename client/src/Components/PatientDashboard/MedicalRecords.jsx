@@ -1,5 +1,17 @@
 "use client";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUp,
+  faArrowDown,
+  faArrowRight,
+  faPlusCircle,
+  faFileMedical,
+  faThermometerHalf,
+  faHeart,
+  faHeartbeat,
+  faLungs,
+} from "@fortawesome/free-solid-svg-icons";
 
 function MedicalRecords() {
   const [activeTab, setActiveTab] = useState("summary");
@@ -114,21 +126,28 @@ function MedicalRecords() {
     <div className="bg-white rounded-xl p-4 border border-[#e1e8ff]">
       <div className="flex items-center justify-between mb-2">
         <span className="font-poppins text-sm text-[#4a5568]">{title}</span>
-        <i className={`fas fa-${icon} text-[#2c4ecf]`}></i>
+        <FontAwesomeIcon icon={icon} className={`fas text-[#2c4ecf]`} />
       </div>
       <div className="font-poppins text-xl font-bold text-[#2c4ecf]">
         {value}
       </div>
       <div className="flex items-center mt-2">
-        <i
-          className={`fas fa-arrow-${
+        <FontAwesomeIcon
+          icon={
             trend === "up"
-              ? "up text-green-500"
+              ? faArrowUp
               : trend === "down"
-              ? "down text-red-500"
-              : "right text-gray-400"
+              ? faArrowDown
+              : faArrowRight
+          }
+          className={`${
+            trend === "up"
+              ? "text-green-500"
+              : trend === "down"
+              ? "text-red-500"
+              : "text-gray-400"
           } text-xs mr-1`}
-        ></i>
+        />{" "}
         <span className="text-xs text-[#4a5568]">From last check</span>
       </div>
     </div>
@@ -162,11 +181,18 @@ function MedicalRecords() {
                         </div>
                         <div className="flex gap-3">
                           <button className="px-4 py-2 bg-[#2c4ecf] text-white rounded-lg font-poppins text-sm hover:bg-[#2341b0] transition-colors duration-200">
-                            <i className="fas fa-plus-circle mr-2"></i>Add Note
+                            <FontAwesomeIcon
+                              icon={faPlusCircle}
+                              className="fas mr-2"
+                            />
+                            Add Note
                           </button>
                           <button className="px-4 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins text-sm hover:bg-[#e1e8ff] transition-colors duration-200">
-                            <i className="fas fa-file-medical mr-2"></i>Order
-                            Lab
+                            <FontAwesomeIcon
+                              icon={faFileMedical}
+                              className="fas mr-2"
+                            />
+                            Order Lab
                           </button>
                         </div>
                       </div>
@@ -174,23 +200,23 @@ function MedicalRecords() {
                         {renderVitalCard(
                           "Temperature",
                           mockData.vitalHistory.latest.temperature,
-                          "thermometer-half"
+                          faThermometerHalf
                         )}
                         {renderVitalCard(
                           "Blood Pressure",
                           mockData.vitalHistory.latest.bloodPressure,
-                          "heart",
+                          faHeart,
                           "up"
                         )}
                         {renderVitalCard(
                           "Heart Rate",
                           mockData.vitalHistory.latest.heartRate,
-                          "heartbeat"
+                          faHeartbeat
                         )}
                         {renderVitalCard(
                           "O2 Saturation",
                           mockData.vitalHistory.latest.oxygenSaturation,
-                          "lungs"
+                          faLungs
                         )}
                       </div>
                     </div>
@@ -327,7 +353,10 @@ function MedicalRecords() {
                     {mockData.documents.recent.map((doc, index) => (
                       <div key={index} className="p-3 bg-[#f8faff] rounded-lg">
                         <div className="flex items-center gap-3">
-                          <i className="fas fa-file-medical text-[#2c4ecf]"></i>
+                          <FontAwesomeIcon
+                            icon={faFileMedical}
+                            className="fas text-[#2c4ecf]"
+                          />
                           <div>
                             <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
                               {doc.type}

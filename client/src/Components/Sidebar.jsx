@@ -85,7 +85,7 @@ function Sidebar({ userRole = "doctor" }) {
         icon: faHistory,
         path: "/patient/medical-records",
       },
-      { name: "Messages", icon: faComments, path: "/patient/messages" },
+      // { name: "Messages", icon: faComments, path: "/patient/messages" }, I currently think this feature is not useful
       { name: "Settings", icon: faCog, path: "/patient/settings" },
     ],
   };

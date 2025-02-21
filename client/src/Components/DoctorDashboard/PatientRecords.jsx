@@ -1,6 +1,19 @@
 "use client";
 import { useState } from "react";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlus,
+  faList,
+  faThLarge,
+  faTrash,
+  faFilter,
+  faEdit,
+  faDownload,
+  faEye,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
+
 function PatientRecords() {
   //   const [searchTerm, setSearchTerm] = useState("");
   const [selectedView, setSelectedView] = useState("list");
@@ -109,7 +122,7 @@ function PatientRecords() {
                 </p>
               </div>
               <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center gap-2">
-                <i className="fas fa-plus"></i>
+                <FontAwesomeIcon className="fas" icon={faPlus} />
                 Add New Patient
               </button>
             </div>
@@ -126,7 +139,7 @@ function PatientRecords() {
                       }`}
                       onClick={() => setSelectedView("list")}
                     >
-                      <i className="fas fa-list"></i>
+                      <FontAwesomeIcon className="fas fa-list" icon={faList} />
                     </button>
                     <button
                       className={`px-4 py-2 rounded-lg ${
@@ -136,7 +149,7 @@ function PatientRecords() {
                       }`}
                       onClick={() => setSelectedView("grid")}
                     >
-                      <i className="fas fa-th-large"></i>
+                      <FontAwesomeIcon icon={faThLarge} />
                     </button>
                   </div>
                   <select
@@ -152,11 +165,11 @@ function PatientRecords() {
                 </div>
                 <div className="flex items-center gap-4">
                   <button className="px-4 py-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                    <i className="fas fa-filter mr-2"></i>
+                    <FontAwesomeIcon icon={faFilter} />
                     More Filters
                   </button>
                   <button className="px-4 py-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                    <i className="fas fa-download mr-2"></i>
+                    <FontAwesomeIcon icon={faDownload} />
                     Export
                   </button>
                 </div>
@@ -242,13 +255,13 @@ function PatientRecords() {
                               className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg"
                               onClick={() => setSelectedPatient(patient)}
                             >
-                              <i className="fas fa-eye"></i>
+                              <FontAwesomeIcon icon={faEye} />
                             </button>
                             <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                              <i className="fas fa-edit"></i>
+                              <FontAwesomeIcon icon={faEdit} />
                             </button>
                             <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                              <i className="fas fa-trash"></i>
+                              <FontAwesomeIcon icon={faTrash} />
                             </button>
                           </div>
                         </td>
@@ -330,10 +343,10 @@ function PatientRecords() {
                       </button>
                       <div className="flex items-center gap-2">
                         <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                          <i className="fas fa-edit"></i>
+                          <FontAwesomeIcon icon={faEdit} />
                         </button>
                         <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                          <i className="fas fa-trash"></i>
+                          <FontAwesomeIcon icon={faTrash} />
                         </button>
                       </div>
                     </div>
@@ -370,7 +383,10 @@ function PatientRecords() {
                         className="p-2 hover:bg-[#f8faff] rounded-lg"
                         onClick={() => setSelectedPatient(null)}
                       >
-                        <i className="fas fa-times text-[#4a5568]"></i>
+                        <FontAwesomeIcon
+                          className="text-[#4a5568]"
+                          icon={faTimes}
+                        />
                       </button>
                     </div>
                   </div>

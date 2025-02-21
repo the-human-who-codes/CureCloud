@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import { useState } from "react";
 
 function DepartmentSettings() {
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState(null);
 
   const mockDepartments = [
@@ -222,7 +223,7 @@ function DepartmentSettings() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="font-poppins text-sm text-[#4a5568]">
-                          Today's Patients
+                          Today&apos;s Patients
                         </p>
                         <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
                           {dept.stats.patientsToday}

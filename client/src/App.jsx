@@ -1,37 +1,106 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AdminDashboard from "./Pages/AdminDashboard.jsx";
-import Appointments from "./Pages/AppointmentsPage.jsx";
-import DoctorDashboard from "./Pages/DoctorDashboard.jsx";
-import LandingPage from "./Pages/LandingPage.jsx";
-import MedicalRecords from "./Pages/MedicalRecords.jsx";
-import NurseDashboard from "./Pages/NurseDashboard.jsx";
-import PatientDashboard from "./Pages/PatientDashboard.jsx";
-import PatientRecords from "./Pages/PatientRecords.jsx";
-import Prescriptions from "./Pages/Prescriptions.jsx";
-import RoleSelection from "./Pages/RoleSelection.jsx";
-import StaffSignUp from "./Pages/StaffSignUp.jsx";
-import NotificationsPage from "./Pages/NotificationsPage.jsx";
-import Prescription from "./Pages/Prescriptions.jsx";
-import ProfilePage from "./Pages/ProfilePage.jsx";
+
+// Layouts
+import AdminLayout from "./Layouts/AdminLayout";
+import DoctorLayout from "./Layouts/DoctorLayout";
+import NurseLayout from "./Layouts/NurseLayout";
+import PatientLayout from "./Layouts/PatientLayout";
+
+// Admin Pages
+import AdminDashboard from "./Components/AdminDashboard/AdminDashboard";
+import UserManagement from "./Components/AdminDashboard/UserManagement";
+import DepartmentSettings from "./Components/AdminDashboard/DepartmentSettings";
+import AdminReports from "./Components/AdminDashboard/AdminReports";
+import SystemSettings from "./Components/AdminDashboard/SystemSettings";
+
+// Doctor Pages
+import DoctorDashboard from "./Components/DoctorDashboard/DoctorDashboard";
+import PatientRecords from "./Components/DoctorDashboard/PatientRecords";
+import AppointmentsPage from "./Pages/AppointmentsPage";
+import Prescriptions from "./Pages/Prescriptions";
+import ReportsPage from "./Components/DoctorDashboard/ReportsPage"; // Role-aware
+import TeamChat from "./Components/TeamChat/TeamChat";
+
+// Nurse Pages
+import NurseDashboard from "./Components/NurseDashboard/NurseDashboard";
+import MyPatients from "./Components/NurseDashboard/MyPatients";
+import Tasks from "./Components/NurseDashboard/Tasks";
+import Medications from "./Components/NurseDashboard/Medications";
+
+// Patient Pages
+import PatientDashboard from "./Components/PatientDashboard/PatientDashboard";
+import MedicalRecords from "./Components/PatientDashboard/MedicalRecords";
+import Messages from "./Components/PatientDashboard/Messages";
+import PatientPrescriptions from "./Components/PatientDashboard/PatientPrescriptions";
+
+// General Pages
+import LandingPage from "./Pages/LandingPage";
+import RoleSelection from "./Pages/RoleSelection";
+import StaffSignUp from "./Pages/StaffSignUp";
+import NotificationsPage from "./Pages/NotificationsPage";
+import ProfilePage from "./Pages/ProfilePage";
+import SettingsPage from "./Pages/SettingsPage"; // Role-aware
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/doctor" element={<DoctorDashboard />} />
-        <Route path="/medical-records" element={<MedicalRecords />} />
-        <Route path="/nurse" element={<NurseDashboard />} />
-        <Route path="/patient" element={<PatientDashboard />} />
-        <Route path="/patient-records" element={<PatientRecords />} />
-        <Route path="/prescriptions" element={<Prescriptions />} />
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route path="/staff-sign-up" element={<StaffSignUp />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/prescription" element={<Prescription />} />
+
+        {/* Admin Dashboard */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index path="dashboard" element={<AdminDashboard />} />
+          <Route path="user-management" element={<UserManagement />} />
+          <Route path="department-settings" element={<DepartmentSettings />} />
+          <Route path="reports" element={<AdminReports role="admin" />} />
+          <Route path="system-settings" element={<SystemSettings />} />
+          <Route path="settings" element={<SettingsPage role="admin" />} />
+        </Route>
+
+        {/* Doctor Dashboard */}
+        <Route path="/doctor" element={<DoctorLayout />}>
+          <Route index path="dashboard" element={<DoctorDashboard />} />
+          <Route path="patient-records" element={<PatientRecords />} />
+          <Route
+            path="appointments"
+            element={<AppointmentsPage role="doctor" />}
+          />
+          <Route path="prescriptions" element={<Prescriptions />} />
+          <Route path="reports" element={<ReportsPage role="doctor" />} />
+          <Route path="team-chat" element={<TeamChat />} />
+          <Route path="settings" element={<SettingsPage role="doctor" />} />
+        </Route>
+
+        {/* Nurse Dashboard */}
+        <Route path="/nurse" element={<NurseLayout />}>
+          <Route index path="dashboard" element={<NurseDashboard />} />
+          <Route path="my-patients" element={<MyPatients />} />
+          <Route path="tasks" element={<Tasks />} />
+          <Route path="medications" element={<Medications />} />
+          <Route path="reports" element={<ReportsPage role="nurse" />} />
+          <Route path="team-chat" element={<TeamChat />} />
+          <Route path="settings" element={<SettingsPage role="nurse" />} />
+        </Route>
+
+        {/* Patient Dashboard */}
+        <Route path="/patient" element={<PatientLayout />}>
+          <Route index path="dashboard" element={<PatientDashboard />} />
+          <Route
+            path="appointments"
+            element={<AppointmentsPage role="patient" />}
+          />
+          <Route path="prescriptions" element={<PatientPrescriptions />} />
+          <Route path="medical-records" element={<MedicalRecords />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="settings" element={<SettingsPage role="patient" />} />
+        </Route>
+
+        {/* General Routes */}
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Routes>
     </Router>
   );

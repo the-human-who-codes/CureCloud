@@ -55,7 +55,7 @@ function RoleSelection() {
     setIsLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate(`/${selectedRole}`);
+      navigate(`/${selectedRole}/dashboard`);
     } catch (error) {
       console.error("Failed to set role:", error);
       setIsLoading(false);

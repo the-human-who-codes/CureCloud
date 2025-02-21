@@ -1,0 +1,26 @@
+.dashboard-layout {
+  display: flex;
+  flex-direction: column; /* Stack header on top */
+  height: 100vh; /* Ensure full viewport height */
+}
+
+.main-content {
+  display: flex;
+  flex: 1; /* Take up remaining space */
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px; /* Adjust width as needed */
+  min-width: 250px; /* Prevent collapse */
+  height: 100vh; /* Make sidebar full height */
+  overflow-y: auto; /* Scroll sidebar if needed */
+  background-color: #2c4ecf;
+  color: white;
+}
+
+.page-content {
+  flex: 1; /* Take up remaining width */
+  overflow-y: auto; /* Allow scrolling */
+  padding: 20px;
+}

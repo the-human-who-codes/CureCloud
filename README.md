@@ -14,10 +14,10 @@ CureCloud is a cloud-based health management system designed for hospitals and c
 
 To set up and run the project locally, follow these steps:
 
-1. **Clone the Repository (Access Required):**
+1. **Clone the Repository:**
 
    ```sh
-   git clone [Private Repository URL]
+   git clone [Repository URL]
    cd CureCloud
    ```
 
@@ -42,7 +42,9 @@ This will start the frontend, and you should see the application running on `htt
 
 ## **Access & Contributions**
 
-CureCloud is a private project. Access is restricted to authorized contributors only. If you need access or wish to contribute, please contact the project maintainer.
+CureCloud is an open-source project. Contributions are welcome! If you would like to contribute, please follow the [contribution guidelines](CONTRIBUTING.md).
+
+For major changes, please open an issue first to discuss your proposed updates.
 
 ## **Deployment**
 
@@ -63,7 +65,15 @@ This will simulate how the app will function when deployed.
 
 ## **License**
 
-This project is proprietary and not open-source. Unauthorized distribution or reproduction of any part of this project is prohibited.
+CureCloud is licensed under the **GNU Affero General Public License (AGPL-3.0)**.
+
+### **What This Means:**
+- You are free to use, modify, and distribute CureCloud.
+- If you modify CureCloud and deploy it as a service, you must also open-source your modifications.
+- Commercial use is allowed, but any derivative work must also be AGPL-licensed.
+- For commercial licenses or proprietary usage, please contact the project maintainer.
+
+For more details, see the [LICENSE](LICENSE) file.
 
 ---
 

@@ -3,11 +3,12 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const NotificationBell = ({ notificationCount }) => {
+const NotificationBell = ({ notificationCount, role }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/notifications");
+    console.log(role);
+    navigate(`notifications`);
   };
 
   return (
@@ -29,6 +30,7 @@ const NotificationBell = ({ notificationCount }) => {
 
 NotificationBell.propTypes = {
   notificationCount: PropTypes.number.isRequired,
+  role: PropTypes.string.isRequired,
 };
 
 export default NotificationBell;

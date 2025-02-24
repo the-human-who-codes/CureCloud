@@ -7,9 +7,8 @@ import {
   faFileMedical,
   faCommentMedical,
 } from "@fortawesome/free-solid-svg-icons";
-import { MockData } from "../../data/MockData";
-import Header from "../Header/Header";
-import Sidebar from "../Sidebar";
+import MockData from "../../data/MockData";
+
 import QuickActionButton from "./QuickActionButton";
 import AppointmentCard from "./AppointmentCard";
 import PrescriptionsCard from "./PrescriptionsCard";

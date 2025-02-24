@@ -2,7 +2,7 @@ import StatsCard from "./StatsCard";
 import QuickActions from "./QuickActions";
 import AppointmentsTable from "./AppointmentsTable";
 import PatientsSection from "./PatientsSection";
-import { MockData } from "../../data/MockData";
+import MockData from "../../data/MockData";
 import {
   faUsers,
   faCalendarCheck,

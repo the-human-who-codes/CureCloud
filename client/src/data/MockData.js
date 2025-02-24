@@ -10,7 +10,7 @@ import img9 from "../assets/pics/9.avif";
 
 const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
 
-export const MockData = {
+const MockData = {
   patients: [
     {
       id: "p1",
@@ -439,6 +439,116 @@ export const MockData = {
     },
   ],
 
+  mockDirectMessages: [
+    {
+      id: "dm1",
+      name: "Dr. John Smith",
+      role: "Surgeon",
+      status: "online",
+      unread: 2,
+    },
+    {
+      id: "dm2",
+      name: "Nurse Emma Wilson",
+      role: "Head Nurse",
+      status: "offline",
+      unread: 0,
+    },
+    {
+      id: "dm3",
+      name: "Dr. Michael Chen",
+      role: "Pediatrician",
+      status: "away",
+      unread: 1,
+    },
+    {
+      id: "dm4",
+      name: "Dr. Lisa Johnson",
+      role: "Radiologist",
+      status: "online",
+      unread: 0,
+    },
+    {
+      id: "dm5",
+      name: "James Wilson",
+      role: "Lab Technician",
+      status: "online",
+      unread: 0,
+    },
+  ],
+  mockUser: {
+    id: "U001",
+    name: "Dr. Sarah Connor",
+    role: "Cardiologist",
+    avatar: "/default-avatar.png",
+    status: "online",
+  },
+  mockChannels: [
+    { id: "general", name: "General", type: "channel", unread: 2 },
+    { id: "emergency", name: "Emergency Room", type: "channel", unread: 5 },
+    { id: "cardiology", name: "Cardiology", type: "channel", unread: 0 },
+    { id: "radiology", name: "Radiology", type: "channel", unread: 1 },
+    { id: "nursing", name: "Nursing Staff", type: "channel", unread: 0 },
+    { id: "lab", name: "Laboratory", type: "channel", unread: 3 },
+  ],
+
+  mockMessages: {
+    general: [
+      {
+        id: 1,
+        user: "Dr. John Smith",
+        avatar: "/default-avatar.png",
+        time: "09:00 AM",
+        content:
+          "Good morning team! Just a reminder about the staff meeting at 2 PM today.",
+        role: "Surgeon",
+        reactions: ["👍", "✅"],
+      },
+      {
+        id: 2,
+        user: "Nurse Emma Wilson",
+        avatar: "/default-avatar.png",
+        time: "09:05 AM",
+        content:
+          "Thanks for the reminder. Could we also discuss the new patient admission protocol?",
+        role: "Head Nurse",
+        reactions: ["👍"],
+      },
+      {
+        id: 3,
+        user: "Dr. Michael Chen",
+        avatar: "/default-avatar.png",
+        time: "09:15 AM",
+        content:
+          "I will prepare a brief presentation about the updated protocols.",
+        role: "Pediatrician",
+        reactions: ["🎉", "👏"],
+      },
+      {
+        id: 4,
+        user: "Dr. Sarah Connor",
+        avatar: "/default-avatar.png",
+        time: "09:30 AM",
+        content:
+          "Great initiative, Michael! I will share some insights from the cardiology department as well.",
+        role: "Cardiologist",
+        attachments: [
+          { type: "pdf", name: "Protocol_Updates.pdf", size: "2.4 MB" },
+        ],
+      },
+      {
+        id: 5,
+        user: "James Wilson",
+        avatar: "/default-avatar.png",
+        time: "09:45 AM",
+        content:
+          "Lab results for patient #12345 are ready. Critical values detected.",
+        role: "Lab Technician",
+        isPriority: true,
+      },
+    ],
+  },
+
   alerts: [
     {
       id: "a1",
@@ -447,3 +557,5 @@ export const MockData = {
     },
   ],
 };
+
+export default MockData;

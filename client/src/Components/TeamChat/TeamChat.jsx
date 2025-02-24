@@ -1,121 +1,28 @@
 import { useState } from "react";
+import MockData from "../../data/MockData";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSearch,
+  faHashtag,
+  faPhone,
+  faVideo,
+  faInfoCircle,
+  faFilePdf,
+  faPlus,
+  faSmile,
+  faPaperclip,
+  faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 
 function TeamChat() {
   const [selectedChat, setSelectedChat] = useState("general");
   const [message, setMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const mockUser = {
-    id: "U001",
-    name: "Dr. Sarah Connor",
-    role: "Cardiologist",
-    avatar: "/default-avatar.png",
-    status: "online",
-  };
-
-  const mockChannels = [
-    { id: "general", name: "General", type: "channel", unread: 2 },
-    { id: "emergency", name: "Emergency Room", type: "channel", unread: 5 },
-    { id: "cardiology", name: "Cardiology", type: "channel", unread: 0 },
-    { id: "radiology", name: "Radiology", type: "channel", unread: 1 },
-    { id: "nursing", name: "Nursing Staff", type: "channel", unread: 0 },
-    { id: "lab", name: "Laboratory", type: "channel", unread: 3 },
-  ];
-
-  const mockDirectMessages = [
-    {
-      id: "dm1",
-      name: "Dr. John Smith",
-      role: "Surgeon",
-      status: "online",
-      unread: 2,
-    },
-    {
-      id: "dm2",
-      name: "Nurse Emma Wilson",
-      role: "Head Nurse",
-      status: "offline",
-      unread: 0,
-    },
-    {
-      id: "dm3",
-      name: "Dr. Michael Chen",
-      role: "Pediatrician",
-      status: "away",
-      unread: 1,
-    },
-    {
-      id: "dm4",
-      name: "Dr. Lisa Johnson",
-      role: "Radiologist",
-      status: "online",
-      unread: 0,
-    },
-    {
-      id: "dm5",
-      name: "James Wilson",
-      role: "Lab Technician",
-      status: "online",
-      unread: 0,
-    },
-  ];
-
-  const mockMessages = {
-    general: [
-      {
-        id: 1,
-        user: "Dr. John Smith",
-        avatar: "/default-avatar.png",
-        time: "09:00 AM",
-        content:
-          "Good morning team! Just a reminder about the staff meeting at 2 PM today.",
-        role: "Surgeon",
-        reactions: ["👍", "✅"],
-      },
-      {
-        id: 2,
-        user: "Nurse Emma Wilson",
-        avatar: "/default-avatar.png",
-        time: "09:05 AM",
-        content:
-          "Thanks for the reminder. Could we also discuss the new patient admission protocol?",
-        role: "Head Nurse",
-        reactions: ["👍"],
-      },
-      {
-        id: 3,
-        user: "Dr. Michael Chen",
-        avatar: "/default-avatar.png",
-        time: "09:15 AM",
-        content:
-          "I will prepare a brief presentation about the updated protocols.",
-        role: "Pediatrician",
-        reactions: ["🎉", "👏"],
-      },
-      {
-        id: 4,
-        user: "Dr. Sarah Connor",
-        avatar: "/default-avatar.png",
-        time: "09:30 AM",
-        content:
-          "Great initiative, Michael! I will share some insights from the cardiology department as well.",
-        role: "Cardiologist",
-        attachments: [
-          { type: "pdf", name: "Protocol_Updates.pdf", size: "2.4 MB" },
-        ],
-      },
-      {
-        id: 5,
-        user: "James Wilson",
-        avatar: "/default-avatar.png",
-        time: "09:45 AM",
-        content:
-          "Lab results for patient #12345 are ready. Critical values detected.",
-        role: "Lab Technician",
-        isPriority: true,
-      },
-    ],
-  };
+  const mockUser = MockData.mockUser;
+  const mockChannels = MockData.mockChannels;
+  const mockDirectMessages = MockData.mockDirectMessages;
+  const mockMessages = MockData.mockMessages;
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
@@ -153,7 +60,10 @@ function TeamChat() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4a5568]"></i>
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4a5568]"
+              />
             </div>
           </div>
 
@@ -173,7 +83,7 @@ function TeamChat() {
                   onClick={() => setSelectedChat(channel.id)}
                 >
                   <div className="flex items-center gap-3">
-                    <i className="fas fa-hashtag"></i>
+                    <FontAwesomeIcon icon={faHashtag} />
                     <span className="font-poppins">{channel.name}</span>
                   </div>
                   {channel.unread > 0 && (
@@ -255,7 +165,7 @@ function TeamChat() {
         <div className="flex-1 flex flex-col bg-white">
           <div className="h-16 border-b border-[#e1e8ff] px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <i className="fas fa-hashtag text-[#2c4ecf]"></i>
+              <FontAwesomeIcon icon={faHashtag} className="text-[#2c4ecf]" />
               <div>
                 <h2 className="font-poppins font-medium text-[#2c4ecf]">
                   {mockChannels.find((c) => c.id === selectedChat)?.name ||
@@ -270,13 +180,16 @@ function TeamChat() {
             </div>
             <div className="flex items-center gap-4">
               <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#f8faff]">
-                <i className="fas fa-phone text-[#4a5568]"></i>
+                <FontAwesomeIcon icon={faPhone} className="text-[#4a5568]" />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#f8faff]">
-                <i className="fas fa-video text-[#4a5568]"></i>
+                <FontAwesomeIcon icon={faVideo} className="text-[#4a5568]" />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#f8faff]">
-                <i className="fas fa-info-circle text-[#4a5568]"></i>
+                <FontAwesomeIcon
+                  icon={faInfoCircle}
+                  className="text-[#4a5568]"
+                />
               </button>
             </div>
           </div>
@@ -317,7 +230,10 @@ function TeamChat() {
                             key={index}
                             className="flex items-center gap-2 px-4 py-2 bg-[#f8faff] rounded-lg hover:bg-[#e1e8ff]"
                           >
-                            <i className="fas fa-file-pdf text-[#2c4ecf]"></i>
+                            <FontAwesomeIcon
+                              icon={faFilePdf}
+                              className="text-[#2c4ecf]"
+                            />
                             <span className="font-poppins text-sm text-[#4a5568]">
                               {attachment.name}
                             </span>
@@ -349,7 +265,7 @@ function TeamChat() {
           <div className="h-24 border-t border-[#e1e8ff] px-6 py-4">
             <div className="flex items-center gap-4">
               <button className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#f8faff]">
-                <i className="fas fa-plus text-[#4a5568]"></i>
+                <FontAwesomeIcon icon={faPlus} className="text-[#4a5568]" />
               </button>
               <div className="flex-1 relative">
                 <input
@@ -361,15 +277,21 @@ function TeamChat() {
                 />
                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
                   <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#e1e8ff]">
-                    <i className="fas fa-smile text-[#4a5568]"></i>
+                    <FontAwesomeIcon
+                      icon={faSmile}
+                      className="text-[#4a5568]"
+                    />
                   </button>
                   <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#e1e8ff]">
-                    <i className="fas fa-paperclip text-[#4a5568]"></i>
+                    <FontAwesomeIcon
+                      icon={faPaperclip}
+                      className="text-[#4a5568]"
+                    />
                   </button>
                 </div>
               </div>
               <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#2c4ecf] text-white hover:bg-[#2341b0]">
-                <i className="fas fa-paper-plane"></i>
+                <FontAwesomeIcon icon={faPaperPlane} />
               </button>
             </div>
           </div>

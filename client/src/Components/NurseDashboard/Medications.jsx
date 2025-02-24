@@ -1,5 +1,12 @@
 "use client";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+  faCalendarAlt,
+  faCheckCircle,
+  faExclamationTriangle,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Medications() {
   //   const [searchTerm, setSearchTerm] = useState("");
@@ -125,7 +132,10 @@ function Medications() {
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
-                    <i className="fas fa-clock text-[#dc2626] text-xl"></i>
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      className="text-[#dc2626] text-xl"
+                    />
                   </div>
                 </div>
               </div>
@@ -141,7 +151,10 @@ function Medications() {
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                    <i className="fas fa-calendar-alt text-[#2c4ecf] text-xl"></i>
+                    <FontAwesomeIcon
+                      icon={faCalendarAlt}
+                      className="text-[#2c4ecf] text-xl"
+                    />
                   </div>
                 </div>
               </div>
@@ -157,7 +170,10 @@ function Medications() {
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
-                    <i className="fas fa-check-circle text-[#059669] text-xl"></i>
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="text-[#059669] text-xl"
+                    />
                   </div>
                 </div>
               </div>
@@ -173,7 +189,10 @@ function Medications() {
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
-                    <i className="fas fa-exclamation-triangle text-[#eab308] text-xl"></i>
+                    <FontAwesomeIcon
+                      icon={faExclamationTriangle}
+                      className="text-[#eab308] text-xl"
+                    />
                   </div>
                 </div>
               </div>
@@ -271,11 +290,12 @@ function Medications() {
                         className="bg-[#f8faff] rounded-lg p-4 border border-[#e1e8ff]"
                       >
                         <div className="flex items-center gap-3 mb-2">
-                          <i
-                            className={`fas fa-exclamation-triangle text-${
+                          <FontAwesomeIcon
+                            icon={faExclamationTriangle}
+                            className={`text-${
                               alert.severity === "high" ? "red" : "yellow"
                             }-500`}
-                          ></i>
+                          />
                           <span className="font-poppins font-semibold text-[#4a5568]">
                             {alert.patient}
                           </span>

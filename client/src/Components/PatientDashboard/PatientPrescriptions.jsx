@@ -1,4 +1,4 @@
-import { MockData } from "../../data/MockData";
+import MockData from "../../data/MockData";
 import PrescriptionsCard from "./PrescriptionsCard";
 
 const PatientPrescriptions = () => {

@@ -1,15 +1,13 @@
 /* eslint-disable no-unused-vars */
 "use client";
 import { useState, useEffect } from "react";
-import Header from "../Header/Header";
-import Sidebar from "../Sidebar";
 import QuickStats from "./QuickStats";
 import AssignedPatientsSection from "./AssignedPatientsSection";
 import TodayTasksSection from "./TodayTasksSection";
 import ShiftInfoSection from "./ShiftInfoSection";
 import QuickActionsSection from "./QuickActionsSection";
 import RecentAlertsSection from "./RecentAlertsSection";
-import { MockData } from "../../data/MockData";
+import MockData from "../../data/MockData";
 
 function NurseDashboard() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,7 +1,3 @@
-import { useState } from "react";
-import Sidebar from "../Components/Sidebar";
-import Header from "../Components/Header/Header";
-import { MockData } from "../data/MockData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserInjured,
@@ -16,9 +12,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function Prescriptions() {
-  const { patients, doctors } = MockData;
-  const [searchTerm, setSearchTerm] = useState("");
-
   const nurseStats = {
     activePatients: 12,
     pendingTasks: 8,
@@ -106,10 +99,6 @@ function Prescriptions() {
       detail: "Requested pain assessment",
     },
   ];
-
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
 
   const getCurrentTime = () => {
     return new Date().toLocaleTimeString([], {
@@ -316,7 +305,7 @@ function Prescriptions() {
                 <FontAwesomeIcon icon={faSyncAlt} />
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 place-content-center my-auto margin-auto">
               {recentUpdates.map((update, index) => (
                 <div key={index} className="bg-[#f8faff] p-4 rounded-lg">
                   <div className="flex items-center mb-2">
@@ -352,7 +341,7 @@ function Prescriptions() {
                   </p>
                 </div>
               ))}
-            </div>
+            </div>{" "}
           </div>
 
           <div className="fixed bottom-6 right-6 flex flex-col gap-4 md:flex-row">

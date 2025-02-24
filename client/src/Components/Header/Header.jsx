@@ -26,7 +26,7 @@ const Header = ({ onSearch, notificationCount, userName, role }) => {
         )}
 
         <div className="flex items-center space-x-4">
-          <NotificationBell notificationCount={notificationCount} />
+          <NotificationBell role={role} notificationCount={notificationCount} />
           <ProfileMenu
             isProfileOpen={isProfileOpen}
             toggleProfile={toggleProfile}

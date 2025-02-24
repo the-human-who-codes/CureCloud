@@ -1,4 +1,4 @@
-import MockData from "../../data/MockData";
+import { MockData } from "../../data/MockData";
 import HealthStatsCard from "./HealthStatsCard";
 
 const HealthStatsGrid = () => {

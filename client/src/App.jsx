@@ -32,12 +32,13 @@ import PatientDashboard from "./Components/PatientDashboard/PatientDashboard";
 import MedicalRecords from "./Components/PatientDashboard/MedicalRecords";
 import Messages from "./Components/PatientDashboard/Messages";
 import PatientPrescriptions from "./Components/PatientDashboard/PatientPrescriptions";
+import UpcomingAppointmentsCard from "./Components/PatientDashboard/UpcomingAppointmentsCard";
 
 // General Pages
 import LandingPage from "./Pages/LandingPage";
 import RoleSelection from "./Pages/RoleSelection";
 import StaffSignUp from "./Pages/StaffSignUp";
-import NotificationsPage from "./Pages/NotificationsPage";
+import Notifications from "./Components/Notifications/Notifications";
 import ProfilePage from "./Pages/ProfilePage";
 import SettingsPage from "./Pages/SettingsPage"; // Role-aware
 
@@ -58,6 +59,7 @@ const AppRouter = () => {
           <Route path="reports" element={<AdminReports role="admin" />} />
           <Route path="system-settings" element={<SystemSettings />} />
           <Route path="settings" element={<SettingsPage role="admin" />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         {/* Doctor Dashboard */}
@@ -72,6 +74,7 @@ const AppRouter = () => {
           <Route path="reports" element={<ReportsPage role="doctor" />} />
           <Route path="team-chat" element={<TeamChat />} />
           <Route path="settings" element={<SettingsPage role="doctor" />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         {/* Nurse Dashboard */}
@@ -83,24 +86,22 @@ const AppRouter = () => {
           <Route path="reports" element={<ReportsPage role="nurse" />} />
           <Route path="team-chat" element={<TeamChat />} />
           <Route path="settings" element={<SettingsPage role="nurse" />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         {/* Patient Dashboard */}
         <Route path="/patient" element={<PatientLayout />}>
           <Route index path="dashboard" element={<PatientDashboard />} />
-          <Route
-            path="appointments"
-            element={<AppointmentsPage role="patient" />}
-          />
+          <Route path="appointments" element={<UpcomingAppointmentsCard />} />
           <Route path="prescriptions" element={<PatientPrescriptions />} />
           <Route path="medical-records" element={<MedicalRecords />} />
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsPage role="patient" />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         {/* General Routes */}
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
       </Routes>
     </Router>
   );

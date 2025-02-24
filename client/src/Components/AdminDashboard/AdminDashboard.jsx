@@ -3,7 +3,7 @@ import QuickActions from "./QuickActions";
 import Analytics from "./Analytics";
 import StaffSchedule from "./StaffSchedule";
 import SystemAlerts from "./SystemAlerts";
-import { MockData } from "../../data/MockData";
+import MockData from "../../data/MockData";
 
 function AdminDashboard() {
   const statsData = MockData.adminStats;

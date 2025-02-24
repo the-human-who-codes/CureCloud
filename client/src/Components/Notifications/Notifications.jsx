@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MockData } from "../../data/MockData";
+import MockData from "../../data/MockData";
 import NotificationList from "./NotificationList";
 import FilterSortControls from "./FilterSortControls";
 

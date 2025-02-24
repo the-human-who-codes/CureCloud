@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { MockData } from "../data/MockData";
+import MockData from "../data/MockData";
 import AppointmentsTable from "../Components/Appointments/AppointmentsTable";
 import AppointmentsFilters from "../Components/Appointments/AppointmentsFilters";
 import AppointmentsHeader from "../Components/Appointments/AppointmentsHeader";

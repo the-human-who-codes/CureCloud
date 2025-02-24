@@ -1,12 +1,41 @@
 "use client";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlus,
+  faExclamationCircle,
+  faArrowUp,
+  faMinus,
+  faArrowDown,
+  faTasks,
+  faCheckCircle,
+  faCheck,
+  faClock,
+  faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Tasks() {
-  //   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPriority, setSelectedPriority] = useState("all");
   const [selectedTimeframe, setSelectedTimeframe] = useState("today");
 
   const mockData = {
+    todaySchedule: [
+      {
+        time: "14:30",
+        count: 3,
+        description: "Medication rounds",
+      },
+      {
+        time: "15:00",
+        count: 2,
+        description: "Patient check-ups",
+      },
+      {
+        time: "16:00",
+        count: 4,
+        description: "Vital signs monitoring",
+      },
+    ],
     taskSummary: {
       urgent: 3,
       high: 5,
@@ -65,23 +94,6 @@ function Tasks() {
         notes: "Patient reported feeling better after medication",
       },
     ],
-    todaySchedule: [
-      {
-        time: "14:30",
-        count: 3,
-        description: "Medication rounds",
-      },
-      {
-        time: "15:00",
-        count: 2,
-        description: "Patient check-ups",
-      },
-      {
-        time: "16:00",
-        count: 4,
-        description: "Vital signs monitoring",
-      },
-    ],
   };
 
   return (
@@ -108,7 +120,8 @@ function Tasks() {
                 </p>
               </div>
               <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins hover:bg-[#1a3baf] transition-colors duration-200">
-                <i className="fas fa-plus mr-2"></i>Add New Task
+                <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                Add New Task
               </button>
             </div>
 
@@ -128,21 +141,22 @@ function Tasks() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           key === "urgent"
-                            ? "fa-exclamation-circle"
+                            ? faExclamationCircle
                             : key === "high"
-                            ? "fa-arrow-up"
+                            ? faArrowUp
                             : key === "medium"
-                            ? "fa-minus"
+                            ? faMinus
                             : key === "low"
-                            ? "fa-arrow-down"
+                            ? faArrowDown
                             : key === "total"
-                            ? "fa-tasks"
-                            : "fa-check-circle"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                            ? faTasks
+                            : faCheckCircle
+                        }
+                        className="text-[#2c4ecf] text-xl"
+                      />
                     </div>
                   </div>
                 </div>
@@ -242,13 +256,13 @@ function Tasks() {
                             </span>
                             <div className="flex gap-2">
                               <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
-                                <i className="fas fa-check"></i>
+                                <FontAwesomeIcon icon={faCheck} />
                               </button>
                               <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
-                                <i className="fas fa-clock"></i>
+                                <FontAwesomeIcon icon={faClock} />
                               </button>
                               <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
-                                <i className="fas fa-ellipsis-h"></i>
+                                <FontAwesomeIcon icon={faEllipsisH} />
                               </button>
                             </div>
                           </div>

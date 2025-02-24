@@ -1,7 +1,8 @@
-import { mockAppointments } from "../../data/MockData";
+import MockData from "../../data/MockData";
 import AppointmentCard from "./AppointmentCard";
 
 const UpcomingAppointmentsCard = () => {
+  let mockAppointments = MockData.mockAppointments;
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
       <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">

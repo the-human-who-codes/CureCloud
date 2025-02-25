@@ -14,7 +14,7 @@ const Header = ({ onSearch, notificationCount, userName, role }) => {
   return (
     <header className="sticky top-0 bg-white shadow-sm px-6 py-3 z-50">
       <div className="flex items-center justify-between max-w-[1920px] mx-auto">
-        <Logo />
+        <Logo role={role} />
 
         {/* Conditionally render the search bar based on role */}
         {role !== "patient" && (
@@ -31,6 +31,7 @@ const Header = ({ onSearch, notificationCount, userName, role }) => {
             isProfileOpen={isProfileOpen}
             toggleProfile={toggleProfile}
             userName={userName}
+            role={role}
           />
         </div>
       </div>

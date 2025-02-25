@@ -1,5 +1,15 @@
 "use client";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHeartbeat,
+  faNotesMedical,
+  faEye,
+  faPills,
+  faClipboardCheck,
+  faFileMedical,
+  faCommentMedical,
+} from "@fortawesome/free-solid-svg-icons";
 
 function MyPatients() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -200,13 +210,16 @@ function MyPatients() {
 
                   <div className="flex gap-2">
                     <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
-                      <i className="fas fa-heartbeat mr-2"></i>Update Vitals
+                      <FontAwesomeIcon icon={faHeartbeat} className="mr-2" />
+                      Update Vitals
                     </button>
                     <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
-                      <i className="fas fa-notes-medical mr-2"></i>Add Notes
+                      <FontAwesomeIcon icon={faNotesMedical} className="mr-2" />
+                      Add Notes
                     </button>
                     <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
-                      <i className="fas fa-eye mr-2"></i>Details
+                      <FontAwesomeIcon icon={faEye} className="mr-2" />
+                      Details
                     </button>
                   </div>
                 </div>
@@ -225,13 +238,14 @@ function MyPatients() {
                       className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
                     >
                       <div className="flex items-center">
-                        <i
-                          className={`fas ${
+                        <FontAwesomeIcon
+                          icon={
                             task.type === "medication"
-                              ? "fa-pills"
-                              : "fa-clipboard-check"
-                          } text-[#2c4ecf] text-xl mr-4`}
-                        ></i>
+                              ? faPills
+                              : faClipboardCheck
+                          }
+                          className={`text-[#2c4ecf] text-xl mr-4`}
+                        />
                         <div>
                           <p className="font-poppins font-semibold">
                             {task.patient}
@@ -272,15 +286,16 @@ function MyPatients() {
                       key={update.id}
                       className="flex items-center p-4 bg-[#f8faff] rounded-lg"
                     >
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           update.type === "vitals"
-                            ? "fa-heartbeat"
+                            ? faHeartbeat
                             : update.type === "order"
-                            ? "fa-file-medical"
-                            : "fa-comment-medical"
-                        } text-[#2c4ecf] text-xl mr-4`}
-                      ></i>
+                            ? faFileMedical
+                            : faCommentMedical
+                        }
+                        className={`text-[#2c4ecf] text-xl mr-4`}
+                      />
                       <div className="flex-1">
                         <div className="flex justify-between">
                           <p className="font-poppins font-semibold">

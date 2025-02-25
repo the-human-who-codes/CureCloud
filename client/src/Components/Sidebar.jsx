@@ -96,7 +96,7 @@ function Sidebar({ userRole = "doctor" }) {
       {/* Desktop Sidebar (Hidden on small screens) */}
       <div
         className={`hidden md:flex min-h-screen bg-[#f8faff] ${
-          isCollapsed ? "w-20" : "w-64"
+          isCollapsed ? "w-20" : "w-fit"
         } transition-all duration-300 shadow-lg z-[100] overflow-y-auto`}
       >
         <div className="flex flex-col h-full">

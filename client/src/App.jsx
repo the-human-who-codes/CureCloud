@@ -60,6 +60,7 @@ const AppRouter = () => {
           <Route path="system-settings" element={<SystemSettings />} />
           <Route path="settings" element={<SettingsPage role="admin" />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="team-chat" element={<TeamChat />} />
         </Route>
 
         {/* Doctor Dashboard */}

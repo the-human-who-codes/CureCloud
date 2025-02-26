@@ -179,7 +179,12 @@ const Footer = () => (
     className="bg-gray-900 text-white text-center py-6 mt-16 w-full"
   >
     <p>&copy; {new Date().getFullYear()} CureCloud. All Rights Reserved.</p>
-    <p>Contact us: curecloud.@gmail.com</p>
+    <p>
+      Contact us:{" "}
+      <a href="mailto:curecloud@gmail.com" className="text-blue-500">
+        curecloud@gmail.com
+      </a>{" "}
+    </p>
     <p className="mt-2 text-sm text-gray-400">
       Currently, the software uses mock data to illustrate its intended
       functionality.

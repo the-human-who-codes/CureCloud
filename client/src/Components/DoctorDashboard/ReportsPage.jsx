@@ -131,7 +131,7 @@ function ReportsAndAnalytics() {
             </div>
 
             <div className="bg-white rounded-xl p-4 shadow-sm border border-[#e1e8ff] mb-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between overflow-auto">
                 <div className="flex items-center gap-4">
                   <select
                     className="px-4 py-2 bg-[#f8faff] rounded-lg border border-[#e1e8ff] focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent"

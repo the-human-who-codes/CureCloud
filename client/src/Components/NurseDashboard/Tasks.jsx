@@ -211,11 +211,14 @@ function Tasks() {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                              <img
-                                src={task.patient.photo}
-                                alt={task.patient.name}
-                                className="w-10 h-10 rounded-full mr-4"
-                              />
+                              <div className="m-3 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                                <span className="font-poppins font-medium text-[#2c4ecf]">
+                                  {task.patient.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </span>
+                              </div>
                               <div>
                                 <h3 className="font-poppins font-semibold text-[#2c4ecf]">
                                   {task.patient.name}
@@ -314,11 +317,14 @@ function Tasks() {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <img
-                              src={task.patient.photo}
-                              alt={task.patient.name}
-                              className="w-8 h-8 rounded-full mr-3"
-                            />
+                            <div className="mr-2 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                              <span className="font-poppins font-medium text-[#2c4ecf]">
+                                {task.patient.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </span>
+                            </div>
                             <div>
                               <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
                                 {task.patient.name}

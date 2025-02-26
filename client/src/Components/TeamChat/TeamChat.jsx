@@ -33,11 +33,14 @@ function TeamChat() {
           <div className="p-4 border-b border-[#e1e8ff]">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <img
-                  src={mockUser.avatar}
-                  alt={mockUser.name}
-                  className="w-10 h-10 rounded-full"
-                />
+                <div className="mr-2 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                  <span className="font-poppins font-medium text-[#2c4ecf]">
+                    {mockUser.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </span>
+                </div>
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
               <div>
@@ -117,11 +120,14 @@ function TeamChat() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <img
-                        src="/default-avatar.png"
-                        alt={dm.name}
-                        className="w-8 h-8 rounded-full"
-                      />
+                      <div className="mr-2 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                        <span className="font-poppins font-medium text-[#2c4ecf]">
+                          {dm.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </span>
+                      </div>
                       <div
                         className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${
                           dm.status === "online"
@@ -198,11 +204,14 @@ function TeamChat() {
             {mockMessages[selectedChat]?.map((message) => (
               <div key={message.id} className="mb-6">
                 <div className="flex items-start gap-4">
-                  <img
-                    src={message.avatar}
-                    alt={message.user}
-                    className="w-10 h-10 rounded-full"
-                  />
+                  <div className="mr-2 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                    <span className="font-poppins font-medium text-[#2c4ecf]">
+                      {message.user
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </span>
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-poppins font-medium text-[#2c4ecf]">

@@ -1,4 +1,15 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserPlus,
+  faUsers,
+  faUserCheck,
+  faUserClock,
+  faUserTimes,
+  faEdit,
+  faEye,
+  faBan,
+} from "@fortawesome/free-solid-svg-icons";
 
 function UserManagement() {
   const [filterRole, setFilterRole] = useState("all");
@@ -88,7 +99,7 @@ function UserManagement() {
                 </p>
               </div>
               <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center">
-                <i className="fas fa-user-plus mr-2"></i>
+                <FontAwesomeIcon icon={faUserPlus} />
                 Add New User
               </button>
             </div>
@@ -109,17 +120,18 @@ function UserManagement() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           key === "totalUsers"
-                            ? "fa-users"
+                            ? faUsers
                             : key === "activeUsers"
-                            ? "fa-user-check"
+                            ? faUserCheck
                             : key === "pendingApprovals"
-                            ? "fa-user-clock"
-                            : "fa-user-times"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                            ? faUserClock
+                            : faUserTimes
+                        }
+                        className={`fas text-[#2c4ecf] text-xl`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -237,19 +249,19 @@ function UserManagement() {
                             className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                             title="Edit"
                           >
-                            <i className="fas fa-edit"></i>
+                            <FontAwesomeIcon icon={faEdit} />
                           </button>
                           <button
                             className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                             title="View Details"
                           >
-                            <i className="fas fa-eye"></i>
+                            <FontAwesomeIcon icon={faEye} />
                           </button>
                           <button
                             className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
                             title="Deactivate"
                           >
-                            <i className="fas fa-ban"></i>
+                            <FontAwesomeIcon icon={faBan} />
                           </button>
                         </div>
                       </td>

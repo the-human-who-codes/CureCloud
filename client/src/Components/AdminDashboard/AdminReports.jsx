@@ -2,6 +2,23 @@
 "use client";
 import { useState } from "react";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBoxes,
+  faChartBar,
+  faChartLine,
+  faCheckCircle,
+  faClock,
+  faDownload,
+  faFileAlt,
+  faFileMedical,
+  faHospital,
+  faShareAlt,
+  faTrash,
+  faUserInjured,
+  faUserMd,
+} from "@fortawesome/free-solid-svg-icons";
+
 function AdminReports() {
   const [selectedDateRange, setSelectedDateRange] = useState("week");
   const [selectedReportType, setSelectedReportType] = useState("all");
@@ -74,42 +91,42 @@ function AdminReports() {
       name: "Patient Statistics",
       description:
         "Comprehensive patient data analysis including demographics, admissions, and treatment outcomes",
-      icon: "fa-user-injured",
+      icon: faUserInjured,
     },
     {
       id: "TEMP002",
       name: "Department Performance",
       description:
         "Department-wise analysis of efficiency, resource utilization, and patient satisfaction",
-      icon: "fa-hospital",
+      icon: faHospital,
     },
     {
       id: "TEMP003",
       name: "Staff Analytics",
       description:
         "Staff performance metrics, attendance patterns, and workload distribution",
-      icon: "fa-user-md",
+      icon: faUserMd,
     },
     {
       id: "TEMP004",
       name: "Financial Report",
       description:
         "Revenue analysis, expense tracking, and budget utilization reports",
-      icon: "fa-chart-line",
+      icon: faChartLine,
     },
     {
       id: "TEMP005",
       name: "Resource Utilization",
       description:
         "Analysis of equipment usage, inventory levels, and resource allocation",
-      icon: "fa-boxes",
+      icon: faBoxes,
     },
     {
       id: "TEMP006",
       name: "Quality Metrics",
       description:
         "Healthcare quality indicators, patient satisfaction scores, and compliance metrics",
-      icon: "fa-chart-bar",
+      icon: faChartBar,
     },
   ];
 
@@ -122,8 +139,8 @@ function AdminReports() {
 
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
+            <div className="flex  justify-between items-center text-center mb-8">
+              <div className="flex-auto">
                 <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
                   Reports Dashboard
                 </h1>
@@ -132,10 +149,10 @@ function AdminReports() {
                 </p>
               </div>
               <button
-                className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center"
+                className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center "
                 onClick={() => setGeneratingReport(true)}
               >
-                <i className="fas fa-file-medical mr-2"></i>
+                <FontAwesomeIcon icon={faFileMedical} className="fas mr-2" />
                 Generate New Report
               </button>
             </div>
@@ -156,17 +173,18 @@ function AdminReports() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           key === "totalReports"
-                            ? "fa-file-alt"
+                            ? faFileAlt
                             : key === "pendingReports"
-                            ? "fa-clock"
+                            ? faClock
                             : key === "completedToday"
-                            ? "fa-check-circle"
-                            : "fa-share-alt"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                            ? faCheckCircle
+                            : faShareAlt
+                        }
+                        className={`fas text-[#2c4ecf] text-xl`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -185,9 +203,10 @@ function AdminReports() {
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                        <i
-                          className={`fas ${template.icon} text-[#2c4ecf] text-xl`}
-                        ></i>
+                        <FontAwesomeIcon
+                          className={`fas text-[#2c4ecf] text-xl`}
+                          icon={template.icon}
+                        />
                       </div>
                       <div>
                         <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf]">
@@ -265,7 +284,10 @@ function AdminReports() {
                     <tr key={report.id} className="border-t border-[#e1e8ff]">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <i className="fas fa-file-alt text-[#2c4ecf] mr-3"></i>
+                          <FontAwesomeIcon
+                            icon={faFileAlt}
+                            className="fa text-[#4a5568] mr-2 "
+                          />
                           <div>
                             <p className="font-poppins text-[#2c4ecf] font-semibold">
                               {report.name}
@@ -309,19 +331,19 @@ function AdminReports() {
                             title="Download"
                             disabled={report.status !== "completed"}
                           >
-                            <i className="fas fa-download"></i>
+                            <FontAwesomeIcon icon={faDownload} />
                           </button>
                           <button
                             className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                             title="Share"
                           >
-                            <i className="fas fa-share-alt"></i>
+                            <FontAwesomeIcon icon={faShareAlt} />
                           </button>
                           <button
                             className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                             title="Delete"
                           >
-                            <i className="fas fa-trash-alt"></i>
+                            <FontAwesomeIcon icon={faTrash} />
                           </button>
                         </div>
                       </td>

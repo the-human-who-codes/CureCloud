@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 const ScheduleOverview = ({ profileData }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
       <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
-        <i className="fas fa-clock mr-2"></i>Schedule Overview
+        <FontAwesomeIcon icon={faClock} className="fas mr-2" />
+        Schedule Overview
       </h2>
       <div className="space-y-6">
         <div>

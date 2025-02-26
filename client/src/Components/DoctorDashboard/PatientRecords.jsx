@@ -127,7 +127,7 @@ function PatientRecords() {
               </button>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#e1e8ff] mb-6">
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#e1e8ff] mb-6 overflow-auto">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 bg-[#f8faff] rounded-lg p-2">
@@ -177,7 +177,7 @@ function PatientRecords() {
             </div>
 
             {selectedView === "list" && (
-              <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
+              <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-auto">
                 <table className="w-full">
                   <thead className="bg-[#f8faff]">
                     <tr>

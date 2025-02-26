@@ -1,4 +1,21 @@
 "use client";
+import {
+  faBell,
+  faCog,
+  faDatabase,
+  faExclamationTriangle,
+  faFileAlt,
+  faFileMedical,
+  faFlask,
+  faNotesMedical,
+  faPlug,
+  faPrescriptionBottleAlt,
+  faShieldAlt,
+  faSync,
+  faTools,
+  faXRay,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 function SystemSettings() {
@@ -52,12 +69,12 @@ function SystemSettings() {
   };
 
   const tabs = [
-    { id: "general", name: "General", icon: "fa-cog" },
-    { id: "security", name: "Security", icon: "fa-shield-alt" },
-    { id: "notifications", name: "Notifications", icon: "fa-bell" },
-    { id: "backup", name: "Backup & Recovery", icon: "fa-database" },
-    { id: "integrations", name: "Integrations", icon: "fa-plug" },
-    { id: "maintenance", name: "Maintenance", icon: "fa-tools" },
+    { id: "general", name: "General", icon: faCog },
+    { id: "security", name: "Security", icon: faShieldAlt },
+    { id: "notifications", name: "Notifications", icon: faBell },
+    { id: "backup", name: "Backup & Recovery", icon: faDatabase },
+    { id: "integrations", name: "Integrations", icon: faPlug },
+    { id: "maintenance", name: "Maintenance", icon: faTools },
   ];
 
   return (
@@ -111,7 +128,7 @@ function SystemSettings() {
                       }`}
                       onClick={() => setActiveTab(tab.id)}
                     >
-                      <i className={`fas ${tab.icon} mr-2`}></i>
+                      <FontAwesomeIcon icon={tab.icon} className={`fas mr-2`} />
                       {tab.name}
                     </button>
                   ))}
@@ -252,27 +269,27 @@ function SystemSettings() {
                       {
                         name: "Electronic Health Records (EHR)",
                         status: "Connected",
-                        icon: "fa-notes-medical",
+                        icon: faNotesMedical,
                       },
                       {
                         name: "Laboratory Information System",
                         status: "Connected",
-                        icon: "fa-flask",
+                        icon: faFlask,
                       },
                       {
                         name: "Pharmacy Management",
                         status: "Not Connected",
-                        icon: "fa-prescription-bottle-alt",
+                        icon: faPrescriptionBottleAlt,
                       },
                       {
                         name: "Medical Imaging (PACS)",
                         status: "Connected",
-                        icon: "fa-x-ray",
+                        icon: faXRay,
                       },
                       {
                         name: "Insurance Verification",
                         status: "Connected",
-                        icon: "fa-file-medical",
+                        icon: faFileMedical,
                       },
                     ].map((integration) => (
                       <div
@@ -281,9 +298,10 @@ function SystemSettings() {
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-full bg-[#2c4ecf]/10 flex items-center justify-center">
-                            <i
-                              className={`fas ${integration.icon} text-[#2c4ecf]`}
-                            ></i>
+                            <FontAwesomeIcon
+                              icon={integration.icon}
+                              className={`fas  text-[#2c4ecf]`}
+                            />
                           </div>
                           <div>
                             <p className="font-poppins font-medium text-[#2c4ecf]">
@@ -309,22 +327,22 @@ function SystemSettings() {
                         {
                           name: "System Logs",
                           description: "View and download system logs",
-                          icon: "fa-file-alt",
+                          icon: faFileAlt,
                         },
                         {
                           name: "Cache Management",
                           description: "Clear system cache",
-                          icon: "fa-sync",
+                          icon: faSync,
                         },
                         {
                           name: "Database Optimization",
                           description: "Optimize database performance",
-                          icon: "fa-database",
+                          icon: faDatabase,
                         },
                         {
                           name: "Error Reports",
                           description: "View system error reports",
-                          icon: "fa-exclamation-triangle",
+                          icon: faExclamationTriangle,
                         },
                       ].map((tool) => (
                         <div
@@ -333,9 +351,10 @@ function SystemSettings() {
                         >
                           <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 rounded-full bg-[#2c4ecf]/10 flex items-center justify-center">
-                              <i
-                                className={`fas ${tool.icon} text-[#2c4ecf] text-xl`}
-                              ></i>
+                              <FontAwesomeIcon
+                                icon={tool.icon}
+                                className={`fas text-[#2c4ecf] text-xl`}
+                              />
                             </div>
                             <div>
                               <h3 className="font-poppins font-semibold text-[#2c4ecf]">

@@ -39,8 +39,8 @@ import LandingPage from "./Pages/LandingPage";
 import RoleSelection from "./Pages/RoleSelection";
 import StaffSignUp from "./Pages/StaffSignUp";
 import Notifications from "./Components/Notifications/Notifications";
-import ProfilePage from "./Pages/ProfilePage";
-import SettingsPage from "./Pages/SettingsPage"; // Role-aware
+import Profile from "./Components/ProfilePage/Profile";
+import Settings from "./Components/Settings/Settings"; // Role-aware
 
 const AppRouter = () => {
   return (
@@ -58,9 +58,10 @@ const AppRouter = () => {
           <Route path="department-settings" element={<DepartmentSettings />} />
           <Route path="reports" element={<AdminReports role="admin" />} />
           <Route path="system-settings" element={<SystemSettings />} />
-          <Route path="settings" element={<SettingsPage role="admin" />} />
+          <Route path="settings" element={<Settings role="admin" />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="team-chat" element={<TeamChat />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* Doctor Dashboard */}
@@ -74,8 +75,9 @@ const AppRouter = () => {
           <Route path="prescriptions" element={<Prescriptions />} />
           <Route path="reports" element={<ReportsPage role="doctor" />} />
           <Route path="team-chat" element={<TeamChat />} />
-          <Route path="settings" element={<SettingsPage role="doctor" />} />
+          <Route path="settings" element={<Settings role="doctor" />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* Nurse Dashboard */}
@@ -86,8 +88,9 @@ const AppRouter = () => {
           <Route path="medications" element={<Medications />} />
           <Route path="reports" element={<ReportsPage role="nurse" />} />
           <Route path="team-chat" element={<TeamChat />} />
-          <Route path="settings" element={<SettingsPage role="nurse" />} />
+          <Route path="settings" element={<Settings role="nurse" />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* Patient Dashboard */}
@@ -97,12 +100,10 @@ const AppRouter = () => {
           <Route path="prescriptions" element={<PatientPrescriptions />} />
           <Route path="medical-records" element={<MedicalRecords />} />
           <Route path="messages" element={<Messages />} />
-          <Route path="settings" element={<SettingsPage role="patient" />} />
+          <Route path="settings" element={<Settings role="patient" />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
-
-        {/* General Routes */}
-        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>
   );

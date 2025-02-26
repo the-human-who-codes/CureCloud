@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 const ProfessionalInformationSection = ({ profileData }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
       <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
-        <i className="fas fa-user-md mr-2"></i>Professional Information
+        <FontAwesomeIcon icon={faUser} className="fas fa-user-md mr-2" />
+        Professional Information
       </h2>
       <div className="space-y-4">
         <div>

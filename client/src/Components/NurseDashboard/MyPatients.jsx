@@ -159,11 +159,14 @@ function MyPatients() {
                   }`}
                 >
                   <div className="flex items-center mb-4">
-                    <img
-                      src={patient.photo}
-                      alt={patient.name}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
+                    <div className="w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center m-3">
+                      <span className="font-poppins font-medium text-[#2c4ecf]">
+                        {patient.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </span>
+                    </div>
                     <div>
                       <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf]">
                         {patient.name}

@@ -1,6 +1,20 @@
 /* eslint-disable no-unused-vars */
 "use client";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlus,
+  faHospital,
+  faUsers,
+  faBed,
+  faDollarSign,
+  faCog,
+  faExpandAlt,
+  faUserPlus,
+  faChartPie,
+  faTools,
+  faFileAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 function DepartmentSettings() {
   // const [searchTerm, setSearchTerm] = useState("");
@@ -103,7 +117,7 @@ function DepartmentSettings() {
                 </p>
               </div>
               <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center">
-                <i className="fas fa-plus mr-2"></i>
+                <FontAwesomeIcon icon={faPlus} />
                 Add New Department
               </button>
             </div>
@@ -124,17 +138,18 @@ function DepartmentSettings() {
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <i
-                        className={`fas ${
+                      <FontAwesomeIcon
+                        icon={
                           key === "totalDepartments"
-                            ? "fa-hospital"
+                            ? faHospital
                             : key === "totalStaff"
-                            ? "fa-users"
+                            ? faUsers
                             : key === "averageOccupancy"
-                            ? "fa-bed"
-                            : "fa-dollar-sign"
-                        } text-[#2c4ecf] text-xl`}
-                      ></i>
+                            ? faBed
+                            : faDollarSign
+                        }
+                        className={`fas text-[#2c4ecf] text-xl`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -161,14 +176,14 @@ function DepartmentSettings() {
                         className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                         title="Edit"
                       >
-                        <i className="fas fa-cog"></i>
+                        <FontAwesomeIcon icon={faCog} />
                       </button>
                       <button
                         className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                         title="View Details"
                         onClick={() => setSelectedDepartment(dept)}
                       >
-                        <i className="fas fa-expand-alt"></i>
+                        <FontAwesomeIcon icon={faExpandAlt} />
                       </button>
                     </div>
                   </div>
@@ -249,16 +264,20 @@ function DepartmentSettings() {
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { name: "Assign Staff", icon: "fa-user-plus" },
-                  { name: "Equipment Request", icon: "fa-tools" },
-                  { name: "Budget Planning", icon: "fa-chart-pie" },
-                  { name: "Generate Report", icon: "fa-file-alt" },
+                  { name: "Assign Staff", icon: faUserPlus },
+                  { name: "Equipment Request", icon: faUserPlus },
+                  { name: "Budget Planning", icon: faChartPie },
+                  { name: "Generate Report", icon: faFileAlt },
                 ].map((action) => (
                   <button
                     key={action.name}
                     className="p-4 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff] transition-colors duration-200 flex flex-col items-center"
                   >
-                    <i className={`fas ${action.icon} mb-2 text-xl`}></i>
+                    <FontAwesomeIcon
+                      className={`fas mb-2 text-xl`}
+                      icon={action.icon}
+                    />
+
                     <span className="text-sm text-center">{action.name}</span>
                   </button>
                 ))}

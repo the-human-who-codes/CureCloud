@@ -1,0 +1,73 @@
+@startuml
+
+abstract class User {
+  {field} id: String <<primary>>
+  {field} email: String <<primary>>
+  {field} name: String
+  {field} role: String
+  {field} avatar: String
+  {field} status: String
+  {field} createdAt: DateTime
+  {field} updatedAt: DateTime
+
+  {method} register(): void
+  {method} login(email: String, password: String): Boolean
+  {method} logout(): void
+  {method} updateProfile(name: String, avatar: String, role: String): void
+  {method} resetPassword(email: String): void
+  {method} updateEmail(newEmail: String): Boolean
+}
+
+abstract class Staff {
+  {method} sendDirectMessage(toUserId: String, message: String): void
+  {method} joinChannel(channelId: String): void
+  {method} leaveChannel(channelId: String): void
+}
+
+class Patient {
+  {field} medicalRecordId: String
+  {field} assignedDoctorId: String
+  {field} insuranceDetails: String
+  {field} emergencyContact: String
+
+  {method} bookAppointment(doctorId: String, date: DateTime): void
+  {method} viewMedicalRecords(): void
+  {method} requestPrescriptionRefill(medicationId: String): void
+}
+
+class Doctor {
+  {field} specialization: String
+  {field} experience: Integer
+  {field} licenseNumber: String
+  {field} schedule: String
+
+  {method} diagnosePatient(patientId: String, diagnosis: String): void
+  {method} prescribeMedication(patientId: String, medication: String, dosage: String): void
+  {method} approveLabTest(patientId: String, testType: String): void
+}
+
+class Admin {
+  {method} createUserAccount(user: User): void
+  {method} deleteUserAccount(userId: String): void
+  {method} updateSystemSettings(settings: Object): void
+}
+
+class Nurse {
+  {field} department: String
+  {method} recordVitals(patientId: String, bp: String, hr: String): void
+  {method} administerMedication(patientId: String, medicationId: String): void
+}
+
+class Receptionist {
+  {method} scheduleAppointment(patientId: String, doctorId: String, date: DateTime): void
+  {method} managePatientCheckIn(patientId: String): void
+}
+
+User <|-- Patient
+User <|-- Staff
+Staff <|-- Doctor
+Staff <|-- Nurse
+Staff <|-- Admin
+Staff <|-- Receptionist
+
+@enduml

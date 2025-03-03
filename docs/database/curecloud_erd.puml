@@ -1,0 +1,63 @@
+@startuml
+!define PRIMARY_KEY(x) <b>x</b>
+!define FOREIGN_KEY(x) <u>x</u>
+
+entity "Users" as users {
+    PRIMARY_KEY(id) UUID
+    name VARCHAR(255)
+    email VARCHAR(255) UNIQUE
+    role ENUM (doctor, nurse, patient, admin)
+    FOREIGN_KEY(facility_id) UUID
+    created_at TIMESTAMP
+}
+
+entity "Facilities" as facilities {
+    PRIMARY_KEY(id) UUID
+    name VARCHAR(255)
+    location TEXT
+    type ENUM (hospital, clinic)
+    capacity INT
+}
+
+entity "Appointments" as appointments {
+    PRIMARY_KEY(id) UUID
+    FOREIGN_KEY(patient_id) UUID
+    FOREIGN_KEY(doctor_id) UUID
+    date TIMESTAMP
+    status ENUM (pending, confirmed, cancelled, completed)
+    notes TEXT
+}
+
+entity "Medical Records" as medical_records {
+    PRIMARY_KEY(id) UUID
+    FOREIGN_KEY(patient_id) UUID
+    FOREIGN_KEY(doctor_id) UUID
+    diagnosis TEXT
+    treatment TEXT
+    created_at TIMESTAMP
+}
+
+entity "Billing" as billing {
+    PRIMARY_KEY(id) UUID
+    FOREIGN_KEY(patient_id) UUID
+    FOREIGN_KEY(facility_id) UUID
+    amount DECIMAL(10,2)
+    status ENUM (pending, paid, overdue)
+    created_at TIMESTAMP
+}
+
+entity "Messages" as messages {
+    PRIMARY_KEY(id) UUID
+    FOREIGN_KEY(sender_id) UUID
+    FOREIGN_KEY(receiver_id) UUID
+    content TEXT
+    timestamp TIMESTAMP
+}
+
+users ||--o{ facilities : works_at
+users ||--o{ appointments : books
+users ||--o{ medical_records : has
+users ||--o{ billing : pays
+users ||--o{ messages : sends
+facilities ||--o{ billing : manages
+appointments ||--o{ medical_records : generates

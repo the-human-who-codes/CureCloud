@@ -7,9 +7,10 @@ import {
 	faUserMd,
 	faHeartbeat,
 } from "@fortawesome/free-solid-svg-icons";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
 import GoogleAuthButton from "../Components/GoogleAuth/GoogleAuthButton";
+import { useNavigate } from "react-router-dom";
+
 const featuresData = [
 	{
 		icon: faNotesMedical,
@@ -125,36 +126,40 @@ const Navbar = () => {
 		</nav>
 	);
 };
-const HeroSection = () => (
-	<div
-		id="hero"
-		className="min-h-screen flex flex-col justify-center items-center text-center px-6"
-	>
-		<h2 className="text-4xl md:text-5xl font-bold text-gray-800">
-			Welcome to <span className="text-blue-600">CureCloud</span>
-		</h2>
-		<p className="mt-4 text-xl font-semibold text-gray-900">
-			Your Health Simplified.
-		</p>
-		<p className="mt-3 text-gray-700 max-w-xl mx-auto">
-			CureCloud simplifies healthcare management by providing a secure,
-			centralized system for hospitals and clinics. Book specialist
-			appointments, track medical history, and access health records
-			seamlessly.
-		</p>
-		<GoogleAuthButton
-			onSuccess={(user, idToken) => {
-				console.log("User authenticated:", user);
-				console.log("ID Token:", idToken);
-				// You can now send the ID token to your backend API
-			}}
-			onFailure={(error) => {
-				console.error("Authentication failed:", error);
-			}}
-		/>
-	</div>
-);
 
+const HeroSection = () => {
+	const navigate = useNavigate();
+
+	return (
+		<div
+			id="hero"
+			className="min-h-screen flex flex-col justify-center items-center text-center px-6"
+		>
+			<h2 className="text-4xl md:text-5xl font-bold text-gray-800">
+				Welcome to <span className="text-blue-600">CureCloud</span>
+			</h2>
+			<p className="mt-4 text-xl font-semibold text-gray-900">
+				Your Health Simplified.
+			</p>
+			<p className="mt-3 text-gray-700 max-w-xl mx-auto">
+				CureCloud simplifies healthcare management by providing a
+				secure, centralized system for hospitals and clinics. Book
+				specialist appointments, track medical history, and access
+				health records seamlessly.
+			</p>
+			<GoogleAuthButton
+				onSuccess={(user, idToken) => {
+					console.log("User authenticated:", user);
+					console.log("ID Token:", idToken);
+					navigate("/role-selection");
+				}}
+				onFailure={(error) => {
+					console.error("Authentication failed:", error);
+				}}
+			/>
+		</div>
+	);
+};
 const FeaturesSection = () => (
 	<div id="features" className="mt-16 px-6 max-w-6xl mx-auto">
 		<h3 className="text-3xl font-bold text-gray-800 text-center">

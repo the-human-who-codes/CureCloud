@@ -1,4 +1,4 @@
-Got it! Here’s the final refined **README.md**, with the **planned enhancements section removed** and a reference to **GitHub Issues** for tracking features and user stories.
+Here's your updated **README.md** with a direct link to the API repo:  
 
 ---
 
@@ -63,6 +63,15 @@ This will simulate **Firestore, Authentication, Functions, and Hosting**.
 
 ---
 
+## **🔗 API Repository**
+
+The CureCloud API is maintained in a separate repository. You can find it here:  
+📌 **[CureCloud API Repository](https://github.com/the-human-who-codes/lively-campus-api)**
+
+Refer to the API documentation for available endpoints and integration details.
+
+---
+
 ## **🗄️ Database Schema & ERD**
 
 CureCloud follows a structured **Entity-Relationship Model (ERD)**.  
@@ -120,3 +129,4 @@ CureCloud is licensed under the **GNU Affero General Public License (AGPL-3.0)**
 -   🏗️ **[Project Architecture](docs/Architecture.md)**
 -   📊 **[Database Schema](docs/database/ERD.md)**
 -   🚀 **[Deployment Guide](docs/Deployment.md)**
+

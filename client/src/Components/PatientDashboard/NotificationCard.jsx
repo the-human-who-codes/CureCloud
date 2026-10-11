@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 const NotificationCard = ({ notification }) => (
   <div
     className={`p-4 rounded-lg ${
-      notification.priority === "high" ? "bg-red-50" : "bg-yellow-50"
+      notification.priority === "normal" ? "bg-yellow-50" : "bg-red-50"
     }`}
   >
     <div className="flex items-start">
@@ -21,9 +21,14 @@ const NotificationCard = ({ notification }) => (
         }
         className="text-[#2c4ecf] mt-1 mr-3"
       />
-      <p className="font-poppins text-sm text-[#4a5568]">
-        {notification.message}
-      </p>
+      <div>
+        <p className="font-poppins text-sm font-medium text-[#2c4ecf]">
+          {notification.title}
+        </p>
+        <p className="font-poppins text-sm text-[#4a5568]">
+          {notification.description}
+        </p>
+      </div>
     </div>
   </div>
 );
@@ -32,7 +37,8 @@ NotificationCard.propTypes = {
   notification: PropTypes.shape({
     priority: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
   }).isRequired,
 };
 

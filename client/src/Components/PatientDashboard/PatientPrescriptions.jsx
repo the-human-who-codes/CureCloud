@@ -1,8 +1,12 @@
-import MockData from "../../data/MockData";
+import { api } from "../../api/client";
+import { useApi } from "../../hooks/useApi";
+import AsyncContent from "../common/AsyncContent";
 import PrescriptionsCard from "./PrescriptionsCard";
 
 const PatientPrescriptions = () => {
-  const mockPrescriptions = MockData.prescriptions;
+  const prescriptions = useApi(() =>
+    api.listPrescriptions({ status: "active" })
+  );
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
@@ -10,12 +14,18 @@ const PatientPrescriptions = () => {
         Current Prescriptions
       </h2>
       <div className="space-y-4">
-        {mockPrescriptions.map((prescription) => (
-          <PrescriptionsCard
-            key={prescription.id}
-            prescription={prescription}
-          />
-        ))}
+        <AsyncContent
+          {...prescriptions}
+          empty={prescriptions.data?.prescriptions.length === 0}
+          emptyText="No active prescriptions."
+        >
+          {prescriptions.data?.prescriptions.map((prescription) => (
+            <PrescriptionsCard
+              key={prescription.id}
+              prescription={prescription}
+            />
+          ))}
+        </AsyncContent>
       </div>
     </div>
   );

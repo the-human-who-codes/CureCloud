@@ -1,5 +1,6 @@
 // AppointmentCard.jsx
 import PropTypes from "prop-types";
+import { capitalize } from "../../utils/format";
 
 const AppointmentCard = ({ appointment }) => (
   <div className="flex items-center justify-between p-3 bg-[#f8faff] rounded-lg">
@@ -13,12 +14,12 @@ const AppointmentCard = ({ appointment }) => (
     </div>
     <span
       className={`px-3 py-1 rounded-full text-xs font-poppins ${
-        appointment.status === "Scheduled"
+        appointment.status === "confirmed"
           ? "bg-green-100 text-green-800"
           : "bg-yellow-100 text-yellow-800"
       }`}
     >
-      {appointment.status}
+      {capitalize(appointment.status)}
     </span>
   </div>
 );

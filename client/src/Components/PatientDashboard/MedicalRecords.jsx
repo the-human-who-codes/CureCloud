@@ -12,115 +12,27 @@ import {
   faHeartbeat,
   faLungs,
 } from "@fortawesome/free-solid-svg-icons";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi } from "../../hooks/useApi";
+import { capitalize } from "../../utils/format";
+import AsyncContent from "../common/AsyncContent";
+import defaultAvatar from "../../assets/default-avatar.svg";
 
 function MedicalRecords() {
   const [activeTab, setActiveTab] = useState("summary");
   //   const [searchTerm, setSearchTerm] = useState("");
 
-  const mockData = {
-    patientInfo: {
-      id: "P12345",
-      name: "John Smith",
-      photo: "https://placehold.co/100",
-      dateOfBirth: "1985-06-15",
-      gender: "Male",
-      bloodType: "A+",
-      height: "5'10\"",
-      weight: "75kg",
-      primaryPhysician: "Dr. Sarah Johnson",
-      insuranceProvider: "BlueCross",
-      emergencyContact: {
-        name: "Mary Smith",
-        relation: "Spouse",
-        phone: "(555) 123-4567",
-      },
-      allergies: ["Penicillin", "Peanuts"],
-      chronicConditions: ["Hypertension", "Type 2 Diabetes"],
-    },
-    vitalHistory: {
-      latest: {
-        temperature: "98.6°F",
-        bloodPressure: "120/80",
-        heartRate: "72 bpm",
-        respiratoryRate: "16/min",
-        oxygenSaturation: "98%",
-        recordedAt: "2024-01-20T08:30:00Z",
-      },
-      trend: [
-        {
-          date: "2024-01-20",
-          temperature: 98.6,
-          bloodPressure: { systolic: 120, diastolic: 80 },
-          heartRate: 72,
-          respiratoryRate: 16,
-          oxygenSaturation: 98,
-        },
-      ],
-    },
-    medications: {
-      current: [
-        {
-          name: "Lisinopril",
-          dosage: "10mg",
-          frequency: "Daily",
-          startDate: "2023-10-15",
-          prescribedBy: "Dr. Johnson",
-          notes: "Take in the morning",
-        },
-      ],
-      past: [],
-    },
-    labResults: {
-      recent: [
-        {
-          type: "Complete Blood Count",
-          date: "2024-01-15",
-          status: "Normal",
-          orderedBy: "Dr. Johnson",
-          results: {
-            wbc: "7.5",
-            rbc: "4.8",
-            hemoglobin: "14.2",
-            hematocrit: "42",
-          },
-          notes: "All values within normal range",
-        },
-      ],
-    },
-    visits: {
-      upcoming: [
-        {
-          date: "2024-01-25",
-          type: "Follow-up",
-          provider: "Dr. Johnson",
-          department: "Cardiology",
-          notes: "Blood pressure check",
-        },
-      ],
-      past: [
-        {
-          date: "2024-01-10",
-          type: "Regular Checkup",
-          provider: "Dr. Johnson",
-          department: "Primary Care",
-          diagnosis: "Hypertension - Controlled",
-          treatment: "Continued current medication",
-          notes: "Patient reporting good medication compliance",
-        },
-      ],
-    },
-    documents: {
-      recent: [
-        {
-          type: "Discharge Summary",
-          date: "2023-12-20",
-          provider: "Memorial Hospital",
-          department: "Cardiology",
-          status: "Final",
-        },
-      ],
-    },
-  };
+  const { patient } = useAuth();
+  const vitals = patient?.vitals ?? {};
+  const unit = (v, u) => (v == null ? "—" : `${v}${u}`);
+  const prescriptions = useApi(() =>
+    api.listPrescriptions({ status: "active" })
+  );
+  const appointments = useApi(() =>
+    api.listAppointments({ upcoming: "true", limit: 5 })
+  );
+  const records = useApi(() => api.listMedicalRecords({ limit: 5 }));
 
   const renderVitalCard = (title, value, icon, trend = "stable") => (
     <div className="bg-white rounded-xl p-4 border border-[#e1e8ff]">
@@ -163,20 +75,19 @@ function MedicalRecords() {
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff] mb-6">
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                     <img
-                      src={mockData.patientInfo.photo}
-                      alt={mockData.patientInfo.name}
+                      src={defaultAvatar}
+                      alt={patient?.name}
                       className="w-24 h-24 rounded-full object-cover border-4 border-[#e1e8ff]"
                     />
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                           <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-                            {mockData.patientInfo.name}
+                            {patient?.name}
                           </h1>
                           <p className="font-poppins text-[#4a5568]">
-                            ID: {mockData.patientInfo.id} • DOB:{" "}
-                            {mockData.patientInfo.dateOfBirth} •{" "}
-                            {mockData.patientInfo.gender}
+                            ID: {patient?.id} • DOB:{" "}
+                            {patient?.dateOfBirth ?? "—"}
                           </p>
                         </div>
                         <div className="flex gap-3">
@@ -199,23 +110,22 @@ function MedicalRecords() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                         {renderVitalCard(
                           "Temperature",
-                          mockData.vitalHistory.latest.temperature,
+                          unit(vitals.temperature, "°C"),
                           faThermometerHalf
                         )}
                         {renderVitalCard(
                           "Blood Pressure",
-                          mockData.vitalHistory.latest.bloodPressure,
-                          faHeart,
-                          "up"
+                          vitals.bloodPressure ?? "—",
+                          faHeart
                         )}
                         {renderVitalCard(
                           "Heart Rate",
-                          mockData.vitalHistory.latest.heartRate,
+                          unit(vitals.heartRate, " bpm"),
                           faHeartbeat
                         )}
                         {renderVitalCard(
                           "O2 Saturation",
-                          mockData.vitalHistory.latest.oxygenSaturation,
+                          unit(vitals.oxygenSaturation, "%"),
                           faLungs
                         )}
                       </div>
@@ -256,26 +166,34 @@ function MedicalRecords() {
                             Active Medications
                           </h3>
                           <div className="space-y-3">
-                            {mockData.medications.current.map((med, index) => (
-                              <div
-                                key={index}
-                                className="p-4 bg-[#f8faff] rounded-lg"
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <h4 className="font-poppins font-semibold text-[#2c4ecf]">
-                                      {med.name}
-                                    </h4>
-                                    <p className="font-poppins text-sm text-[#4a5568]">
-                                      {med.dosage} • {med.frequency}
-                                    </p>
+                            <AsyncContent
+                              {...prescriptions}
+                              empty={
+                                prescriptions.data?.prescriptions.length === 0
+                              }
+                              emptyText="No active medications."
+                            >
+                              {prescriptions.data?.prescriptions.map((med) => (
+                                <div
+                                  key={med.id}
+                                  className="p-4 bg-[#f8faff] rounded-lg"
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-poppins font-semibold text-[#2c4ecf]">
+                                        {med.medication}
+                                      </h4>
+                                      <p className="font-poppins text-sm text-[#4a5568]">
+                                        {med.dosage} • {med.frequency}
+                                      </p>
+                                    </div>
+                                    <span className="text-sm text-[#4a5568]">
+                                      Started {med.startDate}
+                                    </span>
                                   </div>
-                                  <span className="text-sm text-[#4a5568]">
-                                    Started {med.startDate}
-                                  </span>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </AsyncContent>
                           </div>
                         </div>
 
@@ -284,26 +202,35 @@ function MedicalRecords() {
                             Upcoming Appointments
                           </h3>
                           <div className="space-y-3">
-                            {mockData.visits.upcoming.map((visit, index) => (
-                              <div
-                                key={index}
-                                className="p-4 bg-[#f8faff] rounded-lg"
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <h4 className="font-poppins font-semibold text-[#2c4ecf]">
-                                      {visit.type}
-                                    </h4>
-                                    <p className="font-poppins text-sm text-[#4a5568]">
-                                      {visit.provider} • {visit.department}
-                                    </p>
+                            <AsyncContent
+                              {...appointments}
+                              empty={
+                                appointments.data?.appointments.length === 0
+                              }
+                              emptyText="No upcoming appointments."
+                            >
+                              {appointments.data?.appointments.map((visit) => (
+                                <div
+                                  key={visit.id}
+                                  className="p-4 bg-[#f8faff] rounded-lg"
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-poppins font-semibold text-[#2c4ecf]">
+                                        {visit.type}
+                                      </h4>
+                                      <p className="font-poppins text-sm text-[#4a5568]">
+                                        {visit.doctorName} •{" "}
+                                        {capitalize(visit.status)}
+                                      </p>
+                                    </div>
+                                    <span className="text-sm text-[#4a5568]">
+                                      {visit.date} {visit.time}
+                                    </span>
                                   </div>
-                                  <span className="text-sm text-[#4a5568]">
-                                    {visit.date}
-                                  </span>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </AsyncContent>
                           </div>
                         </div>
                       </div>
@@ -320,26 +247,28 @@ function MedicalRecords() {
                   <div className="space-y-4">
                     <div>
                       <p className="font-poppins text-sm text-[#4a5568]">
-                        Blood Type
+                        Date of Birth
                       </p>
                       <p className="font-poppins font-semibold text-[#2c4ecf]">
-                        {mockData.patientInfo.bloodType}
+                        {patient?.dateOfBirth ?? "—"}
                       </p>
                     </div>
                     <div>
                       <p className="font-poppins text-sm text-[#4a5568]">
-                        Primary Physician
+                        Condition
                       </p>
                       <p className="font-poppins font-semibold text-[#2c4ecf]">
-                        {mockData.patientInfo.primaryPhysician}
+                        {capitalize(patient?.priority) || "—"}
                       </p>
                     </div>
                     <div>
                       <p className="font-poppins text-sm text-[#4a5568]">
-                        Insurance
+                        Vitals Last Recorded
                       </p>
                       <p className="font-poppins font-semibold text-[#2c4ecf]">
-                        {mockData.patientInfo.insuranceProvider}
+                        {vitals.recordedAt
+                          ? new Date(vitals.recordedAt).toLocaleDateString()
+                          : "—"}
                       </p>
                     </div>
                   </div>
@@ -350,24 +279,33 @@ function MedicalRecords() {
                     Recent Documents
                   </h3>
                   <div className="space-y-3">
-                    {mockData.documents.recent.map((doc, index) => (
-                      <div key={index} className="p-3 bg-[#f8faff] rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <FontAwesomeIcon
-                            icon={faFileMedical}
-                            className="fas text-[#2c4ecf]"
-                          />
-                          <div>
-                            <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
-                              {doc.type}
-                            </p>
-                            <p className="font-poppins text-xs text-[#4a5568]">
-                              {doc.date}
-                            </p>
+                    <AsyncContent
+                      {...records}
+                      empty={records.data?.medicalRecords.length === 0}
+                      emptyText="No records yet."
+                    >
+                      {records.data?.medicalRecords.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="p-3 bg-[#f8faff] rounded-lg"
+                        >
+                          <div className="flex items-center gap-3">
+                            <FontAwesomeIcon
+                              icon={faFileMedical}
+                              className="fas text-[#2c4ecf]"
+                            />
+                            <div>
+                              <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                                {doc.type}
+                              </p>
+                              <p className="font-poppins text-xs text-[#4a5568]">
+                                {doc.createdAt?.slice(0, 10)} • {doc.doctorName}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </AsyncContent>
                   </div>
                 </div>
               </div>

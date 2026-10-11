@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
+import defaultAvatar from "../../assets/default-avatar.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function PatientCard({
-  image = "/default-patient.png",
-  name = "John Doe",
-  patientId = "P12345",
-  age = 45,
-  gender = "Male",
-  lastVisit = "2025-02-15",
+  image = defaultAvatar,
+  name,
+  patientId,
+  age,
+  gender,
+  lastVisit,
   status = "Active",
   onView = () => {},
   onEdit = () => {},
@@ -47,7 +48,7 @@ function PatientCard({
             Age/Gender:
           </span>
           <span className="font-poppins text-sm font-medium text-[#2c4ecf]">
-            {age} / {gender}
+            {age ?? "—"} / {gender ?? "—"}
           </span>
         </div>
         <div className="flex justify-between">
@@ -55,7 +56,7 @@ function PatientCard({
             Last Visit:
           </span>
           <span className="font-poppins text-sm font-medium text-[#2c4ecf]">
-            {lastVisit}
+            {lastVisit ?? "—"}
           </span>
         </div>
       </div>

@@ -1,18 +1,25 @@
 import { useState } from "react";
-import MockData from "../../data/MockData";
+import { api } from "../../api/client";
+import { useApi } from "../../hooks/useApi";
+import AsyncContent from "../common/AsyncContent";
 import NotificationList from "./NotificationList";
 import FilterSortControls from "./FilterSortControls";
 
 function Notifications() {
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("newest");
-  const mockNotifications = MockData.mockNotifications;
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const { data, error, loading, setData } = useApi(() =>
+    api.listNotifications({ limit: 100 })
+  );
+  const notifications = data?.notifications ?? [];
 
-  const handleMarkAsRead = (id) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const handleMarkAsRead = async (id) => {
+    await api.markNotificationRead(id);
+    setData({
+      notifications: notifications.map((n) =>
+        n.id === id ? { ...n, read: true } : n
+      ),
+    });
   };
 
   const filteredNotifications = notifications
@@ -38,10 +45,17 @@ function Notifications() {
               sort={sort}
               setSort={setSort}
             />
-            <NotificationList
-              notifications={filteredNotifications}
-              handleMarkAsRead={handleMarkAsRead}
-            />
+            <AsyncContent
+              loading={loading}
+              error={error}
+              empty={filteredNotifications.length === 0}
+              emptyText="No notifications."
+            >
+              <NotificationList
+                notifications={filteredNotifications}
+                handleMarkAsRead={handleMarkAsRead}
+              />
+            </AsyncContent>
           </div>
         </div>
       </div>

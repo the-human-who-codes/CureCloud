@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { capitalize } from "../../utils/format";
 
 const AppointmentsTable = ({ appointments }) => {
   return (
@@ -21,30 +22,32 @@ const AppointmentsTable = ({ appointments }) => {
             </tr>
           </thead>
           <tbody>
-            {appointments.map(({ id, patientName, time, type, status }) => (
-              <tr key={id} className="border-t border-[#e1e8ff]">
-                <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                  {patientName}
-                </td>
-                <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                  {time}
-                </td>
-                <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                  {type}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                      status === "Confirmed"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {appointments.map(
+              ({ id, patientName, date, time, type, status }) => (
+                <tr key={id} className="border-t border-[#e1e8ff]">
+                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                    {patientName}
+                  </td>
+                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                    {date} {time}
+                  </td>
+                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                    {type}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-poppins ${
+                        status === "confirmed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {capitalize(status)}
+                    </span>
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>

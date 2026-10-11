@@ -10,10 +10,12 @@ import {
   faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import { useAuth } from "../../auth/AuthProvider";
 
 const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   useEffect(() => {
     // Close dropdown when clicking outside of it
@@ -46,7 +48,7 @@ const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
           className="w-8 h-8 text-[#4a5568]"
         />
         <span className="font-poppins text-[#4a5568] min-w-min">
-          {userName || "Muano"}
+          {userName}
         </span>
       </button>
       <button
@@ -84,7 +86,10 @@ const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
             </button>
           )}
           <button
-            onClick={() => navigate("/")}
+            onClick={async () => {
+              await signOut();
+              navigate("/");
+            }}
             className="block w-full text-left px-4 py-2 text-[#4a5568] hover:bg-[#f8faff] font-poppins"
           >
             <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />

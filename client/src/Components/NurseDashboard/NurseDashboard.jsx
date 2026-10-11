@@ -8,6 +8,8 @@ import ShiftInfoSection from "./ShiftInfoSection";
 import QuickActionsSection from "./QuickActionsSection";
 import RecentAlertsSection from "./RecentAlertsSection";
 import MockData from "../../data/MockData";
+import { api } from "../../api/client";
+import { toPatientCard } from "../../utils/patients";
 
 function NurseDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,13 +38,29 @@ function NurseDashboard() {
   }, [activeTask]);
 
   useEffect(() => {
-    try {
-      setDashboardData(MockData);
-      setLoading(false);
-    } catch (err) {
-      setError("Could not load dashboard data\nerro:" + err);
-      setLoading(false);
-    }
+    api
+      .listPatients({ limit: 100 })
+      .then(({ patients }) => {
+        const critical = patients.filter((p) => p.priority === "critical");
+        setDashboardData({
+          ...MockData, // tasks, medications and shift info have no backend yet
+          stats: {
+            ...MockData.stats,
+            patientsUnderCare: patients.length,
+            criticalAlerts: critical.length,
+          },
+          patients: patients.map(toPatientCard),
+          alerts: critical.map((p) => ({
+            id: p.id,
+            message: `${p.name}${
+              p.room ? ` (room ${p.room})` : ""
+            } is in critical condition.`,
+            level: "Critical",
+          })),
+        });
+      })
+      .catch((err) => setError(`Could not load dashboard data: ${err.message}`))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="loading-screen">Loading...</div>;

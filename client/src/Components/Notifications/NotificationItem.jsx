@@ -44,9 +44,11 @@ function NotificationItem({ notification, handleMarkAsRead }) {
               <p className="font-poppins text-sm text-[#4a5568] mt-1">
                 {notification.description}
               </p>
-              <p className="font-poppins text-xs text-[#4a5568] mt-2">
-                From: {notification.senderName}
-              </p>
+              {notification.senderName && (
+                <p className="font-poppins text-xs text-[#4a5568] mt-2">
+                  From: {notification.senderName}
+                </p>
+              )}
             </div>
             <div className="flex flex-col items-end">
               <span className="font-poppins text-xs text-[#4a5568]">
@@ -76,7 +78,7 @@ NotificationItem.propTypes = {
     type: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    senderName: PropTypes.string.isRequired,
+    senderName: PropTypes.string,
     createdAt: PropTypes.string.isRequired,
   }).isRequired,
   handleMarkAsRead: PropTypes.func.isRequired,

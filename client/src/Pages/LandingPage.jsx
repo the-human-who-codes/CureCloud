@@ -148,11 +148,7 @@ const HeroSection = () => {
 				health records seamlessly.
 			</p>
 			<GoogleAuthButton
-				onSuccess={(user, idToken) => {
-					console.log("User authenticated:", user);
-					console.log("ID Token:", idToken);
-					navigate("/role-selection");
-				}}
+				onSuccess={() => navigate("/dashboard")}
 				onFailure={(error) => {
 					console.error("Authentication failed:", error);
 				}}

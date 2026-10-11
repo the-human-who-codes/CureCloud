@@ -7,7 +7,11 @@ import {
   faFileMedical,
   faCommentMedical,
 } from "@fortawesome/free-solid-svg-icons";
-import MockData from "../../data/MockData";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi } from "../../hooks/useApi";
+import { healthStatsFromVitals } from "../../utils/format";
+import AsyncContent from "../common/AsyncContent";
 
 import QuickActionButton from "./QuickActionButton";
 import AppointmentCard from "./AppointmentCard";
@@ -16,13 +20,17 @@ import NotificationCard from "./NotificationCard";
 import HealthStatsCard from "./HealthStatsCard";
 
 function PatientDashBoard() {
-  const mockAppointments = MockData.mockAppointments;
-
-  const mockPrescriptions = MockData.mockPrescriptions;
-
-  const healthStats = MockData.healthStats;
-
-  const notifications = MockData.notifications;
+  const { user, patient } = useAuth();
+  const appointments = useApi(() =>
+    api.listAppointments({ upcoming: "true", limit: 5 })
+  );
+  const prescriptions = useApi(() =>
+    api.listPrescriptions({ status: "active" })
+  );
+  const notifications = useApi(() =>
+    api.listNotifications({ unread: "true", limit: 5 })
+  );
+  const healthStats = healthStatsFromVitals(patient?.vitals);
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
@@ -31,7 +39,7 @@ function PatientDashBoard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-                Welcome back, John Smith
+                Welcome back, {user?.name}
               </h1>
               <p className="font-poppins text-[#4a5568]">
                 {new Date().toLocaleDateString("en-US", {
@@ -58,9 +66,15 @@ function PatientDashBoard() {
                     Upcoming Appointments
                   </h2>
                   <div className="space-y-4">
-                    {mockAppointments.map((apt) => (
-                      <AppointmentCard key={apt.id} appointment={apt} />
-                    ))}
+                    <AsyncContent
+                      {...appointments}
+                      empty={appointments.data?.appointments.length === 0}
+                      emptyText="No upcoming appointments."
+                    >
+                      {appointments.data?.appointments.map((apt) => (
+                        <AppointmentCard key={apt.id} appointment={apt} />
+                      ))}
+                    </AsyncContent>
                   </div>
                 </div>
 
@@ -69,12 +83,18 @@ function PatientDashBoard() {
                     Current Prescriptions
                   </h2>
                   <div className="space-y-4">
-                    {mockPrescriptions.map((prescription) => (
-                      <PrescriptionsCard
-                        key={prescription.id}
-                        prescription={prescription}
-                      />
-                    ))}
+                    <AsyncContent
+                      {...prescriptions}
+                      empty={prescriptions.data?.prescriptions.length === 0}
+                      emptyText="No active prescriptions."
+                    >
+                      {prescriptions.data?.prescriptions.map((prescription) => (
+                        <PrescriptionsCard
+                          key={prescription.id}
+                          prescription={prescription}
+                        />
+                      ))}
+                    </AsyncContent>
                   </div>
                 </div>
               </div>
@@ -114,12 +134,18 @@ function PatientDashBoard() {
                   Notifications
                 </h2>
                 <div className="space-y-4">
-                  {notifications.map((notification) => (
-                    <NotificationCard
-                      key={notification.id}
-                      notification={notification}
-                    />
-                  ))}
+                  <AsyncContent
+                    {...notifications}
+                    empty={notifications.data?.notifications.length === 0}
+                    emptyText="You're all caught up."
+                  >
+                    {notifications.data?.notifications.map((notification) => (
+                      <NotificationCard
+                        key={notification.id}
+                        notification={notification}
+                      />
+                    ))}
+                  </AsyncContent>
                 </div>
               </div>
             </div>

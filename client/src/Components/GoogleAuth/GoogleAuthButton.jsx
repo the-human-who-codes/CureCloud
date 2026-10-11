@@ -8,12 +8,10 @@ const GoogleAuthButton = ({ onSuccess, onFailure }) => {
 	const googleSignIn = () => {
 		signInWithPopup(auth, provider)
 			.then((result) => {
-				console.log("Google Sign-In successful:", result.user);
 				// Get the Firebase ID token
 				result.user
 					.getIdToken()
 					.then((idToken) => {
-						console.log("Firebase ID Token:", idToken);
 						// Pass the ID token to the onSuccess callback
 						if (onSuccess) onSuccess(result.user, idToken);
 					})

@@ -1,22 +1,41 @@
 import { useState } from "react";
 
-import MockData from "../data/MockData";
+import { api } from "../api/client";
+import { useApi } from "../hooks/useApi";
+import { todaySast } from "../utils/format";
+import defaultAvatar from "../assets/default-avatar.svg";
+import AsyncContent from "../Components/common/AsyncContent";
 import AppointmentsTable from "../Components/Appointments/AppointmentsTable";
 import AppointmentsFilters from "../Components/Appointments/AppointmentsFilters";
 import AppointmentsHeader from "../Components/Appointments/AppointmentsHeader";
 
+const RANGE_DAYS = { today: 0, week: 7, month: 30 };
+
 function AppointmentsPage() {
-  const { appointments, patients, doctors } = MockData;
   const [selectedDateRange, setSelectedDateRange] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [isCalendarView, setIsCalendarView] = useState(true);
+  const [isCalendarView, setIsCalendarView] = useState(false);
+  const { data, error, loading, reload } = useApi(() =>
+    api.listAppointments({ limit: 100 })
+  );
 
-  const enrichedAppointments = appointments.map((appointment) => ({
-    ...appointment,
-    patientName: patients.find((p) => p.id === appointment.patientId)?.name,
-    patientImage: patients.find((p) => p.id === appointment.patientId)?.image,
-    doctorName: doctors.find((d) => d.id === appointment.doctorId)?.name,
-  }));
+  const today = todaySast();
+  const rangeEnd =
+    selectedDateRange in RANGE_DAYS
+      ? new Date(Date.parse(today) + RANGE_DAYS[selectedDateRange] * 86400e3)
+          .toISOString()
+          .slice(0, 10)
+      : null;
+
+  const appointments = (data?.appointments ?? [])
+    .filter((a) => selectedStatus === "all" || a.status === selectedStatus)
+    .filter((a) => !rangeEnd || (a.date >= today && a.date <= rangeEnd))
+    .map((a) => ({ ...a, patientImage: defaultAvatar }));
+
+  const updateStatus = async (id, status) => {
+    await api.updateAppointment(id, { status });
+    reload();
+  };
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
@@ -35,7 +54,18 @@ function AppointmentsPage() {
         {isCalendarView ? (
           <div>Calendar View Coming Soon</div>
         ) : (
-          <AppointmentsTable appointments={enrichedAppointments} />
+          <AsyncContent
+            loading={loading}
+            error={error}
+            empty={appointments.length === 0}
+            emptyText="No appointments match these filters."
+          >
+            <AppointmentsTable
+              appointments={appointments}
+              onConfirm={(id) => updateStatus(id, "confirmed")}
+              onCancel={(id) => updateStatus(id, "cancelled")}
+            />
+          </AsyncContent>
         )}
       </div>
     </div>

@@ -42,70 +42,108 @@ import Notifications from "./Components/Notifications/Notifications";
 import Profile from "./Components/ProfilePage/Profile";
 import Settings from "./Components/Settings/Settings"; // Role-aware
 
+// Auth
+import { AuthProvider } from "./auth/AuthProvider";
+import RequireRole from "./auth/RequireRole";
+
 const AppRouter = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/role-selection" element={<RoleSelection />} />
-        <Route path="/staff-sign-up" element={<StaffSignUp />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/role-selection" element={<RoleSelection />} />
+          <Route path="/staff-sign-up" element={<StaffSignUp />} />
+          <Route path="/dashboard" element={<RequireRole />} />
 
-        {/* Admin Dashboard */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index path="dashboard" element={<AdminDashboard />} />
-          <Route path="user-management" element={<UserManagement />} />
-          <Route path="department-settings" element={<DepartmentSettings />} />
-          <Route path="reports" element={<AdminReports role="admin" />} />
-          <Route path="system-settings" element={<SystemSettings />} />
-          <Route path="settings" element={<Settings role="admin" />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="team-chat" element={<TeamChat />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-
-        {/* Doctor Dashboard */}
-        <Route path="/doctor" element={<DoctorLayout />}>
-          <Route index path="dashboard" element={<DoctorDashboard />} />
-          <Route path="patient-records" element={<PatientRecords />} />
+          {/* Admin Dashboard */}
           <Route
-            path="appointments"
-            element={<AppointmentsPage role="doctor" />}
-          />
-          <Route path="prescriptions" element={<Prescriptions />} />
-          <Route path="reports" element={<ReportsPage role="doctor" />} />
-          <Route path="team-chat" element={<TeamChat />} />
-          <Route path="settings" element={<Settings role="doctor" />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
+            path="/admin"
+            element={
+              <RequireRole role="admin">
+                <AdminLayout />
+              </RequireRole>
+            }
+          >
+            <Route index path="dashboard" element={<AdminDashboard />} />
+            <Route path="user-management" element={<UserManagement />} />
+            <Route
+              path="department-settings"
+              element={<DepartmentSettings />}
+            />
+            <Route path="reports" element={<AdminReports role="admin" />} />
+            <Route path="system-settings" element={<SystemSettings />} />
+            <Route path="settings" element={<Settings role="admin" />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="team-chat" element={<TeamChat />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        {/* Nurse Dashboard */}
-        <Route path="/nurse" element={<NurseLayout />}>
-          <Route index path="dashboard" element={<NurseDashboard />} />
-          <Route path="my-patients" element={<MyPatients />} />
-          <Route path="tasks" element={<Tasks />} />
-          <Route path="medications" element={<Medications />} />
-          <Route path="reports" element={<ReportsPage role="nurse" />} />
-          <Route path="team-chat" element={<TeamChat />} />
-          <Route path="settings" element={<Settings role="nurse" />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
+          {/* Doctor Dashboard */}
+          <Route
+            path="/doctor"
+            element={
+              <RequireRole role="doctor">
+                <DoctorLayout />
+              </RequireRole>
+            }
+          >
+            <Route index path="dashboard" element={<DoctorDashboard />} />
+            <Route path="patient-records" element={<PatientRecords />} />
+            <Route
+              path="appointments"
+              element={<AppointmentsPage role="doctor" />}
+            />
+            <Route path="prescriptions" element={<Prescriptions />} />
+            <Route path="reports" element={<ReportsPage role="doctor" />} />
+            <Route path="team-chat" element={<TeamChat />} />
+            <Route path="settings" element={<Settings role="doctor" />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        {/* Patient Dashboard */}
-        <Route path="/patient" element={<PatientLayout />}>
-          <Route index path="dashboard" element={<PatientDashboard />} />
-          <Route path="appointments" element={<UpcomingAppointmentsCard />} />
-          <Route path="prescriptions" element={<PatientPrescriptions />} />
-          <Route path="medical-records" element={<MedicalRecords />} />
-          <Route path="messages" element={<Messages />} />
-          <Route path="settings" element={<Settings role="patient" />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-      </Routes>
-    </Router>
+          {/* Nurse Dashboard */}
+          <Route
+            path="/nurse"
+            element={
+              <RequireRole role="nurse">
+                <NurseLayout />
+              </RequireRole>
+            }
+          >
+            <Route index path="dashboard" element={<NurseDashboard />} />
+            <Route path="my-patients" element={<MyPatients />} />
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="medications" element={<Medications />} />
+            <Route path="reports" element={<ReportsPage role="nurse" />} />
+            <Route path="team-chat" element={<TeamChat />} />
+            <Route path="settings" element={<Settings role="nurse" />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+
+          {/* Patient Dashboard */}
+          <Route
+            path="/patient"
+            element={
+              <RequireRole role="patient">
+                <PatientLayout />
+              </RequireRole>
+            }
+          >
+            <Route index path="dashboard" element={<PatientDashboard />} />
+            <Route path="appointments" element={<UpcomingAppointmentsCard />} />
+            <Route path="prescriptions" element={<PatientPrescriptions />} />
+            <Route path="medical-records" element={<MedicalRecords />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="settings" element={<Settings role="patient" />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 

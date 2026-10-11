@@ -55,9 +55,10 @@ function AppointmentsFilters({
           className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
         >
           <option value="all">All Status</option>
-          <option value="Scheduled">Scheduled</option>
-          <option value="Completed">Completed</option>
-          <option value="Pending">Pending</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
     </div>

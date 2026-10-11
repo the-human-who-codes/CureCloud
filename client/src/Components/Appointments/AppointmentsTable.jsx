@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { capitalize } from "../../utils/format";
 
-function AppointmentsTable({ appointments }) {
+function AppointmentsTable({ appointments, onConfirm, onCancel }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -53,24 +54,38 @@ function AppointmentsTable({ appointments }) {
               <td className="px-6 py-4">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                    appointment.status === "Completed"
+                    appointment.status === "completed"
                       ? "bg-green-100 text-green-800"
-                      : appointment.status === "Scheduled"
+                      : appointment.status === "confirmed"
                       ? "bg-blue-100 text-blue-800"
+                      : appointment.status === "cancelled"
+                      ? "bg-gray-100 text-gray-600"
                       : "bg-yellow-100 text-yellow-800"
                   }`}
                 >
-                  {appointment.status}
+                  {capitalize(appointment.status)}
                 </span>
               </td>
               <td className="px-6 py-4">
                 <div className="flex gap-2">
-                  <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                  {appointment.status === "pending" && (
+                    <button
+                      title="Confirm"
+                      onClick={() => onConfirm(appointment.id)}
+                      className="p-2 text-green-600 hover:bg-[#f8faff] rounded-lg"
+                    >
+                      <FontAwesomeIcon icon={faCheck} />
+                    </button>
+                  )}
+                  {["pending", "confirmed"].includes(appointment.status) && (
+                    <button
+                      title="Cancel"
+                      onClick={() => onCancel(appointment.id)}
+                      className="p-2 text-red-500 hover:bg-[#f8faff] rounded-lg"
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                  )}
                 </div>
               </td>
             </tr>
@@ -94,6 +109,8 @@ AppointmentsTable.propTypes = {
       status: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export default AppointmentsTable;

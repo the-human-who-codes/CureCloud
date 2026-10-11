@@ -1,5 +1,9 @@
 "use client";
 import { useState } from "react";
+import { api } from "../../api/client";
+import { useApi } from "../../hooks/useApi";
+import { ageFromDob, capitalize } from "../../utils/format";
+import AsyncContent from "../common/AsyncContent";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,94 +18,93 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
+const formatVitals = (v = {}) =>
+  Object.fromEntries(
+    [
+      ["bloodPressure", v.bloodPressure],
+      ["heartRate", v.heartRate != null ? `${v.heartRate} bpm` : null],
+      ["temperature", v.temperature != null ? `${v.temperature}°C` : null],
+      [
+        "oxygenLevel",
+        v.oxygenSaturation != null ? `${v.oxygenSaturation}%` : null,
+      ],
+    ].filter(([, value]) => value != null)
+  );
+
+// API patient (+ the doctor's appointments) -> the row/detail shape this page renders.
+function toRecordRow(p, appointments) {
+  const mine = appointments.filter(
+    (a) => a.patientId === p.id && a.status !== "cancelled"
+  );
+  const now = new Date().toISOString();
+  const next = mine.find((a) => a.scheduledAt >= now);
+  const last = mine.filter((a) => a.status === "completed").at(-1);
+  return {
+    id: p.id,
+    name: p.name,
+    age: ageFromDob(p.dateOfBirth) ?? "—",
+    gender: "—",
+    bloodType: "—",
+    lastVisit: last?.date ?? "—",
+    nextAppointment: next ? `${next.date} ${next.time}` : "—",
+    status: p.priority === "critical" ? "Critical" : "Active",
+    phone: "—",
+    email: "—",
+    address: p.room ? `Room ${p.room}` : "—",
+    vitals: formatVitals(p.vitals ?? {}),
+    medications: [],
+    recentTests: [],
+    notes: [],
+  };
+}
+
 function PatientRecords() {
   //   const [searchTerm, setSearchTerm] = useState("");
   const [selectedView, setSelectedView] = useState("list");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedPatient, setSelectedPatient] = useState(null);
 
-  const mockPatients = [
-    {
-      id: "P1001",
-      name: "Sarah Johnson",
-      age: 45,
-      gender: "Female",
-      bloodType: "A+",
-      lastVisit: "2024-02-15",
-      nextAppointment: "2024-03-01",
-      status: "Active",
-      condition: "Stable",
-      phone: "(555) 123-4567",
-      email: "sarah.j@email.com",
-      address: "123 Medical Drive, Healthcare City",
-      insurance: "BlueCross Health",
-      doctor: "Dr. Michael Chen",
-      recentDiagnosis: "Hypertension",
-      vitals: {
-        bloodPressure: "120/80",
-        heartRate: "72 bpm",
-        temperature: "98.6°F",
-        oxygenLevel: "98%",
-      },
-      medications: [
-        { name: "Lisinopril", dosage: "10mg", frequency: "Daily" },
-        { name: "Metformin", dosage: "500mg", frequency: "Twice daily" },
-      ],
-      allergies: ["Penicillin", "Latex"],
-      recentTests: [
-        { name: "Blood Work", date: "2024-02-10", status: "Completed" },
-        { name: "ECG", date: "2024-02-10", status: "Pending" },
-      ],
-      notes: [
-        {
-          date: "2024-02-15",
-          doctor: "Dr. Chen",
-          content:
-            "Patient reports improved sleep patterns. Maintaining current medication schedule.",
-        },
-      ],
-    },
-    {
-      id: "P1002",
-      name: "James Wilson",
-      age: 62,
-      gender: "Male",
-      bloodType: "O-",
-      lastVisit: "2024-02-14",
-      nextAppointment: "2024-02-28",
-      status: "Critical",
-      condition: "Under Observation",
-      phone: "(555) 234-5678",
-      email: "j.wilson@email.com",
-      address: "456 Health Avenue, Medical District",
-      insurance: "Medicare Plus",
-      doctor: "Dr. Sarah Connor",
-      recentDiagnosis: "Coronary Artery Disease",
-      vitals: {
-        bloodPressure: "140/90",
-        heartRate: "85 bpm",
-        temperature: "99.1°F",
-        oxygenLevel: "95%",
-      },
-      medications: [
-        { name: "Aspirin", dosage: "81mg", frequency: "Daily" },
-        { name: "Atorvastatin", dosage: "40mg", frequency: "Daily" },
-      ],
-      allergies: ["Sulfa drugs"],
-      recentTests: [
-        { name: "Stress Test", date: "2024-02-13", status: "Completed" },
-        { name: "Cardiac MRI", date: "2024-02-20", status: "Scheduled" },
-      ],
-      notes: [
-        {
-          date: "2024-02-14",
-          doctor: "Dr. Connor",
-          content:
-            "Patient experiencing occasional chest pain. Scheduled for further cardiac evaluation.",
-        },
-      ],
-    },
-  ];
+  const { data, error, loading } = useApi(async () => {
+    const [{ patients }, { appointments }] = await Promise.all([
+      api.listPatients({ limit: 100 }),
+      api.listAppointments({ limit: 100 }),
+    ]);
+    return patients.map((p) => toRecordRow(p, appointments));
+  });
+  const patients = (data ?? []).filter(
+    (p) => filterStatus === "all" || p.status.toLowerCase() === filterStatus
+  );
+
+  // Loads the detail panel's medications, tests and notes for one patient.
+  const selectPatient = async (patient) => {
+    setSelectedPatient(patient);
+    const [{ prescriptions }, { medicalRecords }] = await Promise.all([
+      api.listPrescriptions({ patientId: patient.id, status: "active" }),
+      api.listMedicalRecords({ patientId: patient.id }),
+    ]);
+    setSelectedPatient({
+      ...patient,
+      medications: prescriptions.map((rx) => ({
+        name: rx.medication,
+        dosage: rx.dosage,
+        frequency: rx.frequency,
+      })),
+      recentTests: medicalRecords.map((r) => ({
+        name: r.type,
+        date: r.createdAt?.slice(0, 10),
+        status: capitalize(r.status),
+      })),
+      notes: medicalRecords
+        .filter((r) => r.diagnosis || r.recommendations)
+        .map((r) => ({
+          date: r.createdAt?.slice(0, 10),
+          doctor: r.doctorName,
+          content: [r.diagnosis, r.treatment, r.recommendations]
+            .filter(Boolean)
+            .join(". "),
+        })),
+    });
+  };
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
@@ -176,61 +179,131 @@ function PatientRecords() {
               </div>
             </div>
 
-            {selectedView === "list" && (
-              <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-auto">
-                <table className="w-full">
-                  <thead className="bg-[#f8faff]">
-                    <tr>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        Patient
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        ID
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        Status
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        Last Visit
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        Next Appointment
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockPatients.map((patient) => (
-                      <tr
-                        key={patient.id}
-                        className="border-t border-[#e1e8ff] hover:bg-[#f8faff]"
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
-                              <span className="font-poppins font-medium text-[#2c4ecf]">
-                                {patient.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </span>
+            <AsyncContent
+              loading={loading}
+              error={error}
+              empty={patients.length === 0}
+              emptyText="No patients on your care team yet."
+            >
+              {selectedView === "list" && (
+                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-auto">
+                  <table className="w-full">
+                    <thead className="bg-[#f8faff]">
+                      <tr>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          Patient
+                        </th>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          ID
+                        </th>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          Last Visit
+                        </th>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          Next Appointment
+                        </th>
+                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {patients.map((patient) => (
+                        <tr
+                          key={patient.id}
+                          className="border-t border-[#e1e8ff] hover:bg-[#f8faff]"
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                                <span className="font-poppins font-medium text-[#2c4ecf]">
+                                  {patient.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="font-poppins font-medium text-[#2c4ecf]">
+                                  {patient.name}
+                                </p>
+                                <p className="font-poppins text-sm text-[#4a5568]">
+                                  {patient.age} yrs • {patient.gender}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-poppins font-medium text-[#2c4ecf]">
-                                {patient.name}
-                              </p>
-                              <p className="font-poppins text-sm text-[#4a5568]">
-                                {patient.age} yrs • {patient.gender}
-                              </p>
+                          </td>
+                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                            {patient.id}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-poppins ${
+                                patient.status === "Active"
+                                  ? "bg-green-100 text-green-800"
+                                  : patient.status === "Critical"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {patient.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                            {patient.lastVisit}
+                          </td>
+                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                            {patient.nextAppointment}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg"
+                                onClick={() => selectPatient(patient)}
+                              >
+                                <FontAwesomeIcon icon={faEye} />
+                              </button>
+                              <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
+                                <FontAwesomeIcon icon={faEdit} />
+                              </button>
+                              <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                                <FontAwesomeIcon icon={faTrash} />
+                              </button>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                          {patient.id}
-                        </td>
-                        <td className="px-6 py-4">
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {selectedView === "grid" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {patients.map((patient) => (
+                    <div
+                      key={patient.id}
+                      className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6"
+                    >
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-full bg-[#e1e8ff] flex items-center justify-center">
+                          <span className="font-poppins text-xl font-medium text-[#2c4ecf]">
+                            {patient.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-poppins font-medium text-[#2c4ecf]">
+                            {patient.name}
+                          </h3>
+                          <p className="font-poppins text-sm text-[#4a5568]">
+                            {patient.id}
+                          </p>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-poppins ${
                               patient.status === "Active"
@@ -242,118 +315,55 @@ function PatientRecords() {
                           >
                             {patient.status}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                          {patient.lastVisit}
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                          {patient.nextAppointment}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <button
-                              className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg"
-                              onClick={() => setSelectedPatient(patient)}
-                            >
-                              <FontAwesomeIcon icon={faEye} />
-                            </button>
-                            <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                              <FontAwesomeIcon icon={faEdit} />
-                            </button>
-                            <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {selectedView === "grid" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {mockPatients.map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-16 h-16 rounded-full bg-[#e1e8ff] flex items-center justify-center">
-                        <span className="font-poppins text-xl font-medium text-[#2c4ecf]">
-                          {patient.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-poppins font-medium text-[#2c4ecf]">
-                          {patient.name}
-                        </h3>
-                        <p className="font-poppins text-sm text-[#4a5568]">
-                          {patient.id}
-                        </p>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                            patient.status === "Active"
-                              ? "bg-green-100 text-green-800"
-                              : patient.status === "Critical"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between">
+                          <span className="font-poppins text-sm text-[#4a5568]">
+                            Age
+                          </span>
+                          <span className="font-poppins text-sm font-medium">
+                            {patient.age} years
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-poppins text-sm text-[#4a5568]">
+                            Blood Type
+                          </span>
+                          <span className="font-poppins text-sm font-medium">
+                            {patient.bloodType}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-poppins text-sm text-[#4a5568]">
+                            Last Visit
+                          </span>
+                          <span className="font-poppins text-sm font-medium">
+                            {patient.lastVisit}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-4 border-t border-[#e1e8ff]">
+                        <button
+                          className="px-4 py-2 text-[#2c4ecf] hover:bg-[#f8faff] rounded-lg"
+                          onClick={() => selectPatient(patient)}
                         >
-                          {patient.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between">
-                        <span className="font-poppins text-sm text-[#4a5568]">
-                          Age
-                        </span>
-                        <span className="font-poppins text-sm font-medium">
-                          {patient.age} years
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-poppins text-sm text-[#4a5568]">
-                          Blood Type
-                        </span>
-                        <span className="font-poppins text-sm font-medium">
-                          {patient.bloodType}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-poppins text-sm text-[#4a5568]">
-                          Last Visit
-                        </span>
-                        <span className="font-poppins text-sm font-medium">
-                          {patient.lastVisit}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-[#e1e8ff]">
-                      <button
-                        className="px-4 py-2 text-[#2c4ecf] hover:bg-[#f8faff] rounded-lg"
-                        onClick={() => setSelectedPatient(patient)}
-                      >
-                        View Details
-                      </button>
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
-                          <FontAwesomeIcon icon={faEdit} />
+                          View Details
                         </button>
-                        <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button className="p-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </AsyncContent>
 
             {selectedPatient && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

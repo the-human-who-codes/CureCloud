@@ -37,36 +37,29 @@ npm run dev
 
 -   The frontend will be available at **`http://localhost:5173`** (or the assigned port).
 
-### **3️⃣ Server Setup**
+### **3️⃣ Backend Setup**
+
+The API lives in **[CureCloudBackend](https://github.com/the-human-who-codes/CureCloudBackend)**
+(Express on Cloud Functions + Firestore). Clone it next to this repo, then:
 
 ```sh
-cd ../server
+cd ../CureCloudBackend
 npm install
-npm run dev
+npm run serve          # Auth, Firestore and Functions emulators
 ```
-
--   The backend will run on **`http://localhost:5000`** _(or as configured in `.env`)_.
-
----
-
-## **🛠️ Development & Local Testing**
-
-### **🔹 Firebase Emulator (Local Testing)**
-
-For local testing, you can use **Firebase Emulator Suite**:
 
 ```sh
-firebase emulators:start
+cd ../CureCloud/client
+npm run dev:emulator   # frontend wired to the local emulators
 ```
 
-This will simulate **Firestore, Authentication, Functions, and Hosting**.
+`npm run dev` (without emulators) proxies `/api` to the deployed API at `curecloud1.web.app`.
 
 ---
 
 ## **🔗 API Repository**
 
-The CureCloud API is maintained in a separate repository. You can find it here:  
-📌 **[CureCloud API Repository](https://github.com/the-human-who-codes/lively-campus-api)**
+📌 **[CureCloudBackend](https://github.com/the-human-who-codes/CureCloudBackend)** — endpoints, roles and data model.
 
 Refer to the API documentation for available endpoints and integration details.
 

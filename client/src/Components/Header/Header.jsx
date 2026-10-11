@@ -4,10 +4,17 @@ import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import NotificationBell from "./NotificationBell";
 import ProfileMenu from "./ProfileMenu";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi } from "../../hooks/useApi";
+import { api } from "../../api/client";
 
 const Header = ({ onSearch, notificationCount, userName, role }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useAuth();
+  const { data: unread } = useApi(() =>
+    api.listNotifications({ unread: "true" })
+  );
 
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
 
@@ -26,11 +33,16 @@ const Header = ({ onSearch, notificationCount, userName, role }) => {
         )}
 
         <div className="flex items-center space-x-4">
-          <NotificationBell role={role} notificationCount={notificationCount} />
+          <NotificationBell
+            role={role}
+            notificationCount={
+              notificationCount ?? unread?.notifications.length ?? 0
+            }
+          />
           <ProfileMenu
             isProfileOpen={isProfileOpen}
             toggleProfile={toggleProfile}
-            userName={userName}
+            userName={userName ?? user?.name ?? ""}
             role={role}
           />
         </div>

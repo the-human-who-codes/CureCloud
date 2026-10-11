@@ -2,21 +2,21 @@ import PropTypes from "prop-types";
 
 function StaffSchedule({ staffSchedule }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-      <h2 className="font-poppins text-lg font-semibold text-[#2c4ecf] mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+      <h2 className="font-poppins text-lg font-semibold text-primary mb-4">
         Staff Schedule
       </h2>
       <div className="space-y-4">
         {staffSchedule.map((staff, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-3 bg-[#f8faff] rounded-lg"
+            className="flex items-center justify-between p-3 bg-surface rounded-lg"
           >
             <div>
-              <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+              <p className="font-poppins text-sm font-semibold text-primary">
                 {staff.doctor}
               </p>
-              <p className="font-poppins text-xs text-[#4a5568]">
+              <p className="font-poppins text-xs text-ink">
                 {staff.shift} Shift
               </p>
             </div>

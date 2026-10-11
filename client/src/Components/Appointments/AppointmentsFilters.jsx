@@ -17,9 +17,7 @@ function AppointmentsFilters({
         <button
           onClick={() => setIsCalendarView(true)}
           className={`px-4 py-2 rounded-lg font-poppins ${
-            isCalendarView
-              ? "bg-[#2c4ecf] text-white"
-              : "bg-[#f8faff] text-[#4a5568]"
+            isCalendarView ? "bg-primary text-white" : "bg-surface text-ink"
           }`}
         >
           <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
@@ -28,9 +26,7 @@ function AppointmentsFilters({
         <button
           onClick={() => setIsCalendarView(false)}
           className={`px-4 py-2 rounded-lg font-poppins ${
-            !isCalendarView
-              ? "bg-[#2c4ecf] text-white"
-              : "bg-[#f8faff] text-[#4a5568]"
+            !isCalendarView ? "bg-primary text-white" : "bg-surface text-ink"
           }`}
         >
           <FontAwesomeIcon icon={faList} className="mr-2" />
@@ -42,7 +38,7 @@ function AppointmentsFilters({
         <select
           value={selectedDateRange}
           onChange={(e) => setSelectedDateRange(e.target.value)}
-          className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
+          className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
         >
           <option value="all">All Dates</option>
           <option value="today">Today</option>
@@ -52,7 +48,7 @@ function AppointmentsFilters({
         <select
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
-          className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
+          className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>

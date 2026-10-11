@@ -81,20 +81,20 @@ function UserManagement() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   User Management
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   Manage and monitor system users
                 </p>
               </div>
-              <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center">
+              <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 flex items-center">
                 <FontAwesomeIcon icon={faUserPlus} />
                 Add New User
               </button>
@@ -104,18 +104,18 @@ function UserManagement() {
               {Object.entries(stats).map(([key, value]) => (
                 <div
                   key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
+                  className="bg-white rounded-xl p-6 shadow-sm border border-line"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-poppins text-[#4a5568] text-sm">
+                      <p className="font-poppins text-ink text-sm">
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </p>
-                      <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                      <p className="font-poppins text-2xl font-bold text-primary">
                         {value}
                       </p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
                       <FontAwesomeIcon
                         icon={
                           key === "totalUsers"
@@ -126,7 +126,7 @@ function UserManagement() {
                             ? faUserClock
                             : faUserTimes
                         }
-                        className={`fas text-[#2c4ecf] text-xl`}
+                        className={`fas text-primary text-xl`}
                       />
                     </div>
                   </div>
@@ -134,14 +134,14 @@ function UserManagement() {
               ))}
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff] mb-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-line mb-8">
               <div className="flex flex-wrap gap-4">
                 <div className="flex-1 min-w-[200px]">
-                  <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+                  <label className="block font-poppins text-sm text-ink mb-2">
                     Role
                   </label>
                   <select
-                    className="w-full px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                    className="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                     value={filterRole}
                     onChange={(e) => setFilterRole(e.target.value)}
                   >
@@ -152,11 +152,11 @@ function UserManagement() {
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
-                  <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+                  <label className="block font-poppins text-sm text-ink mb-2">
                     Status
                   </label>
                   <select
-                    className="w-full px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                    className="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
@@ -169,33 +169,33 @@ function UserManagement() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[#f8faff]">
+                <thead className="bg-surface">
                   <tr>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       User
                     </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       Role
                     </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       Department
                     </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       Status
                     </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       Last Active
                     </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                    <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {mockUsers.map((user) => (
-                    <tr key={user.id} className="border-t border-[#e1e8ff]">
+                    <tr key={user.id} className="border-t border-line">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <img
@@ -204,22 +204,22 @@ function UserManagement() {
                             className="w-10 h-10 rounded-full mr-3"
                           />
                           <div>
-                            <p className="font-poppins text-[#2c4ecf] font-semibold">
+                            <p className="font-poppins text-primary font-semibold">
                               {user.name}
                             </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
+                            <p className="font-poppins text-sm text-ink">
                               {user.email}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="px-3 py-1 rounded-full text-xs font-poppins bg-[#f8faff] text-[#2c4ecf]">
+                        <span className="px-3 py-1 rounded-full text-xs font-poppins bg-surface text-primary">
                           {user.role.charAt(0).toUpperCase() +
                             user.role.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                      <td className="px-6 py-4 font-poppins text-ink">
                         {user.department}
                       </td>
                       <td className="px-6 py-4">
@@ -236,19 +236,19 @@ function UserManagement() {
                             user.status.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                      <td className="px-6 py-4 font-poppins text-ink">
                         {new Date(user.lastActive).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button
-                            className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+                            className="p-2 text-ink hover:bg-surface rounded-lg"
                             title="Edit"
                           >
                             <FontAwesomeIcon icon={faEdit} />
                           </button>
                           <button
-                            className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+                            className="p-2 text-ink hover:bg-surface rounded-lg"
                             title="View Details"
                           >
                             <FontAwesomeIcon icon={faEye} />

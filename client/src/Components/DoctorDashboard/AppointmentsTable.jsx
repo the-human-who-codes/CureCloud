@@ -4,17 +4,17 @@ import { capitalize } from "../../utils/format";
 const AppointmentsTable = ({ appointments }) => {
   return (
     <div>
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
         Upcoming Appointments
       </h2>
-      <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
         <table className="w-full">
-          <thead className="bg-[#f8faff]">
+          <thead className="bg-surface">
             <tr>
               {["Patient Name", "Time", "Type", "Status"].map((header) => (
                 <th
                   key={header}
-                  className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left"
+                  className="px-6 py-4 font-poppins text-sm text-ink text-left"
                 >
                   {header}
                 </th>
@@ -24,16 +24,14 @@ const AppointmentsTable = ({ appointments }) => {
           <tbody>
             {appointments.map(
               ({ id, patientName, date, time, type, status }) => (
-                <tr key={id} className="border-t border-[#e1e8ff]">
-                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                <tr key={id} className="border-t border-line">
+                  <td className="px-6 py-4 font-poppins text-ink">
                     {patientName}
                   </td>
-                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                  <td className="px-6 py-4 font-poppins text-ink">
                     {date} {time}
                   </td>
-                  <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                    {type}
-                  </td>
+                  <td className="px-6 py-4 font-poppins text-ink">{type}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-poppins ${

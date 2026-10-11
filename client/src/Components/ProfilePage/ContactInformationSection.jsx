@@ -4,8 +4,8 @@ import { faAddressCard } from "@fortawesome/free-solid-svg-icons";
 
 const ProfessionalInformationSection = ({ profileData }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
+    <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-6">
         <FontAwesomeIcon
           icon={faAddressCard}
           className="fas fa-address-card mr-2"
@@ -14,23 +14,21 @@ const ProfessionalInformationSection = ({ profileData }) => {
       </h2>
       <div className="space-y-4">
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Email</p>
+          <p className="font-poppins text-sm text-ink">Email</p>
           <p className="font-poppins text-lg">{profileData.email}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Phone</p>
+          <p className="font-poppins text-sm text-ink">Phone</p>
           <p className="font-poppins text-lg">{profileData.phone}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Office Location</p>
+          <p className="font-poppins text-sm text-ink">Office Location</p>
           <p className="font-poppins text-lg">{profileData.office}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">
-            Emergency Contact
-          </p>
+          <p className="font-poppins text-sm text-ink">Emergency Contact</p>
           <p className="font-poppins text-lg">{profileData?.emergency?.name}</p>
-          <p className="font-poppins text-sm text-[#4a5568]">
+          <p className="font-poppins text-sm text-ink">
             {profileData?.emergency?.relation} • {profileData?.emergency?.phone}
           </p>
         </div>

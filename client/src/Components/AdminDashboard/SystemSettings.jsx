@@ -77,32 +77,32 @@ function SystemSettings() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   System Settings
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   Manage system configuration and preferences
                 </p>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff] mb-8">
-              <h2 className="font-poppins text-lg font-semibold text-[#2c4ecf] mb-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-line mb-8">
+              <h2 className="font-poppins text-lg font-semibold text-primary mb-4">
                 System Status
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {Object.entries(mockSystemInfo).map(([key, value]) => (
-                  <div key={key} className="bg-[#f8faff] rounded-lg p-4">
-                    <p className="font-poppins text-sm text-[#4a5568]">
+                  <div key={key} className="bg-surface rounded-lg p-4">
+                    <p className="font-poppins text-sm text-ink">
                       {key.replace(/([A-Z])/g, " $1").trim()}
                     </p>
-                    <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                    <p className="font-poppins text-lg font-semibold text-primary">
                       {value}
                     </p>
                   </div>
@@ -110,16 +110,16 @@ function SystemSettings() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
-              <div className="border-b border-[#e1e8ff]">
+            <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+              <div className="border-b border-line">
                 <div className="flex overflow-x-auto">
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
                       className={`px-6 py-4 font-poppins font-medium flex items-center whitespace-nowrap ${
                         activeTab === tab.id
-                          ? "text-[#2c4ecf] border-b-2 border-[#2c4ecf]"
-                          : "text-[#4a5568] hover:text-[#2c4ecf]"
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-ink hover:text-primary"
                       }`}
                       onClick={() => setActiveTab(tab.id)}
                     >
@@ -137,13 +137,13 @@ function SystemSettings() {
                       {Object.entries(mockSettings.general).map(
                         ([key, value]) => (
                           <div key={key} className="space-y-2">
-                            <label className="block font-poppins text-sm font-medium text-[#4a5568]">
+                            <label className="block font-poppins text-sm font-medium text-ink">
                               {key.replace(/([A-Z])/g, " $1").trim()}
                             </label>
                             <input
                               type="text"
                               value={value}
-                              className="w-full p-3 border border-[#e1e8ff] rounded-lg focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent"
+                              className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                           </div>
                         )
@@ -158,13 +158,13 @@ function SystemSettings() {
                       ([key, value]) => (
                         <div
                           key={key}
-                          className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+                          className="flex items-center justify-between p-4 bg-surface rounded-lg"
                         >
                           <div>
-                            <p className="font-poppins font-medium text-[#2c4ecf]">
+                            <p className="font-poppins font-medium text-primary">
                               {key.replace(/([A-Z])/g, " $1").trim()}
                             </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
+                            <p className="font-poppins text-sm text-ink">
                               Current value:{" "}
                               {typeof value === "boolean"
                                 ? value
@@ -174,16 +174,16 @@ function SystemSettings() {
                             </p>
                           </div>
                           {typeof value === "boolean" ? (
-                            <div className="relative inline-block w-12 h-6 rounded-full bg-[#e1e8ff]">
+                            <div className="relative inline-block w-12 h-6 rounded-full bg-line">
                               <input
                                 type="checkbox"
                                 checked={value}
-                                className="absolute w-6 h-6 rounded-full bg-[#2c4ecf] transform transition-transform duration-200 ease-in-out"
+                                className="absolute w-6 h-6 rounded-full bg-primary transform transition-transform duration-200 ease-in-out"
                                 style={{ left: value ? "24px" : "0" }}
                               />
                             </div>
                           ) : (
-                            <button className="px-4 py-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
+                            <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
                               Configure
                             </button>
                           )}
@@ -199,21 +199,21 @@ function SystemSettings() {
                       ([key, value]) => (
                         <div
                           key={key}
-                          className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+                          className="flex items-center justify-between p-4 bg-surface rounded-lg"
                         >
                           <div>
-                            <p className="font-poppins font-medium text-[#2c4ecf]">
+                            <p className="font-poppins font-medium text-primary">
                               {key.replace(/([A-Z])/g, " $1").trim()}
                             </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
+                            <p className="font-poppins text-sm text-ink">
                               {value ? "Enabled" : "Disabled"}
                             </p>
                           </div>
-                          <div className="relative inline-block w-12 h-6 rounded-full bg-[#e1e8ff]">
+                          <div className="relative inline-block w-12 h-6 rounded-full bg-line">
                             <input
                               type="checkbox"
                               checked={value}
-                              className="absolute w-6 h-6 rounded-full bg-[#2c4ecf] transform transition-transform duration-200 ease-in-out"
+                              className="absolute w-6 h-6 rounded-full bg-primary transform transition-transform duration-200 ease-in-out"
                               style={{ left: value ? "24px" : "0" }}
                             />
                           </div>
@@ -228,13 +228,13 @@ function SystemSettings() {
                     {Object.entries(mockSettings.backup).map(([key, value]) => (
                       <div
                         key={key}
-                        className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+                        className="flex items-center justify-between p-4 bg-surface rounded-lg"
                       >
                         <div>
-                          <p className="font-poppins font-medium text-[#2c4ecf]">
+                          <p className="font-poppins font-medium text-primary">
                             {key.replace(/([A-Z])/g, " $1").trim()}
                           </p>
-                          <p className="font-poppins text-sm text-[#4a5568]">
+                          <p className="font-poppins text-sm text-ink">
                             {typeof value === "boolean"
                               ? value
                                 ? "Enabled"
@@ -242,16 +242,16 @@ function SystemSettings() {
                               : value}
                           </p>
                         </div>
-                        <button className="px-4 py-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
+                        <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
                           Configure
                         </button>
                       </div>
                     ))}
                     <div className="flex gap-4">
-                      <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200">
+                      <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200">
                         Backup Now
                       </button>
-                      <button className="px-6 py-3 border border-[#2c4ecf] text-[#2c4ecf] rounded-lg font-poppins font-semibold hover:bg-[#f8faff] transition-colors duration-200">
+                      <button className="px-6 py-3 border border-primary text-primary rounded-lg font-poppins font-semibold hover:bg-surface transition-colors duration-200">
                         Restore from Backup
                       </button>
                     </div>
@@ -289,25 +289,25 @@ function SystemSettings() {
                     ].map((integration) => (
                       <div
                         key={integration.name}
-                        className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+                        className="flex items-center justify-between p-4 bg-surface rounded-lg"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-[#2c4ecf]/10 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <FontAwesomeIcon
                               icon={integration.icon}
-                              className={`fas  text-[#2c4ecf]`}
+                              className={`fas  text-primary`}
                             />
                           </div>
                           <div>
-                            <p className="font-poppins font-medium text-[#2c4ecf]">
+                            <p className="font-poppins font-medium text-primary">
                               {integration.name}
                             </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
+                            <p className="font-poppins text-sm text-ink">
                               {integration.status}
                             </p>
                           </div>
                         </div>
-                        <button className="px-4 py-2 text-[#2c4ecf] hover:bg-[#e1e8ff] rounded-lg">
+                        <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
                           Configure
                         </button>
                       </div>
@@ -342,25 +342,25 @@ function SystemSettings() {
                       ].map((tool) => (
                         <div
                           key={tool.name}
-                          className="p-6 bg-[#f8faff] rounded-xl"
+                          className="p-6 bg-surface rounded-xl"
                         >
                           <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-full bg-[#2c4ecf]/10 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                               <FontAwesomeIcon
                                 icon={tool.icon}
-                                className={`fas text-[#2c4ecf] text-xl`}
+                                className={`fas text-primary text-xl`}
                               />
                             </div>
                             <div>
-                              <h3 className="font-poppins font-semibold text-[#2c4ecf]">
+                              <h3 className="font-poppins font-semibold text-primary">
                                 {tool.name}
                               </h3>
-                              <p className="font-poppins text-sm text-[#4a5568]">
+                              <p className="font-poppins text-sm text-ink">
                                 {tool.description}
                               </p>
                             </div>
                           </div>
-                          <button className="w-full px-4 py-2 bg-white text-[#2c4ecf] rounded-lg hover:bg-[#e1e8ff] transition-colors duration-200">
+                          <button className="w-full px-4 py-2 bg-white text-primary rounded-lg hover:bg-line transition-colors duration-200">
                             Access
                           </button>
                         </div>
@@ -370,13 +370,13 @@ function SystemSettings() {
                 )}
               </div>
 
-              <div className="p-6 bg-[#f8faff] border-t border-[#e1e8ff]">
+              <div className="p-6 bg-surface border-t border-line">
                 <div className="flex justify-end gap-4">
-                  <button className="px-6 py-3 border border-[#2c4ecf] text-[#2c4ecf] rounded-lg font-poppins font-semibold hover:bg-[#f8faff] transition-colors duration-200">
+                  <button className="px-6 py-3 border border-primary text-primary rounded-lg font-poppins font-semibold hover:bg-surface transition-colors duration-200">
                     Cancel
                   </button>
                   <button
-                    className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center gap-2"
+                    className="px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 flex items-center gap-2"
                     onClick={() => {
                       setSaving(true);
                       setTimeout(() => setSaving(false), 1500);

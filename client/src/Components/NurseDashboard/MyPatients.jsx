@@ -111,16 +111,16 @@ function MyPatients() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   My Patients
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   Managing {mockPatients.length} active patients
                 </p>
               </div>
@@ -128,12 +128,12 @@ function MyPatients() {
                 <input
                   type="text"
                   placeholder="Search patients..."
-                  className="px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                  className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <select
-                  className="px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                  className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -158,8 +158,8 @@ function MyPatients() {
                   }`}
                 >
                   <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center m-3">
-                      <span className="font-poppins font-medium text-[#2c4ecf]">
+                    <div className="w-10 h-10 rounded-full bg-line flex items-center justify-center m-3">
+                      <span className="font-poppins font-medium text-primary">
                         {patient.name
                           .split(" ")
                           .map((n) => n[0])
@@ -167,10 +167,10 @@ function MyPatients() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                      <h3 className="font-poppins text-lg font-semibold text-primary">
                         {patient.name}
                       </h3>
-                      <p className="font-poppins text-sm text-[#4a5568]">
+                      <p className="font-poppins text-sm text-ink">
                         Room {patient.room}
                       </p>
                     </div>
@@ -178,21 +178,19 @@ function MyPatients() {
 
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="text-center">
-                      <p className="font-poppins text-sm text-[#4a5568]">
-                        Temp
-                      </p>
+                      <p className="font-poppins text-sm text-ink">Temp</p>
                       <p className="font-poppins font-semibold">
                         {patient.vitals.temperature}
                       </p>
                     </div>
                     <div className="text-center">
-                      <p className="font-poppins text-sm text-[#4a5568]">BP</p>
+                      <p className="font-poppins text-sm text-ink">BP</p>
                       <p className="font-poppins font-semibold">
                         {patient.vitals.bloodPressure}
                       </p>
                     </div>
                     <div className="text-center">
-                      <p className="font-poppins text-sm text-[#4a5568]">HR</p>
+                      <p className="font-poppins text-sm text-ink">HR</p>
                       <p className="font-poppins font-semibold">
                         {patient.vitals.heartRate}
                       </p>
@@ -200,26 +198,26 @@ function MyPatients() {
                   </div>
 
                   <div className="flex justify-between text-sm mb-4">
-                    <p className="font-poppins text-[#4a5568]">
+                    <p className="font-poppins text-ink">
                       Last Med:{" "}
                       {new Date(patient.lastMedication).toLocaleTimeString()}
                     </p>
-                    <p className="font-poppins text-[#4a5568]">
+                    <p className="font-poppins text-ink">
                       Next Check:{" "}
                       {new Date(patient.nextCheck).toLocaleTimeString()}
                     </p>
                   </div>
 
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
+                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
                       <FontAwesomeIcon icon={faHeartbeat} className="mr-2" />
                       Update Vitals
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
+                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
                       <FontAwesomeIcon icon={faNotesMedical} className="mr-2" />
                       Add Notes
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff]">
+                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
                       <FontAwesomeIcon icon={faEye} className="mr-2" />
                       Details
                     </button>
@@ -229,15 +227,15 @@ function MyPatients() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-                <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+                <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                   Upcoming Tasks
                 </h2>
                 <div className="space-y-4">
                   {upcomingTasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+                      className="flex items-center justify-between p-4 bg-surface rounded-lg"
                     >
                       <div className="flex items-center">
                         <FontAwesomeIcon
@@ -246,13 +244,13 @@ function MyPatients() {
                               ? faPills
                               : faClipboardCheck
                           }
-                          className={`text-[#2c4ecf] text-xl mr-4`}
+                          className={`text-primary text-xl mr-4`}
                         />
                         <div>
                           <p className="font-poppins font-semibold">
                             {task.patient}
                           </p>
-                          <p className="font-poppins text-sm text-[#4a5568]">
+                          <p className="font-poppins text-sm text-ink">
                             {task.description}
                           </p>
                         </div>
@@ -278,15 +276,15 @@ function MyPatients() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-                <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+                <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                   Recent Updates
                 </h2>
                 <div className="space-y-4">
                   {recentUpdates.map((update) => (
                     <div
                       key={update.id}
-                      className="flex items-center p-4 bg-[#f8faff] rounded-lg"
+                      className="flex items-center p-4 bg-surface rounded-lg"
                     >
                       <FontAwesomeIcon
                         icon={
@@ -296,18 +294,18 @@ function MyPatients() {
                             ? faFileMedical
                             : faCommentMedical
                         }
-                        className={`text-[#2c4ecf] text-xl mr-4`}
+                        className={`text-primary text-xl mr-4`}
                       />
                       <div className="flex-1">
                         <div className="flex justify-between">
                           <p className="font-poppins font-semibold">
                             {update.patient}
                           </p>
-                          <p className="font-poppins text-sm text-[#4a5568]">
+                          <p className="font-poppins text-sm text-ink">
                             {update.time}
                           </p>
                         </div>
-                        <p className="font-poppins text-sm text-[#4a5568]">
+                        <p className="font-poppins text-sm text-ink">
                           {update.description}
                         </p>
                       </div>

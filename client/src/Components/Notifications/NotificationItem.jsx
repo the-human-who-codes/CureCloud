@@ -15,14 +15,14 @@ function NotificationItem({ notification, handleMarkAsRead }) {
 
   return (
     <div
-      className={`bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff] ${
+      className={`bg-white rounded-xl p-6 shadow-sm border border-line ${
         !notification.read ? "border-l-4" : ""
       } ${
         notification.priority === "urgent"
           ? "border-l-red-500"
           : notification.priority === "important"
           ? "border-l-yellow-500"
-          : "border-l-[#2c4ecf]"
+          : "border-l-primary"
       }`}
     >
       <div className="flex items-start gap-4">
@@ -34,30 +34,30 @@ function NotificationItem({ notification, handleMarkAsRead }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-poppins font-semibold text-[#2c4ecf]">
+                <h3 className="font-poppins font-semibold text-primary">
                   {notification.title}
                 </h3>
                 {!notification.read && (
-                  <span className="w-2 h-2 rounded-full bg-[#2c4ecf]"></span>
+                  <span className="w-2 h-2 rounded-full bg-primary"></span>
                 )}
               </div>
-              <p className="font-poppins text-sm text-[#4a5568] mt-1">
+              <p className="font-poppins text-sm text-ink mt-1">
                 {notification.description}
               </p>
               {notification.senderName && (
-                <p className="font-poppins text-xs text-[#4a5568] mt-2">
+                <p className="font-poppins text-xs text-ink mt-2">
                   From: {notification.senderName}
                 </p>
               )}
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-poppins text-xs text-[#4a5568]">
+              <span className="font-poppins text-xs text-ink">
                 {formatDate(notification.createdAt)}
               </span>
               {!notification.read && (
                 <button
                   onClick={() => handleMarkAsRead(notification.id)}
-                  className="mt-2 text-sm text-[#2c4ecf] hover:text-[#1a3baf]"
+                  className="mt-2 text-sm text-primary hover:text-primary-dark"
                 >
                   Mark as read
                 </button>

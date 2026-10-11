@@ -38,13 +38,13 @@ function StaffSignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8faff] to-[#e6eaff] flex items-center justify-center p-6">
-      <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-8 max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-surface to-surface-tint flex items-center justify-center p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-line p-8 max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="font-poppins text-3xl font-bold text-[#2c4ecf] mb-2">
+          <h1 className="font-poppins text-3xl font-bold text-primary mb-2">
             Join CureCloud
           </h1>
-          <p className="font-poppins text-[#4a5568]">
+          <p className="font-poppins text-ink">
             Create your account to get started
           </p>
         </div>
@@ -58,14 +58,14 @@ function StaffSignUp() {
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Full Name
               </label>
               <input
                 type="text"
                 name="fullName"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={(e) =>
@@ -75,14 +75,14 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 National ID Number
               </label>
               <input
                 type="text"
                 name="nationalId"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Enter your ID number"
                 value={formData.nationalId}
                 onChange={(e) =>
@@ -92,14 +92,14 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) =>
@@ -109,14 +109,14 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Phone Number
               </label>
               <input
                 type="tel"
                 name="phoneNumber"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Enter your phone number"
                 value={formData.phoneNumber}
                 onChange={(e) =>
@@ -126,13 +126,13 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Role
               </label>
               <select
                 name="role"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 value={formData.role}
                 onChange={(e) =>
                   setFormData({ ...formData, role: e.target.value })
@@ -145,14 +145,14 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Password
               </label>
               <input
                 type="password"
                 name="password"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={(e) =>
@@ -162,14 +162,14 @@ function StaffSignUp() {
             </div>
 
             <div>
-              <label className="block font-poppins text-sm text-[#4a5568] mb-2">
+              <label className="block font-poppins text-sm text-ink mb-2">
                 Confirm Password
               </label>
               <input
                 type="password"
                 name="confirmPassword"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
+                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={(e) =>
@@ -182,15 +182,15 @@ function StaffSignUp() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-8 px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 disabled:opacity-50"
+            className="w-full mt-8 px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 disabled:opacity-50"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center font-poppins text-sm text-[#4a5568]">
+        <p className="mt-6 text-center font-poppins text-sm text-ink">
           Already have an account?{" "}
-          <a href="/login" className="text-[#2c4ecf] hover:underline">
+          <a href="/login" className="text-primary hover:underline">
             Sign in
           </a>
         </p>

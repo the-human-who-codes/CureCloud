@@ -9,12 +9,12 @@ function Analytics() {
       ].map((title) => (
         <div
           key={title}
-          className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
+          className="bg-white rounded-xl p-6 shadow-sm border border-line"
         >
-          <h2 className="font-poppins text-lg font-semibold text-[#2c4ecf] mb-4">
+          <h2 className="font-poppins text-lg font-semibold text-primary mb-4">
             {title}
           </h2>
-          <div className="h-[200px] bg-[#f8faff] rounded-lg"></div>
+          <div className="h-[200px] bg-surface rounded-lg"></div>
         </div>
       ))}
     </div>

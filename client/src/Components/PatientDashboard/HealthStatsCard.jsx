@@ -8,17 +8,15 @@ import {
 import PropTypes from "prop-types";
 
 const HealthStatsCard = ({ statKey, value }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+  <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
     <div className="flex items-center justify-between">
       <div>
-        <p className="font-poppins text-[#4a5568] text-sm">
+        <p className="font-poppins text-ink text-sm">
           {statKey.replace(/([A-Z])/g, " $1").trim()}
         </p>
-        <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-          {value}
-        </p>
+        <p className="font-poppins text-2xl font-bold text-primary">{value}</p>
       </div>
-      <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+      <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
         <FontAwesomeIcon
           icon={
             statKey === "bloodPressure"
@@ -29,7 +27,7 @@ const HealthStatsCard = ({ statKey, value }) => (
               ? faWeight
               : faTint
           }
-          className="text-[#2c4ecf] text-xl"
+          className="text-primary text-xl"
         />
       </div>
     </div>

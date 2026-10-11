@@ -7,48 +7,48 @@ function AppointmentsTable({ appointments, onConfirm, onCancel }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="bg-[#f8faff]">
+        <thead className="bg-surface">
           <tr>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Patient
             </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Doctor
             </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Date & Time
             </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Type
             </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Status
             </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-[#4a5568]">
+            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
               Actions
             </th>
           </tr>
         </thead>
         <tbody>
           {appointments.map((appointment) => (
-            <tr key={appointment.id} className="border-t border-[#e1e8ff]">
+            <tr key={appointment.id} className="border-t border-line">
               <td className="px-6 py-4 flex items-center">
                 <img
                   src={appointment.patientImage}
                   alt={appointment.patientName}
                   className="w-8 h-8 rounded-full mr-3"
                 />
-                <span className="font-poppins text-[#4a5568]">
+                <span className="font-poppins text-ink">
                   {appointment.patientName}
                 </span>
               </td>
-              <td className="px-6 py-4 font-poppins text-[#4a5568]">
+              <td className="px-6 py-4 font-poppins text-ink">
                 {appointment.doctorName}
               </td>
-              <td className="px-6 py-4 font-poppins text-[#4a5568]">
+              <td className="px-6 py-4 font-poppins text-ink">
                 {appointment.date} {appointment.time}
               </td>
-              <td className="px-6 py-4 font-poppins text-[#4a5568]">
+              <td className="px-6 py-4 font-poppins text-ink">
                 {appointment.type}
               </td>
               <td className="px-6 py-4">
@@ -72,7 +72,7 @@ function AppointmentsTable({ appointments, onConfirm, onCancel }) {
                     <button
                       title="Confirm"
                       onClick={() => onConfirm(appointment.id)}
-                      className="p-2 text-green-600 hover:bg-[#f8faff] rounded-lg"
+                      className="p-2 text-green-600 hover:bg-surface rounded-lg"
                     >
                       <FontAwesomeIcon icon={faCheck} />
                     </button>
@@ -81,7 +81,7 @@ function AppointmentsTable({ appointments, onConfirm, onCancel }) {
                     <button
                       title="Cancel"
                       onClick={() => onCancel(appointment.id)}
-                      className="p-2 text-red-500 hover:bg-[#f8faff] rounded-lg"
+                      className="p-2 text-red-500 hover:bg-surface rounded-lg"
                     >
                       <FontAwesomeIcon icon={faTimes} />
                     </button>

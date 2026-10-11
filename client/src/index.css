@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @import "font-awesome/css/font-awesome.min.css";
+
+/* CureCloud design tokens: bg-primary, text-ink, border-line, bg-surface, ... */
+@theme {
+  --color-primary: #2c4ecf;
+  --color-primary-hover: #2341b0;
+  --color-primary-dark: #1a3baf;
+  --color-surface: #f8faff;
+  --color-surface-tint: #e6eaff;
+  --color-line: #e1e8ff;
+  --color-ink: #4a5568;
+  --color-ink-muted: #718096;
+}

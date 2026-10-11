@@ -13,9 +13,7 @@ const getIcon = (key) => {
     upcomingMedications: faPills,
     criticalAlerts: faExclamationTriangle,
   };
-  return (
-    <FontAwesomeIcon icon={icons[key]} className="text-[#2c4ecf] text-xl" />
-  );
+  return <FontAwesomeIcon icon={icons[key]} className="text-primary text-xl" />;
 };
 
 const QuickStats = ({ stats }) => {
@@ -28,16 +26,16 @@ const QuickStats = ({ stats }) => {
       {Object.entries(stats).map(([key, value]) => (
         <div
           key={key}
-          className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
+          className="bg-white rounded-xl p-6 shadow-sm border border-line"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-[#4a5568]">
+              <p className="text-sm text-ink">
                 {key.replace(/([A-Z])/g, " $1")}
               </p>
-              <p className="text-2xl font-bold text-[#2c4ecf]">{value}</p>
+              <p className="text-2xl font-bold text-primary">{value}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
               {getIcon(key)}
             </div>
           </div>

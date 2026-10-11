@@ -9,10 +9,12 @@ function ContinueButton({ selectedRole, isLoading, onClick, roles }) {
       onClick={onClick}
       disabled={!selectedRole || isLoading}
       className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-max md:w-auto px-8 py-4 
-        bg-[#2c4ecf] text-white rounded-xl font-poppins transition-all duration-200 
+        bg-primary text-white rounded-xl font-poppins transition-all duration-200 
         inline-flex items-center gap-3 shadow-lg whitespace-nowrap
         ${
-          !selectedRole ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1a3baf]"
+          !selectedRole
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-primary-dark"
         }
       `}
     >

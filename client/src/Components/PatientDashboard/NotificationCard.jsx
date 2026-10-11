@@ -18,13 +18,13 @@ const NotificationCard = ({ notification }) => (
             ? faCalendarAlt
             : faPrescriptionBottle
         }
-        className="text-[#2c4ecf] mt-1 mr-3"
+        className="text-primary mt-1 mr-3"
       />
       <div>
-        <p className="font-poppins text-sm font-medium text-[#2c4ecf]">
+        <p className="font-poppins text-sm font-medium text-primary">
           {notification.title}
         </p>
-        <p className="font-poppins text-sm text-[#4a5568]">
+        <p className="font-poppins text-sm text-ink">
           {notification.description}
         </p>
       </div>

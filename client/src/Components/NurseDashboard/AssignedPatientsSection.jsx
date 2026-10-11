@@ -1,15 +1,15 @@
 import PropTypes from "prop-types";
 
 const AssignedPatientsSection = ({ patients }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-    <h2 className="text-xl font-semibold text-[#2c4ecf] mb-4">
+  <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+    <h2 className="text-xl font-semibold text-primary mb-4">
       Assigned Patients
     </h2>
     <div className="grid gap-4">
       {patients.map((patient) => (
         <div
           key={patient.id}
-          className="flex items-center justify-between p-4 bg-[#f8faff] rounded-lg"
+          className="flex items-center justify-between p-4 bg-surface rounded-lg"
         >
           <div className="flex items-center space-x-4">
             <img
@@ -18,8 +18,8 @@ const AssignedPatientsSection = ({ patients }) => (
               className="w-12 h-12 rounded-full object-cover"
             />
             <div>
-              <p className="text-[#2c4ecf] font-medium">{patient.name}</p>
-              <p className="text-sm text-[#4a5568]">Room {patient.room}</p>
+              <p className="text-primary font-medium">{patient.name}</p>
+              <p className="text-sm text-ink">Room {patient.room}</p>
             </div>
           </div>
         </div>

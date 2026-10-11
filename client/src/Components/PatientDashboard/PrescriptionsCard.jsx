@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 
 const PrescriptionCard = ({ prescription }) => (
-  <div className="p-3 bg-[#f8faff] rounded-lg">
-    <p className="font-poppins font-medium text-[#2c4ecf]">
+  <div className="p-3 bg-surface rounded-lg">
+    <p className="font-poppins font-medium text-primary">
       {prescription.medication}
     </p>
-    <p className="font-poppins text-sm text-[#4a5568]">
+    <p className="font-poppins text-sm text-ink">
       {prescription.dosage} - {prescription.frequency}
     </p>
   </div>

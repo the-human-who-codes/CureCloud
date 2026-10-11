@@ -96,16 +96,16 @@ function Tasks() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   My Tasks
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   {new Date().toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
@@ -114,7 +114,7 @@ function Tasks() {
                   })}
                 </p>
               </div>
-              <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins hover:bg-[#1a3baf] transition-colors duration-200">
+              <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins hover:bg-primary-dark transition-colors duration-200">
                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
                 Add New Task
               </button>
@@ -124,18 +124,18 @@ function Tasks() {
               {Object.entries(mockData.taskSummary).map(([key, value]) => (
                 <div
                   key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
+                  className="bg-white rounded-xl p-6 shadow-sm border border-line"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-poppins text-[#4a5568] text-sm">
+                      <p className="font-poppins text-ink text-sm">
                         {key.charAt(0).toUpperCase() + key.slice(1)} Tasks
                       </p>
-                      <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                      <p className="font-poppins text-2xl font-bold text-primary">
                         {value}
                       </p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
                       <FontAwesomeIcon
                         icon={
                           key === "urgent"
@@ -150,7 +150,7 @@ function Tasks() {
                             ? faTasks
                             : faCheckCircle
                         }
-                        className="text-[#2c4ecf] text-xl"
+                        className="text-primary text-xl"
                       />
                     </div>
                   </div>
@@ -160,16 +160,16 @@ function Tasks() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6 mb-8">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf]">
+                    <h2 className="font-poppins text-xl font-semibold text-primary">
                       Active Tasks
                     </h2>
                     <div className="flex gap-4">
                       <select
                         value={selectedPriority}
                         onChange={(e) => setSelectedPriority(e.target.value)}
-                        className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
+                        className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
                       >
                         <option value="all">All Priorities</option>
                         <option value="urgent">Urgent</option>
@@ -180,7 +180,7 @@ function Tasks() {
                       <select
                         value={selectedTimeframe}
                         onChange={(e) => setSelectedTimeframe(e.target.value)}
-                        className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
+                        className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
                       >
                         <option value="today">Today</option>
                         <option value="tomorrow">Tomorrow</option>
@@ -202,12 +202,12 @@ function Tasks() {
                               : priority === "medium"
                               ? "border-l-yellow-500"
                               : "border-l-blue-500"
-                          } bg-[#f8faff]`}
+                          } bg-surface`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                              <div className="m-3 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
-                                <span className="font-poppins font-medium text-[#2c4ecf]">
+                              <div className="m-3 w-10 h-10 rounded-full bg-line flex items-center justify-center">
+                                <span className="font-poppins font-medium text-primary">
                                   {task.patient.name
                                     .split(" ")
                                     .map((n) => n[0])
@@ -215,16 +215,16 @@ function Tasks() {
                                 </span>
                               </div>
                               <div>
-                                <h3 className="font-poppins font-semibold text-[#2c4ecf]">
+                                <h3 className="font-poppins font-semibold text-primary">
                                   {task.patient.name}
                                 </h3>
-                                <p className="font-poppins text-sm text-[#4a5568]">
+                                <p className="font-poppins text-sm text-ink">
                                   Room {task.patient.room}
                                 </p>
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-poppins text-sm text-[#4a5568]">
+                              <p className="font-poppins text-sm text-ink">
                                 {new Date(task.dueAt).toLocaleTimeString()}
                               </p>
                               <span
@@ -244,22 +244,22 @@ function Tasks() {
                             </div>
                           </div>
                           <div className="mt-3">
-                            <p className="font-poppins text-[#4a5568]">
+                            <p className="font-poppins text-ink">
                               {task.description}
                             </p>
                           </div>
                           <div className="mt-3 flex justify-between items-center">
-                            <span className="font-poppins text-sm text-[#4a5568]">
+                            <span className="font-poppins text-sm text-ink">
                               {task.type}
                             </span>
                             <div className="flex gap-2">
-                              <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
+                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
                                 <FontAwesomeIcon icon={faCheck} />
                               </button>
-                              <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
+                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
                                 <FontAwesomeIcon icon={faClock} />
                               </button>
-                              <button className="p-2 text-[#4a5568] hover:bg-white rounded-lg transition-colors duration-200">
+                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
                                 <FontAwesomeIcon icon={faEllipsisH} />
                               </button>
                             </div>
@@ -272,26 +272,26 @@ function Tasks() {
               </div>
 
               <div>
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6 mb-8">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Today&apos;s Schedule
                   </h2>
                   <div className="space-y-4">
                     {mockData.todaySchedule.map((schedule, index) => (
                       <div
                         key={index}
-                        className="flex items-center p-3 bg-[#f8faff] rounded-lg"
+                        className="flex items-center p-3 bg-surface rounded-lg"
                       >
                         <div className="w-16 text-center">
-                          <p className="font-poppins font-semibold text-[#2c4ecf]">
+                          <p className="font-poppins font-semibold text-primary">
                             {schedule.time}
                           </p>
                         </div>
                         <div className="flex-1 ml-4">
-                          <p className="font-poppins text-[#4a5568]">
+                          <p className="font-poppins text-ink">
                             {schedule.description}
                           </p>
-                          <p className="font-poppins text-sm text-[#4a5568]">
+                          <p className="font-poppins text-sm text-ink">
                             {schedule.count} tasks
                           </p>
                         </div>
@@ -300,20 +300,17 @@ function Tasks() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Recently Completed
                   </h2>
                   <div className="space-y-4">
                     {mockData.completedTasks.map((task) => (
-                      <div
-                        key={task.id}
-                        className="p-3 bg-[#f8faff] rounded-lg"
-                      >
+                      <div key={task.id} className="p-3 bg-surface rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <div className="mr-2 w-10 h-10 rounded-full bg-[#e1e8ff] flex items-center justify-center">
-                              <span className="font-poppins font-medium text-[#2c4ecf]">
+                            <div className="mr-2 w-10 h-10 rounded-full bg-line flex items-center justify-center">
+                              <span className="font-poppins font-medium text-primary">
                                 {task.patient.name
                                   .split(" ")
                                   .map((n) => n[0])
@@ -321,15 +318,15 @@ function Tasks() {
                               </span>
                             </div>
                             <div>
-                              <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                              <p className="font-poppins text-sm font-semibold text-primary">
                                 {task.patient.name}
                               </p>
-                              <p className="font-poppins text-xs text-[#4a5568]">
+                              <p className="font-poppins text-xs text-ink">
                                 {task.type}
                               </p>
                             </div>
                           </div>
-                          <p className="font-poppins text-xs text-[#4a5568]">
+                          <p className="font-poppins text-xs text-ink">
                             {new Date(task.completedAt).toLocaleTimeString()}
                           </p>
                         </div>

@@ -17,11 +17,11 @@ const SearchBar = ({ searchTerm, onSearch, setSearchTerm }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search patients, appointments, records..."
-          className="w-full px-4 py-2 pl-10 bg-[#f8faff] border border-[#e1e8ff] rounded-lg focus:outline-none focus:border-[#2c4ecf] font-poppins"
+          className="w-full px-4 py-2 pl-10 bg-surface border border-line rounded-lg focus:outline-none focus:border-primary font-poppins"
         />
         <FontAwesomeIcon
           icon={faSearch}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a5568]"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-ink"
         />
       </div>
     </form>

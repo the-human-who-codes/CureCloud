@@ -3,22 +3,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 const ScheduleOverview = ({ profileData }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
+    <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-6">
         <FontAwesomeIcon icon={faClock} className="fas mr-2" />
         Schedule Overview
       </h2>
       <div className="space-y-6">
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Working Hours</p>
+          <p className="font-poppins text-sm text-ink">Working Hours</p>
           <p className="font-poppins text-lg">
             {profileData.schedule.workingHours}
           </p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">
-            Available Time Slots
-          </p>
+          <p className="font-poppins text-sm text-ink">Available Time Slots</p>
           {profileData.schedule.availableSlots.map((slot, index) => (
             <p key={index} className="font-poppins text-lg mt-2">
               {slot}
@@ -26,7 +24,7 @@ const ScheduleOverview = ({ profileData }) => {
           ))}
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">
+          <p className="font-poppins text-sm text-ink">
             Preferred Appointment Duration
           </p>
           <p className="font-poppins text-lg">

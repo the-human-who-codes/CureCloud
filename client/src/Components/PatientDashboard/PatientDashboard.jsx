@@ -30,15 +30,15 @@ function PatientDashBoard() {
   const healthStats = healthStatsFromVitals(patient?.vitals);
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-[1920px] mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+              <h1 className="font-poppins text-2xl font-bold text-primary">
                 Welcome back, {user?.name}
               </h1>
-              <p className="font-poppins text-[#4a5568]">
+              <p className="font-poppins text-ink">
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
                   year: "numeric",
@@ -58,8 +58,8 @@ function PatientDashBoard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <div className="lg:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Upcoming Appointments
                   </h2>
                   <div className="space-y-4">
@@ -75,8 +75,8 @@ function PatientDashBoard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Current Prescriptions
                   </h2>
                   <div className="space-y-4">
@@ -98,10 +98,10 @@ function PatientDashBoard() {
             </div>
 
             <div>
-              <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+              <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                 Quick Actions
               </h2>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
                 <div className="space-y-4">
                   {[
                     {
@@ -126,8 +126,8 @@ function PatientDashBoard() {
                 </div>
               </div>
 
-              <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-                <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+              <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-line">
+                <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                   Notifications
                 </h2>
                 <div className="space-y-4">

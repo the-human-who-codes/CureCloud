@@ -11,7 +11,7 @@ function RequireRole({ role, children }) {
   // Right after sign-in, Firebase knows the user before the profile has loaded into context.
   const syncing = auth.currentUser?.uid !== firebaseUser?.uid;
   if (loading || syncing)
-    return <div className="p-8 font-poppins text-[#4a5568]">Loading…</div>;
+    return <div className="p-8 font-poppins text-ink">Loading…</div>;
   if (!firebaseUser) return <Navigate to="/" replace />;
   if (error) {
     return (
@@ -24,7 +24,7 @@ function RequireRole({ role, children }) {
   }
   if (user.status !== "active") {
     return (
-      <div className="p-8 font-poppins text-[#4a5568]">
+      <div className="p-8 font-poppins text-ink">
         {user.status === "pending"
           ? "Your account is awaiting admin approval."
           : "Your account has been disabled. Contact an administrator."}

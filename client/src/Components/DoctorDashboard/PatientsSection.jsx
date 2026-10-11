@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const PatientsSection = ({ patients }) => {
   return (
     <div className="lg:col-span-2">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
         Recent Patients
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -95,12 +95,12 @@ function Messages() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 flex flex-col md:flex-row">
-          <div className="w-full md:w-[320px] lg:w-[380px] border-r border-[#e1e8ff] bg-white">
+          <div className="w-full md:w-[320px] lg:w-[380px] border-r border-line bg-white">
             <div className="p-6">
-              <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf] mb-6">
+              <h1 className="font-poppins text-2xl font-bold text-primary mb-6">
                 Patient Messages
               </h1>
 
@@ -108,12 +108,12 @@ function Messages() {
                 {Object.entries(mockData.messageStats).map(([key, value]) => (
                   <div
                     key={key}
-                    className="bg-[#f8faff] rounded-xl p-4 border border-[#e1e8ff]"
+                    className="bg-surface rounded-xl p-4 border border-line"
                   >
-                    <p className="font-poppins text-sm text-[#4a5568]">
+                    <p className="font-poppins text-sm text-ink">
                       {key.charAt(0).toUpperCase() + key.slice(1)}
                     </p>
-                    <p className="font-poppins text-xl font-bold text-[#2c4ecf]">
+                    <p className="font-poppins text-xl font-bold text-primary">
                       {value}
                     </p>
                   </div>
@@ -124,11 +124,11 @@ function Messages() {
                 <input
                   type="text"
                   placeholder="Search conversations..."
-                  className="w-full pl-10 pr-4 py-2 border border-[#e1e8ff] rounded-lg focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#4a5568]"></i>
+                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink"></i>
               </div>
 
               <div className="space-y-4">
@@ -138,8 +138,8 @@ function Messages() {
                     onClick={() => setSelectedConversation(conv)}
                     className={`p-4 rounded-xl border ${
                       selectedConversation?.id === conv.id
-                        ? "border-[#2c4ecf] bg-[#f8faff]"
-                        : "border-[#e1e8ff] hover:border-[#2c4ecf]"
+                        ? "border-primary bg-surface"
+                        : "border-line hover:border-primary"
                     } cursor-pointer transition-colors duration-200`}
                   >
                     <div className="flex items-center gap-4">
@@ -150,18 +150,18 @@ function Messages() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-poppins font-semibold text-[#2c4ecf] truncate">
+                          <h3 className="font-poppins font-semibold text-primary truncate">
                             {conv.patient.name}
                           </h3>
-                          <span className="font-poppins text-xs text-[#4a5568]">
+                          <span className="font-poppins text-xs text-ink">
                             {formatTimestamp(conv.lastMessage.timestamp)}
                           </span>
                         </div>
-                        <p className="font-poppins text-sm text-[#4a5568] truncate">
+                        <p className="font-poppins text-sm text-ink truncate">
                           {conv.lastMessage.content}
                         </p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="px-2 py-0.5 bg-[#e1e8ff] text-[#2c4ecf] rounded-full text-xs">
+                          <span className="px-2 py-0.5 bg-line text-primary rounded-full text-xs">
                             Room {conv.patient.room}
                           </span>
                           {conv.lastMessage.isUrgent && (
@@ -181,7 +181,7 @@ function Messages() {
           <div className="flex-1 flex flex-col bg-white">
             {selectedConversation ? (
               <>
-                <div className="p-6 border-b border-[#e1e8ff]">
+                <div className="p-6 border-b border-line">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <img
@@ -190,22 +190,22 @@ function Messages() {
                         className="w-12 h-12 rounded-full object-cover"
                       />
                       <div>
-                        <h2 className="font-poppins font-semibold text-[#2c4ecf]">
+                        <h2 className="font-poppins font-semibold text-primary">
                           {selectedConversation.patient.name}
                         </h2>
-                        <p className="font-poppins text-sm text-[#4a5568]">
+                        <p className="font-poppins text-sm text-ink">
                           Room {selectedConversation.patient.room}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
+                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
                         <i className="fas fa-phone"></i>
                       </button>
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
+                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
                         <i className="fas fa-video"></i>
                       </button>
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
+                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
                         <i className="fas fa-ellipsis-v"></i>
                       </button>
                     </div>
@@ -218,22 +218,22 @@ function Messages() {
                   </div>
                 </div>
 
-                <div className="p-6 border-t border-[#e1e8ff]">
+                <div className="p-6 border-t border-line">
                   <div className="flex items-end gap-4">
                     <div className="flex-1 relative">
                       <textarea
                         placeholder="Type your message..."
-                        className="w-full p-4 border border-[#e1e8ff] rounded-lg focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent resize-none"
+                        className="w-full p-4 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                         rows="3"
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
                       ></textarea>
                       <div className="absolute bottom-2 right-2 flex gap-2">
-                        <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
+                        <button className="p-2 text-ink hover:bg-surface rounded-lg">
                           <i className="fas fa-paperclip"></i>
                         </button>
                         <button
-                          className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+                          className="p-2 text-ink hover:bg-surface rounded-lg"
                           onClick={() =>
                             setShowQuickResponses(!showQuickResponses)
                           }
@@ -242,7 +242,7 @@ function Messages() {
                         </button>
                       </div>
                     </div>
-                    <button className="px-6 py-4 bg-[#2c4ecf] text-white rounded-lg font-poppins hover:bg-[#2341b0] transition-colors duration-200">
+                    <button className="px-6 py-4 bg-primary text-white rounded-lg font-poppins hover:bg-primary-hover transition-colors duration-200">
                       Send
                     </button>
                   </div>
@@ -251,8 +251,8 @@ function Messages() {
             ) : (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <i className="fas fa-comments text-6xl text-[#2c4ecf]/20 mb-4"></i>
-                  <p className="font-poppins text-[#4a5568]">
+                  <i className="fas fa-comments text-6xl text-primary/20 mb-4"></i>
+                  <p className="font-poppins text-ink">
                     Select a conversation to start messaging
                   </p>
                 </div>
@@ -260,22 +260,22 @@ function Messages() {
             )}
           </div>
 
-          <div className="hidden lg:block w-[300px] border-l border-[#e1e8ff] bg-white p-6">
+          <div className="hidden lg:block w-[300px] border-l border-line bg-white p-6">
             <div className="space-y-6">
               <div>
-                <h3 className="font-poppins font-semibold text-[#2c4ecf] mb-4">
+                <h3 className="font-poppins font-semibold text-primary mb-4">
                   Quick Responses
                 </h3>
                 <div className="space-y-2">
                   {mockData.quickResponses.map((response) => (
                     <button
                       key={response.id}
-                      className="w-full p-3 text-left bg-[#f8faff] hover:bg-[#e1e8ff] rounded-lg transition-colors duration-200"
+                      className="w-full p-3 text-left bg-surface hover:bg-line rounded-lg transition-colors duration-200"
                     >
-                      <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                      <p className="font-poppins text-sm font-semibold text-primary">
                         {response.title}
                       </p>
-                      <p className="font-poppins text-xs text-[#4a5568] mt-1">
+                      <p className="font-poppins text-xs text-ink mt-1">
                         {response.content}
                       </p>
                     </button>
@@ -284,25 +284,25 @@ function Messages() {
               </div>
 
               <div>
-                <h3 className="font-poppins font-semibold text-[#2c4ecf] mb-4">
+                <h3 className="font-poppins font-semibold text-primary mb-4">
                   Recent Attachments
                 </h3>
                 <div className="space-y-2">
                   {mockData.recentAttachments.map((attachment) => (
                     <div
                       key={attachment.id}
-                      className="flex items-center gap-3 p-3 bg-[#f8faff] rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-surface rounded-lg"
                     >
                       <i
                         className={`fas fa-${
                           attachment.type === "pdf" ? "file-pdf" : "file-word"
-                        } text-[#2c4ecf]`}
+                        } text-primary`}
                       ></i>
                       <div className="flex-1 min-w-0">
-                        <p className="font-poppins text-sm font-semibold text-[#2c4ecf] truncate">
+                        <p className="font-poppins text-sm font-semibold text-primary truncate">
                           {attachment.name}
                         </p>
-                        <p className="font-poppins text-xs text-[#4a5568]">
+                        <p className="font-poppins text-xs text-ink">
                           {attachment.size}
                         </p>
                       </div>

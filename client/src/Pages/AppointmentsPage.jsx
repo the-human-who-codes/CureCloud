@@ -38,7 +38,7 @@ function AppointmentsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <AppointmentsHeader />
         <AppointmentsFilters

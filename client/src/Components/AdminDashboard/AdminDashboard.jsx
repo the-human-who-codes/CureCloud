@@ -17,7 +17,7 @@ function AdminDashboard() {
   return (
     <>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+        <h1 className="font-poppins text-2xl font-bold text-primary">
           Admin Dashboard
         </h1>
       </div>

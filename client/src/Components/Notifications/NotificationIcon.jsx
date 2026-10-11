@@ -39,7 +39,7 @@ function NotificationIcon({ type, priority }) {
             ? "text-red-500"
             : priority === "important"
             ? "text-yellow-600"
-            : "text-[#2c4ecf]"
+            : "text-primary"
         }`}
       />
     </div>

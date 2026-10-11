@@ -2,12 +2,12 @@ import PropTypes from "prop-types";
 import { capitalize } from "../../utils/format";
 
 const AppointmentCard = ({ appointment }) => (
-  <div className="flex items-center justify-between p-3 bg-[#f8faff] rounded-lg">
+  <div className="flex items-center justify-between p-3 bg-surface rounded-lg">
     <div>
-      <p className="font-poppins font-medium text-[#2c4ecf]">
+      <p className="font-poppins font-medium text-primary">
         {appointment.type}
       </p>
-      <p className="font-poppins text-sm text-[#4a5568]">
+      <p className="font-poppins text-sm text-ink">
         {appointment.date} {appointment.time}
       </p>
     </div>

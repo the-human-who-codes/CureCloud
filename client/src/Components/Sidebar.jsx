@@ -95,20 +95,20 @@ function Sidebar({ userRole = "doctor" }) {
     <>
       {/* Desktop Sidebar (Hidden on small screens) */}
       <div
-        className={`hidden md:flex min-h-screen bg-[#f8faff] ${
+        className={`hidden md:flex min-h-screen bg-surface ${
           isCollapsed ? "w-20" : "w-fit"
         } transition-all duration-300 shadow-lg z-[100] overflow-y-auto`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 flex items-center justify-between border-b border-[#e1e8ff]">
+          <div className="p-4 flex items-center justify-between border-b border-line">
             {!isCollapsed && (
-              <h1 className="text-[#2c4ecf] font-poppins font-bold text-xl">
+              <h1 className="text-primary font-poppins font-bold text-xl">
                 CureCloud
               </h1>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="text-[#2c4ecf] hover:text-[#1a3baf] p-2 rounded-lg"
+              className="text-primary hover:text-primary-dark p-2 rounded-lg"
             >
               <FontAwesomeIcon
                 icon={isCollapsed ? faAngleRight : faAngleLeft}
@@ -125,8 +125,8 @@ function Sidebar({ userRole = "doctor" }) {
                     className={({ isActive }) =>
                       `flex items-center p-3 rounded-lg transition-all duration-200 ${
                         isActive
-                          ? "bg-[#2c4ecf] text-white"
-                          : "text-[#4a5568] hover:bg-[#e1e8ff]"
+                          ? "bg-primary text-white"
+                          : "text-ink hover:bg-line"
                       }`
                     }
                   >
@@ -152,8 +152,8 @@ function Sidebar({ userRole = "doctor" }) {
               className={({ isActive }) =>
                 `flex flex-col items-center text-sm p-2 ${
                   isActive
-                    ? "text-[#2c4ecf]"
-                    : "text-gray-500 hover:text-[#1a3baf]"
+                    ? "text-primary"
+                    : "text-gray-500 hover:text-primary-dark"
                 }`
               }
             >

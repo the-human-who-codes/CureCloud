@@ -14,7 +14,7 @@ const NotificationBell = ({ notificationCount }) => {
     <div className="relative">
       <button
         onClick={handleClick}
-        className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+        className="p-2 text-ink hover:bg-surface rounded-lg"
       >
         <FontAwesomeIcon icon={faBell} className="text-xl" />
         {notificationCount > 0 && (

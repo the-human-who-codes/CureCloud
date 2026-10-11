@@ -6,8 +6,8 @@ import AppointmentCard from "./AppointmentCard";
 const UpcomingAppointmentsCard = () => {
   const appointments = useApi(() => api.listAppointments({ upcoming: "true" }));
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
         Upcoming Appointments
       </h2>
       <div className="space-y-4">

@@ -62,15 +62,15 @@ function RoleSelection() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8faff] to-[#e6eaff] relative overflow-hidden">
-      <div className="absolute inset-0 bg-[#2c4ecf]/[0.02] mix-blend-multiply"></div>
+    <div className="min-h-screen bg-gradient-to-br from-surface to-surface-tint relative overflow-hidden">
+      <div className="absolute inset-0 bg-primary/[0.02] mix-blend-multiply"></div>
 
       <div className="relative z-10 container mx-auto px-6 py-12">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="font-poppins text-3xl md:text-4xl font-bold text-[#2c4ecf] mb-4">
+          <h1 className="font-poppins text-3xl md:text-4xl font-bold text-primary mb-4">
             Welcome to CureCloud
           </h1>
-          <p className="font-poppins text-lg text-[#4a5568]/80">
+          <p className="font-poppins text-lg text-ink/80">
             Please select how you&apos;ll be using CureCloud today
           </p>
         </div>

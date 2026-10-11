@@ -92,20 +92,20 @@ function DepartmentSettings() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   Department Settings
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   Manage hospital departments and their resources
                 </p>
               </div>
-              <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center">
+              <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 flex items-center">
                 <FontAwesomeIcon icon={faPlus} />
                 Add New Department
               </button>
@@ -115,18 +115,18 @@ function DepartmentSettings() {
               {Object.entries(overallStats).map(([key, value]) => (
                 <div
                   key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
+                  className="bg-white rounded-xl p-6 shadow-sm border border-line"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-poppins text-[#4a5568] text-sm">
+                      <p className="font-poppins text-ink text-sm">
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </p>
-                      <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                      <p className="font-poppins text-2xl font-bold text-primary">
                         {value}
                       </p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
                       <FontAwesomeIcon
                         icon={
                           key === "totalDepartments"
@@ -137,7 +137,7 @@ function DepartmentSettings() {
                             ? faBed
                             : faDollarSign
                         }
-                        className={`fas text-[#2c4ecf] text-xl`}
+                        className={`fas text-primary text-xl`}
                       />
                     </div>
                   </div>
@@ -149,26 +149,26 @@ function DepartmentSettings() {
               {mockDepartments.map((dept) => (
                 <div
                   key={dept.id}
-                  className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6"
+                  className="bg-white rounded-xl shadow-sm border border-line p-6"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                      <h3 className="font-poppins text-lg font-semibold text-primary">
                         {dept.name}
                       </h3>
-                      <p className="font-poppins text-sm text-[#4a5568]">
+                      <p className="font-poppins text-sm text-ink">
                         Head: {dept.head}
                       </p>
                     </div>
                     <div className="flex gap-2">
                       <button
-                        className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+                        className="p-2 text-ink hover:bg-surface rounded-lg"
                         title="Edit"
                       >
                         <FontAwesomeIcon icon={faCog} />
                       </button>
                       <button
-                        className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+                        className="p-2 text-ink hover:bg-surface rounded-lg"
                         title="View Details"
                       >
                         <FontAwesomeIcon icon={faExpandAlt} />
@@ -177,19 +177,15 @@ function DepartmentSettings() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="bg-[#f8faff] rounded-lg p-3">
-                      <p className="font-poppins text-sm text-[#4a5568]">
-                        Staff
-                      </p>
-                      <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                    <div className="bg-surface rounded-lg p-3">
+                      <p className="font-poppins text-sm text-ink">Staff</p>
+                      <p className="font-poppins text-lg font-semibold text-primary">
                         {dept.staffCount}
                       </p>
                     </div>
-                    <div className="bg-[#f8faff] rounded-lg p-3">
-                      <p className="font-poppins text-sm text-[#4a5568]">
-                        Rooms
-                      </p>
-                      <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                    <div className="bg-surface rounded-lg p-3">
+                      <p className="font-poppins text-sm text-ink">Rooms</p>
+                      <p className="font-poppins text-lg font-semibold text-primary">
                         {dept.roomCount}
                       </p>
                     </div>
@@ -197,46 +193,46 @@ function DepartmentSettings() {
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-[#4a5568]">
+                      <span className="font-poppins text-sm text-ink">
                         Occupancy
                       </span>
-                      <span className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                      <span className="font-poppins text-sm font-semibold text-primary">
                         {dept.occupancyRate}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-[#4a5568]">
+                      <span className="font-poppins text-sm text-ink">
                         Budget
                       </span>
-                      <span className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                      <span className="font-poppins text-sm font-semibold text-primary">
                         {dept.budget}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-[#4a5568]">
+                      <span className="font-poppins text-sm text-ink">
                         Equipment
                       </span>
-                      <span className="font-poppins text-sm font-semibold text-[#2c4ecf]">
+                      <span className="font-poppins text-sm font-semibold text-primary">
                         {dept.equipmentCount} units
                       </span>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-[#e1e8ff]">
+                  <div className="mt-4 pt-4 border-t border-line">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="font-poppins text-sm text-[#4a5568]">
+                        <p className="font-poppins text-sm text-ink">
                           Today&apos;s Patients
                         </p>
-                        <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                        <p className="font-poppins text-lg font-semibold text-primary">
                           {dept.stats.patientsToday}
                         </p>
                       </div>
                       <div>
-                        <p className="font-poppins text-sm text-[#4a5568]">
+                        <p className="font-poppins text-sm text-ink">
                           Available Beds
                         </p>
-                        <p className="font-poppins text-lg font-semibold text-[#2c4ecf]">
+                        <p className="font-poppins text-lg font-semibold text-primary">
                           {dept.stats.availableBeds}
                         </p>
                       </div>
@@ -246,8 +242,8 @@ function DepartmentSettings() {
               ))}
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-              <h3 className="font-poppins text-lg font-semibold text-[#2c4ecf] mb-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+              <h3 className="font-poppins text-lg font-semibold text-primary mb-4">
                 Quick Actions
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -259,7 +255,7 @@ function DepartmentSettings() {
                 ].map((action) => (
                   <button
                     key={action.name}
-                    className="p-4 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff] transition-colors duration-200 flex flex-col items-center"
+                    className="p-4 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex flex-col items-center"
                   >
                     <FontAwesomeIcon
                       className={`fas mb-2 text-xl`}

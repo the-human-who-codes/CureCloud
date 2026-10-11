@@ -44,15 +44,15 @@ function DoctorDashboard() {
   });
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-[1920px] mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+              <h1 className="font-poppins text-2xl font-bold text-primary">
                 Welcome back, {user?.name}
               </h1>
-              <p className="font-poppins text-[#4a5568]">
+              <p className="font-poppins text-ink">
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
                   year: "numeric",

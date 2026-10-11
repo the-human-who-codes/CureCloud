@@ -8,12 +8,11 @@ function AsyncContent({
   emptyText = "Nothing here yet.",
   children,
 }) {
-  if (loading)
-    return <p className="font-poppins text-sm text-[#4a5568]">Loading…</p>;
+  if (loading) return <p className="font-poppins text-sm text-ink">Loading…</p>;
   if (error)
     return <p className="font-poppins text-sm text-red-600">{error.message}</p>;
   if (empty)
-    return <p className="font-poppins text-sm text-[#4a5568]">{emptyText}</p>;
+    return <p className="font-poppins text-sm text-ink">{emptyText}</p>;
   return children;
 }
 

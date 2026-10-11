@@ -3,30 +3,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 const ProfessionalInformationSection = ({ profileData }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
+    <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-6">
         <FontAwesomeIcon icon={faUser} className="fas fa-user-md mr-2" />
         Professional Information
       </h2>
       <div className="space-y-4">
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Medical License</p>
+          <p className="font-poppins text-sm text-ink">Medical License</p>
           <p className="font-poppins text-lg">{profileData.license}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Specialization</p>
+          <p className="font-poppins text-sm text-ink">Specialization</p>
           <p className="font-poppins text-lg">{profileData.specialization}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Experience</p>
+          <p className="font-poppins text-sm text-ink">Experience</p>
           <p className="font-poppins text-lg">{profileData.experience}</p>
         </div>
         <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Education</p>
+          <p className="font-poppins text-sm text-ink">Education</p>
           {profileData.education.map((edu, index) => (
             <div key={index} className="mt-2">
               <p className="font-poppins text-lg">{edu.degree}</p>
-              <p className="font-poppins text-sm text-[#4a5568]">
+              <p className="font-poppins text-sm text-ink">
                 {edu.institution}, {edu.year}
               </p>
             </div>

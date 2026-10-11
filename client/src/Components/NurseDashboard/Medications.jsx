@@ -85,16 +85,16 @@ function Medications() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                <h1 className="font-poppins text-2xl font-bold text-primary">
                   Medication Administration
                 </h1>
-                <p className="font-poppins text-[#4a5568]">
+                <p className="font-poppins text-ink">
                   {new Date().toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
@@ -106,7 +106,7 @@ function Medications() {
               <select
                 value={selectedTimeRange}
                 onChange={(e) => setSelectedTimeRange(e.target.value)}
-                className="px-4 py-2 bg-[#f8faff] border border-[#e1e8ff] rounded-lg font-poppins text-[#4a5568]"
+                className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
               >
                 <option value="today">Today</option>
                 <option value="tomorrow">Tomorrow</option>
@@ -115,12 +115,10 @@ function Medications() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-poppins text-[#4a5568] text-sm">
-                      Due Now
-                    </p>
+                    <p className="font-poppins text-ink text-sm">Due Now</p>
                     <p className="font-poppins text-2xl font-bold text-[#dc2626]">
                       {mockData.medicationSummary.dueNow}
                     </p>
@@ -134,31 +132,27 @@ function Medications() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-poppins text-[#4a5568] text-sm">
-                      Upcoming
-                    </p>
-                    <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
+                    <p className="font-poppins text-ink text-sm">Upcoming</p>
+                    <p className="font-poppins text-2xl font-bold text-primary">
                       {mockData.medicationSummary.upcoming}
                     </p>
                   </div>
-                  <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
                     <FontAwesomeIcon
                       icon={faCalendarAlt}
-                      className="text-[#2c4ecf] text-xl"
+                      className="text-primary text-xl"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-poppins text-[#4a5568] text-sm">
-                      Completed
-                    </p>
+                    <p className="font-poppins text-ink text-sm">Completed</p>
                     <p className="font-poppins text-2xl font-bold text-[#059669]">
                       {mockData.medicationSummary.completed}
                     </p>
@@ -172,12 +166,10 @@ function Medications() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-poppins text-[#4a5568] text-sm">
-                      Alerts
-                    </p>
+                    <p className="font-poppins text-ink text-sm">Alerts</p>
                     <p className="font-poppins text-2xl font-bold text-[#eab308]">
                       {mockData.medicationSummary.alerts}
                     </p>
@@ -194,7 +186,7 @@ function Medications() {
 
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1">
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6 mb-8">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
                   <div className="flex gap-4 mb-6">
                     {Object.keys(mockData.scheduleGroups).map((period) => (
                       <button
@@ -202,8 +194,8 @@ function Medications() {
                         onClick={() => setSelectedPeriod(period)}
                         className={`px-4 py-2 rounded-lg font-poppins ${
                           selectedPeriod === period
-                            ? "bg-[#2c4ecf] text-white"
-                            : "bg-[#f8faff] text-[#4a5568]"
+                            ? "bg-primary text-white"
+                            : "bg-surface text-ink"
                         }`}
                       >
                         {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -216,7 +208,7 @@ function Medications() {
                       (med) => (
                         <div
                           key={med.id}
-                          className="bg-[#f8faff] rounded-lg p-4 border border-[#e1e8ff]"
+                          className="bg-surface rounded-lg p-4 border border-line"
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center">
@@ -226,10 +218,10 @@ function Medications() {
                                 className="w-10 h-10 rounded-full mr-3"
                               />
                               <div>
-                                <p className="font-poppins font-semibold text-[#2c4ecf]">
+                                <p className="font-poppins font-semibold text-primary">
                                   {med.patient.name}
                                 </p>
-                                <p className="font-poppins text-sm text-[#4a5568]">
+                                <p className="font-poppins text-sm text-ink">
                                   Room {med.patient.room}
                                 </p>
                               </div>
@@ -247,21 +239,21 @@ function Medications() {
                             </span>
                           </div>
                           <div className="mb-3">
-                            <p className="font-poppins font-semibold text-[#4a5568]">
+                            <p className="font-poppins font-semibold text-ink">
                               {med.medication} - {med.dosage}
                             </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
+                            <p className="font-poppins text-sm text-ink">
                               {med.route} | {med.instructions}
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            <button className="px-3 py-1 bg-[#2c4ecf] text-white rounded font-poppins text-sm">
+                            <button className="px-3 py-1 bg-primary text-white rounded font-poppins text-sm">
                               Mark Given
                             </button>
-                            <button className="px-3 py-1 bg-[#f8faff] text-[#4a5568] border border-[#e1e8ff] rounded font-poppins text-sm">
+                            <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
                               Reschedule
                             </button>
-                            <button className="px-3 py-1 bg-[#f8faff] text-[#4a5568] border border-[#e1e8ff] rounded font-poppins text-sm">
+                            <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
                               Details
                             </button>
                           </div>
@@ -273,15 +265,15 @@ function Medications() {
               </div>
 
               <div className="lg:w-[400px] space-y-8">
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Active Alerts
                   </h2>
                   <div className="space-y-4">
                     {mockData.alerts.map((alert, index) => (
                       <div
                         key={index}
-                        className="bg-[#f8faff] rounded-lg p-4 border border-[#e1e8ff]"
+                        className="bg-surface rounded-lg p-4 border border-line"
                       >
                         <div className="flex items-center gap-3 mb-2">
                           <FontAwesomeIcon
@@ -290,14 +282,14 @@ function Medications() {
                               alert.severity === "high" ? "red" : "yellow"
                             }-500`}
                           />
-                          <span className="font-poppins font-semibold text-[#4a5568]">
+                          <span className="font-poppins font-semibold text-ink">
                             {alert.patient}
                           </span>
                         </div>
-                        <p className="font-poppins text-sm text-[#4a5568] mb-2">
+                        <p className="font-poppins text-sm text-ink mb-2">
                           {alert.description}
                         </p>
-                        <p className="font-poppins text-sm text-[#2c4ecf]">
+                        <p className="font-poppins text-sm text-primary">
                           Action: {alert.action}
                         </p>
                       </div>
@@ -305,27 +297,27 @@ function Medications() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
+                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
                     Recent Administrations
                   </h2>
                   <div className="space-y-4">
                     {mockData.recentAdministrations.map((admin) => (
                       <div
                         key={admin.id}
-                        className="bg-[#f8faff] rounded-lg p-4 border border-[#e1e8ff]"
+                        className="bg-surface rounded-lg p-4 border border-line"
                       >
-                        <p className="font-poppins font-semibold text-[#4a5568]">
+                        <p className="font-poppins font-semibold text-ink">
                           {admin.patient}
                         </p>
-                        <p className="font-poppins text-sm text-[#4a5568]">
+                        <p className="font-poppins text-sm text-ink">
                           {admin.medication} {admin.dosage}
                         </p>
                         <div className="flex justify-between items-center mt-2 text-sm">
-                          <span className="font-poppins text-[#4a5568]">
+                          <span className="font-poppins text-ink">
                             {new Date(admin.givenAt).toLocaleTimeString()}
                           </span>
-                          <span className="font-poppins text-[#2c4ecf]">
+                          <span className="font-poppins text-primary">
                             {admin.givenBy}
                           </span>
                         </div>

@@ -35,7 +35,7 @@ function Notifications() {
     });
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-[#f8faff] to-[#e6eaff]">
+    <div className="flex h-screen bg-gradient-to-br from-surface to-surface-tint">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-4xl mx-auto">

@@ -9,8 +9,8 @@ const PatientPrescriptions = () => {
   );
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
         Current Prescriptions
       </h2>
       <div className="space-y-4">

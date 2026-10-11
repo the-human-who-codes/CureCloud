@@ -37,15 +37,15 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
+      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
         Quick Actions
       </h2>
       <div className="space-y-4">
         {actions.map((action) => (
           <button
             key={action.name}
-            className="w-full px-4 py-3 bg-[#f8faff] text-[#2c4ecf] rounded-lg font-poppins hover:bg-[#e1e8ff] transition-colors duration-200 flex items-center"
+            className="w-full px-4 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex items-center"
           >
             <FontAwesomeIcon
               icon={action.icon}

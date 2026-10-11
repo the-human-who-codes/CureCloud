@@ -108,14 +108,14 @@ function Prescriptions() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
+    <div className="flex h-screen bg-surface">
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {Object.entries(nurseStats).map(([key, value]) => (
               <div
                 key={key}
-                className="bg-white p-6 rounded-xl shadow-sm border border-[#e1e8ff] relative overflow-hidden"
+                className="bg-white p-6 rounded-xl shadow-sm border border-line relative overflow-hidden"
               >
                 <div
                   className={`w-16 h-16 rounded-full absolute -right-4 -top-4 opacity-50 ${
@@ -140,7 +140,7 @@ function Prescriptions() {
                   }
                   className={`text-2xl mb-4 ${
                     key === "activePatients"
-                      ? "text-[#2c4ecf]"
+                      ? "text-primary"
                       : key === "pendingTasks"
                       ? "text-yellow-600"
                       : key === "medicationsDue"
@@ -148,13 +148,13 @@ function Prescriptions() {
                       : "text-red-600"
                   }`}
                 />
-                <h3 className="font-poppins text-lg font-semibold text-[#4a5568]">
+                <h3 className="font-poppins text-lg font-semibold text-ink">
                   {key.replace(/([A-Z])/g, " $1").trim()}
                 </h3>
                 <p
                   className={`font-poppins text-2xl font-bold ${
                     key === "activePatients"
-                      ? "text-[#2c4ecf]"
+                      ? "text-primary"
                       : key === "pendingTasks"
                       ? "text-yellow-600"
                       : key === "medicationsDue"
@@ -170,42 +170,39 @@ function Prescriptions() {
 
           <div className="flex flex-col lg:flex-row gap-6 mb-8">
             <div className="lg:w-2/3">
-              <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#e1e8ff]">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf]">
+              <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+                <div className="px-6 py-4 border-b border-line">
+                  <h2 className="font-poppins text-xl font-semibold text-primary">
                     Current Patients
                   </h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-[#f8faff]">
+                    <thead className="bg-surface">
                       <tr>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Patient
                         </th>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Room
                         </th>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Last Vitals
                         </th>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Status
                         </th>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Next Due
                         </th>
-                        <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
+                        <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {assignedPatients.map((patient) => (
-                        <tr
-                          key={patient.id}
-                          className="border-t border-[#e1e8ff]"
-                        >
+                        <tr key={patient.id} className="border-t border-line">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <img
@@ -213,15 +210,15 @@ function Prescriptions() {
                                 alt={patient.name}
                                 className="w-8 h-8 rounded-full mr-3"
                               />
-                              <span className="font-poppins text-[#4a5568]">
+                              <span className="font-poppins text-ink">
                                 {patient.name}
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                          <td className="px-6 py-4 font-poppins text-ink">
                             {patient.roomNumber}
                           </td>
-                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                          <td className="px-6 py-4 font-poppins text-ink">
                             {patient.lastVitals.temp}°C, {patient.lastVitals.bp}
                           </td>
                           <td className="px-6 py-4">
@@ -237,14 +234,14 @@ function Prescriptions() {
                               {patient.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-poppins text-[#4a5568]">
+                          <td className="px-6 py-4 font-poppins text-ink">
                             {patient.nextAction}
                           </td>
                           <td className="px-6 py-4">
-                            <button className="text-[#2c4ecf] hover:text-[#1a3baf] mr-3">
+                            <button className="text-primary hover:text-primary-dark mr-3">
                               <FontAwesomeIcon icon={faFileMedical} />
                             </button>
-                            <button className="text-[#2c4ecf] hover:text-[#1a3baf]">
+                            <button className="text-primary hover:text-primary-dark">
                               <FontAwesomeIcon icon={faPills} />
                             </button>
                           </td>
@@ -256,12 +253,12 @@ function Prescriptions() {
               </div>
             </div>
             <div className="lg:w-1/3">
-              <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff]">
-                <div className="px-6 py-4 border-b border-[#e1e8ff] flex justify-between items-center">
-                  <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf]">
+              <div className="bg-white rounded-xl shadow-sm border border-line">
+                <div className="px-6 py-4 border-b border-line flex justify-between items-center">
+                  <h2 className="font-poppins text-xl font-semibold text-primary">
                     Upcoming Tasks
                   </h2>
-                  <span className="font-poppins text-sm text-[#4a5568]">
+                  <span className="font-poppins text-sm text-ink">
                     {getCurrentTime()}
                   </span>
                 </div>
@@ -269,7 +266,7 @@ function Prescriptions() {
                   <div className="space-y-6">
                     {upcomingTasks.map((task, index) => (
                       <div key={index} className="flex items-start">
-                        <div className="flex-shrink-0 w-16 font-poppins text-sm text-[#4a5568]">
+                        <div className="flex-shrink-0 w-16 font-poppins text-sm text-ink">
                           {task.time}
                         </div>
                         <div
@@ -281,10 +278,10 @@ function Prescriptions() {
                               : "border-yellow-400"
                           }`}
                         >
-                          <p className="font-poppins font-medium text-[#4a5568]">
+                          <p className="font-poppins font-medium text-ink">
                             {task.patient}
                           </p>
-                          <p className="font-poppins text-sm text-[#718096]">
+                          <p className="font-poppins text-sm text-ink-muted">
                             {task.action}
                           </p>
                         </div>
@@ -296,18 +293,18 @@ function Prescriptions() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-line p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf]">
+              <h2 className="font-poppins text-xl font-semibold text-primary">
                 Recent Updates
               </h2>
-              <button className="text-[#2c4ecf]">
+              <button className="text-primary">
                 <FontAwesomeIcon icon={faSyncAlt} />
               </button>
             </div>
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 place-content-center my-auto margin-auto">
               {recentUpdates.map((update, index) => (
-                <div key={index} className="bg-[#f8faff] p-4 rounded-lg">
+                <div key={index} className="bg-surface p-4 rounded-lg">
                   <div className="flex items-center mb-2">
                     <FontAwesomeIcon
                       icon={
@@ -329,14 +326,14 @@ function Prescriptions() {
                           : "text-red-500 mr-3"
                       }
                     />
-                    <span className="font-poppins text-sm text-[#4a5568]">
+                    <span className="font-poppins text-sm text-ink">
                       {update.time}
                     </span>
                   </div>
-                  <p className="font-poppins font-medium text-[#4a5568] mb-1">
+                  <p className="font-poppins font-medium text-ink mb-1">
                     {update.patient}
                   </p>
-                  <p className="font-poppins text-sm text-[#718096]">
+                  <p className="font-poppins text-sm text-ink-muted">
                     {update.detail}
                   </p>
                 </div>
@@ -345,7 +342,7 @@ function Prescriptions() {
           </div>
 
           <div className="fixed bottom-6 right-6 flex flex-col gap-4 md:flex-row">
-            <button className="bg-[#2c4ecf] text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-[#1a3baf]">
+            <button className="bg-primary text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-primary-dark">
               <FontAwesomeIcon icon={faFileMedical} className="md:mr-2" />
               <span className="hidden md:inline font-poppins">
                 Record Vitals

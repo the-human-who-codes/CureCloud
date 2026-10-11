@@ -44,7 +44,7 @@ function NurseDashboard() {
   if (error) return <div className="error-screen">{error}</div>;
 
   return (
-    <div className="flex min-h-fit bg-[#f8faff]">
+    <div className="flex min-h-fit bg-surface">
       <div className="flex-1 px-6 py-8">
         <div className="max-w-[1920px] mx-auto">
           <QuickStats stats={dashboardData?.stats} />

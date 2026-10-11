@@ -1,13 +1,14 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { Card, SectionTitle } from "../common/Card";
 const ScheduleOverview = ({ profileData }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-line p-6">
-      <h2 className="font-poppins text-xl font-semibold text-primary mb-6">
-        <FontAwesomeIcon icon={faClock} className="fas mr-2" />
+    <Card>
+      <SectionTitle className="mb-6">
+        <FontAwesomeIcon icon={faClock} className="mr-2" />
         Schedule Overview
-      </h2>
+      </SectionTitle>
       <div className="space-y-6">
         <div>
           <p className="font-poppins text-sm text-ink">Working Hours</p>
@@ -32,7 +33,7 @@ const ScheduleOverview = ({ profileData }) => {
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

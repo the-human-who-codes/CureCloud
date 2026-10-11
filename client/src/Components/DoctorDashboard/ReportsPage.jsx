@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,6 +12,59 @@ import {
   faChartLine,
   faSmile,
 } from "@fortawesome/free-solid-svg-icons";
+import { PageHeader, PageShell } from "../common/PageShell";
+import TableHead from "../common/TableHead";
+import StatusBadge from "../common/StatusBadge";
+import { Button, IconButton } from "../common/Button";
+
+const ICON_COLOURS = {
+  blue: "bg-blue-100 text-blue-600",
+  green: "bg-green-100 text-green-600",
+  purple: "bg-purple-100 text-purple-600",
+  yellow: "bg-yellow-100 text-yellow-600",
+};
+
+// White panel with a title and an overflow menu button.
+function ReportPanel({ title, children }) {
+  return (
+    <div className="bg-white rounded-xl p-6 border border-line">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="font-poppins font-semibold text-primary">{title}</h3>
+        <IconButton icon={faEllipsisH} />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+ReportPanel.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
+
+// Label, value and a horizontal bar filled to `percent`.
+function ProgressRow({ label, value, percent }) {
+  return (
+    <div className="mb-3">
+      <div className="flex items-center justify-between mb-1">
+        <span className="font-poppins text-sm text-ink">{label}</span>
+        <span className="font-poppins text-sm font-medium">{value}</span>
+      </div>
+      <div className="h-2 bg-surface rounded-full">
+        <div
+          className="h-full bg-primary rounded-full"
+          style={{ width: `${percent}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+}
+
+ProgressRow.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  percent: PropTypes.number.isRequired,
+};
 
 function ReportsAndAnalytics() {
   const [dateRange, setDateRange] = useState("week");
@@ -99,333 +153,248 @@ function ReportsAndAnalytics() {
   };
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="font-poppins text-2xl font-bold text-primary">
-                  Reports & Analytics
-                </h1>
-                <p className="font-poppins text-ink">
-                  View detailed insights and statistics
-                </p>
-              </div>
-              <button
-                className={`px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 flex items-center gap-2 ${
-                  isExporting ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-                onClick={() => setIsExporting(true)}
-                disabled={isExporting}
-              >
-                <FontAwesomeIcon icon={faDownload} />
+    <PageShell>
+      <PageHeader
+        title="Reports & Analytics"
+        subtitle="View detailed insights and statistics"
+        actions={
+          <Button
+            icon={faDownload}
+            onClick={() => setIsExporting(true)}
+            disabled={isExporting}
+          >
+            {isExporting ? "Exporting..." : "Export Report"}
+          </Button>
+        }
+      />
 
-                {isExporting ? "Exporting..." : "Export Report"}
-              </button>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-line mb-6">
-              <div className="flex items-center justify-between overflow-auto">
-                <div className="flex items-center gap-4">
-                  <select
-                    className="px-4 py-2 bg-surface rounded-lg border border-line focus:ring-2 focus:ring-primary focus:border-transparent"
-                    value={dateRange}
-                    onChange={(e) => setDateRange(e.target.value)}
-                  >
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                    <option value="quarter">This Quarter</option>
-                    <option value="year">This Year</option>
-                  </select>
-                  <select
-                    className="px-4 py-2 bg-surface rounded-lg border border-line focus:ring-2 focus:ring-primary focus:border-transparent"
-                    value={reportType}
-                    onChange={(e) => setReportType(e.target.value)}
-                  >
-                    <option value="overview">Overview</option>
-                    <option value="patients">Patient Analytics</option>
-                    <option value="appointments">Appointment Analytics</option>
-                    <option value="departments">Department Performance</option>
-                    <option value="financial">Financial Reports</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-4">
-                  <button className="px-4 py-2 text-ink hover:bg-surface rounded-lg">
-                    <FontAwesomeIcon icon={faFilter} />
-                    More Filters
-                  </button>
-                  <button className="px-4 py-2 text-ink hover:bg-surface rounded-lg">
-                    <FontAwesomeIcon icon={faShare} />
-                    Share
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {[
-                {
-                  title: "Total Patients",
-                  value: mockData.overview.totalPatients,
-                  change: "+12.5%",
-                  icon: faUsers,
-                  color: "blue",
-                },
-                {
-                  title: "Appointments",
-                  value: mockData.overview.totalAppointments,
-                  change: "+8.2%",
-                  icon: faCalendarCheck,
-                  color: "green",
-                },
-                {
-                  title: "Revenue",
-                  value: `$${mockData.overview.revenue.toLocaleString()}`,
-                  change: "+8.3%",
-                  icon: faChartLine,
-                  color: "purple",
-                },
-                {
-                  title: "Patient Satisfaction",
-                  value: "4.6",
-                  change: "+0.3",
-                  icon: faSmile,
-                  color: "yellow",
-                },
-              ].map((card, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl p-6 border border-line"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                        card.color === "blue"
-                          ? "bg-blue-100 text-blue-600"
-                          : card.color === "green"
-                          ? "bg-green-100 text-green-600"
-                          : card.color === "purple"
-                          ? "bg-purple-100 text-purple-600"
-                          : "bg-yellow-100 text-yellow-600"
-                      }`}
-                    >
-                      <FontAwesomeIcon className={`text-xl`} icon={card.icon} />
-                    </div>
-                    <span className="px-2 py-1 rounded-full text-xs font-poppins bg-green-100 text-green-800">
-                      {card.change}
-                    </span>
-                  </div>
-                  <h3 className="font-poppins text-ink mb-1">{card.title}</h3>
-                  <p className="font-poppins text-2xl font-bold text-primary">
-                    {card.value}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <div className="bg-white rounded-xl p-6 border border-line">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-poppins font-semibold text-primary">
-                    Patient Demographics
-                  </h3>
-                  <button className="p-2 hover:bg-surface rounded-lg text-ink">
-                    <FontAwesomeIcon icon={faEllipsisH} />
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-poppins text-sm text-ink mb-4">
-                      Gender Distribution
-                    </h4>
-                    {mockData.patientMetrics.genderDistribution.map(
-                      (item, index) => (
-                        <div key={index} className="mb-3">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-poppins text-sm text-ink">
-                              {item.gender}
-                            </span>
-                            <span className="font-poppins text-sm font-medium">
-                              {item.percentage}%
-                            </span>
-                          </div>
-                          <div className="h-2 bg-surface rounded-full">
-                            <div
-                              className="h-full bg-primary rounded-full"
-                              style={{ width: `${item.percentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-poppins text-sm text-ink mb-4">
-                      Age Distribution
-                    </h4>
-                    {mockData.patientMetrics.ageGroups.map((item, index) => (
-                      <div key={index} className="mb-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-poppins text-sm text-ink">
-                            {item.group}
-                          </span>
-                          <span className="font-poppins text-sm font-medium">
-                            {item.count}
-                          </span>
-                        </div>
-                        <div className="h-2 bg-surface rounded-full">
-                          <div
-                            className="h-full bg-primary rounded-full"
-                            style={{
-                              width: `${
-                                (item.count / mockData.overview.totalPatients) *
-                                100
-                              }%`,
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 border border-line">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-poppins font-semibold text-primary">
-                    Appointment Analytics
-                  </h3>
-                  <button className="p-2 hover:bg-surface rounded-lg text-ink">
-                    <FontAwesomeIcon icon={faEllipsisH} />
-                  </button>
-                </div>
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-poppins text-sm text-ink mb-4">
-                      Appointment Status
-                    </h4>
-                    <div className="grid grid-cols-3 gap-4">
-                      {mockData.appointmentMetrics.status.map((item, index) => (
-                        <div
-                          key={index}
-                          className="bg-surface rounded-lg p-4 text-center"
-                        >
-                          <p className="font-poppins text-2xl font-bold text-primary mb-1">
-                            {item.count}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            {item.status}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-poppins text-sm text-ink mb-4">
-                      Peak Hours
-                    </h4>
-                    <div className="flex items-end gap-2 h-32">
-                      {mockData.appointmentMetrics.peakHours.map(
-                        (item, index) => (
-                          <div
-                            key={index}
-                            className="flex-1 flex flex-col items-center"
-                          >
-                            <div
-                              className="w-full bg-primary rounded-t-lg transition-all duration-300"
-                              style={{ height: `${(item.count / 100) * 100}%` }}
-                            ></div>
-                            <p className="font-poppins text-xs text-ink mt-2">
-                              {item.hour}
-                            </p>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 border border-line">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-poppins font-semibold text-primary">
-                  Department Performance
-                </h3>
-                <button className="p-2 hover:bg-surface rounded-lg text-ink">
-                  <FontAwesomeIcon icon={faEllipsisH} />
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-surface">
-                    <tr>
-                      <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
-                        Department
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
-                        Patients
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
-                        Appointments
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
-                        Revenue
-                      </th>
-                      <th className="px-6 py-4 font-poppins text-sm text-ink text-left">
-                        Satisfaction
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockData.departmentMetrics.map((dept, index) => (
-                      <tr key={index} className="border-t border-line">
-                        <td className="px-6 py-4">
-                          <p className="font-poppins font-medium text-primary">
-                            {dept.department}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-ink">
-                          {dept.patients}
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-ink">
-                          {dept.appointments}
-                        </td>
-                        <td className="px-6 py-4 font-poppins text-ink">
-                          ${dept.revenue.toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center text-yellow-400">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <FontAwesomeIcon
-                                  key={star}
-                                  icon={faStar}
-                                  className={`fas fa-star ${
-                                    star <= dept.satisfaction
-                                      ? "text-yellow-400"
-                                      : "text-gray-200"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="font-poppins text-sm text-ink">
-                              {dept.satisfaction}
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-line mb-6">
+        <div className="flex items-center justify-between overflow-auto">
+          <div className="flex items-center gap-4">
+            <select
+              className="px-4 py-2 bg-surface rounded-lg border border-line focus:ring-2 focus:ring-primary focus:border-transparent"
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+            >
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+            <select
+              className="px-4 py-2 bg-surface rounded-lg border border-line focus:ring-2 focus:ring-primary focus:border-transparent"
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+            >
+              <option value="overview">Overview</option>
+              <option value="patients">Patient Analytics</option>
+              <option value="appointments">Appointment Analytics</option>
+              <option value="departments">Department Performance</option>
+              <option value="financial">Financial Reports</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="px-4 py-2 text-ink hover:bg-surface rounded-lg">
+              <FontAwesomeIcon icon={faFilter} />
+              More Filters
+            </button>
+            <button className="px-4 py-2 text-ink hover:bg-surface rounded-lg">
+              <FontAwesomeIcon icon={faShare} />
+              Share
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {[
+          {
+            title: "Total Patients",
+            value: mockData.overview.totalPatients,
+            change: "+12.5%",
+            icon: faUsers,
+            color: "blue",
+          },
+          {
+            title: "Appointments",
+            value: mockData.overview.totalAppointments,
+            change: "+8.2%",
+            icon: faCalendarCheck,
+            color: "green",
+          },
+          {
+            title: "Revenue",
+            value: `$${mockData.overview.revenue.toLocaleString()}`,
+            change: "+8.3%",
+            icon: faChartLine,
+            color: "purple",
+          },
+          {
+            title: "Patient Satisfaction",
+            value: "4.6",
+            change: "+0.3",
+            icon: faSmile,
+            color: "yellow",
+          },
+        ].map((card, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-xl p-6 border border-line"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                  ICON_COLOURS[card.color]
+                }`}
+              >
+                <FontAwesomeIcon className="text-xl" icon={card.icon} />
+              </div>
+              <StatusBadge tone="success" size="sm">
+                {card.change}
+              </StatusBadge>
+            </div>
+            <h3 className="font-poppins text-ink mb-1">{card.title}</h3>
+            <p className="font-poppins text-2xl font-bold text-primary">
+              {card.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <ReportPanel title="Patient Demographics">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-poppins text-sm text-ink mb-4">
+                Gender Distribution
+              </h4>
+              {mockData.patientMetrics.genderDistribution.map((item) => (
+                <ProgressRow
+                  key={item.gender}
+                  label={item.gender}
+                  value={`${item.percentage}%`}
+                  percent={item.percentage}
+                />
+              ))}
+            </div>
+            <div>
+              <h4 className="font-poppins text-sm text-ink mb-4">
+                Age Distribution
+              </h4>
+              {mockData.patientMetrics.ageGroups.map((item) => (
+                <ProgressRow
+                  key={item.group}
+                  label={item.group}
+                  value={item.count}
+                  percent={(item.count / mockData.overview.totalPatients) * 100}
+                />
+              ))}
+            </div>
+          </div>
+        </ReportPanel>
+
+        <ReportPanel title="Appointment Analytics">
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-poppins text-sm text-ink mb-4">
+                Appointment Status
+              </h4>
+              <div className="grid grid-cols-3 gap-4">
+                {mockData.appointmentMetrics.status.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-surface rounded-lg p-4 text-center"
+                  >
+                    <p className="font-poppins text-2xl font-bold text-primary mb-1">
+                      {item.count}
+                    </p>
+                    <p className="font-poppins text-sm text-ink">
+                      {item.status}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-poppins text-sm text-ink mb-4">Peak Hours</h4>
+              <div className="flex items-end gap-2 h-32">
+                {mockData.appointmentMetrics.peakHours.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 flex flex-col items-center"
+                  >
+                    <div
+                      className="w-full bg-primary rounded-t-lg transition-all duration-300"
+                      style={{ height: `${(item.count / 100) * 100}%` }}
+                    ></div>
+                    <p className="font-poppins text-xs text-ink mt-2">
+                      {item.hour}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ReportPanel>
+      </div>
+
+      <ReportPanel title="Department Performance">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <TableHead
+              columns={[
+                "Department",
+                "Patients",
+                "Appointments",
+                "Revenue",
+                "Satisfaction",
+              ]}
+            />
+            <tbody>
+              {mockData.departmentMetrics.map((dept, index) => (
+                <tr key={index} className="border-t border-line">
+                  <td className="px-6 py-4">
+                    <p className="font-poppins font-medium text-primary">
+                      {dept.department}
+                    </p>
+                  </td>
+                  <td className="px-6 py-4 font-poppins text-ink">
+                    {dept.patients}
+                  </td>
+                  <td className="px-6 py-4 font-poppins text-ink">
+                    {dept.appointments}
+                  </td>
+                  <td className="px-6 py-4 font-poppins text-ink">
+                    ${dept.revenue.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center text-yellow-400">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <FontAwesomeIcon
+                            key={star}
+                            icon={faStar}
+                            className={`${
+                              star <= dept.satisfaction
+                                ? "text-yellow-400"
+                                : "text-gray-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-poppins text-sm text-ink">
+                        {dept.satisfaction}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </ReportPanel>
+    </PageShell>
   );
 }
 

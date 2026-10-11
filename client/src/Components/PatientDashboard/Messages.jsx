@@ -1,4 +1,16 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSearch,
+  faPhone,
+  faVideo,
+  faEllipsisV,
+  faPaperclip,
+  faReply,
+  faComments,
+  faFilePdf,
+  faFileWord,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Messages() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -128,7 +140,10 @@ function Messages() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink"></i>
+                <FontAwesomeIcon
+                  icon={faSearch}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-ink"
+                />
               </div>
 
               <div className="space-y-4">
@@ -200,13 +215,13 @@ function Messages() {
                     </div>
                     <div className="flex items-center gap-2">
                       <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <i className="fas fa-phone"></i>
+                        <FontAwesomeIcon icon={faPhone} />
                       </button>
                       <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <i className="fas fa-video"></i>
+                        <FontAwesomeIcon icon={faVideo} />
                       </button>
                       <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <i className="fas fa-ellipsis-v"></i>
+                        <FontAwesomeIcon icon={faEllipsisV} />
                       </button>
                     </div>
                   </div>
@@ -230,7 +245,7 @@ function Messages() {
                       ></textarea>
                       <div className="absolute bottom-2 right-2 flex gap-2">
                         <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                          <i className="fas fa-paperclip"></i>
+                          <FontAwesomeIcon icon={faPaperclip} />
                         </button>
                         <button
                           className="p-2 text-ink hover:bg-surface rounded-lg"
@@ -238,7 +253,7 @@ function Messages() {
                             setShowQuickResponses(!showQuickResponses)
                           }
                         >
-                          <i className="fas fa-reply"></i>
+                          <FontAwesomeIcon icon={faReply} />
                         </button>
                       </div>
                     </div>
@@ -251,7 +266,10 @@ function Messages() {
             ) : (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <i className="fas fa-comments text-6xl text-primary/20 mb-4"></i>
+                  <FontAwesomeIcon
+                    icon={faComments}
+                    className="text-6xl text-primary/20 mb-4"
+                  />
                   <p className="font-poppins text-ink">
                     Select a conversation to start messaging
                   </p>
@@ -293,11 +311,12 @@ function Messages() {
                       key={attachment.id}
                       className="flex items-center gap-3 p-3 bg-surface rounded-lg"
                     >
-                      <i
-                        className={`fas fa-${
-                          attachment.type === "pdf" ? "file-pdf" : "file-word"
-                        } text-primary`}
-                      ></i>
+                      <FontAwesomeIcon
+                        icon={
+                          attachment.type === "pdf" ? faFilePdf : faFileWord
+                        }
+                        className="text-primary"
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="font-poppins text-sm font-semibold text-primary truncate">
                           {attachment.name}

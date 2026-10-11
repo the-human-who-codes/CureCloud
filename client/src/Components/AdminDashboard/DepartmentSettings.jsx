@@ -11,6 +11,17 @@ import {
   faChartPie,
   faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { PageHeader, PageShell } from "../common/PageShell";
+import { StatGrid } from "../common/StatCard";
+import { Button, IconButton } from "../common/Button";
+import { Card } from "../common/Card";
+
+const STAT_ICONS = {
+  totalDepartments: faHospital,
+  totalStaff: faUsers,
+  averageOccupancy: faBed,
+  totalBudget: faDollarSign,
+};
 
 function DepartmentSettings() {
   const mockDepartments = [
@@ -92,185 +103,119 @@ function DepartmentSettings() {
   };
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
+    <PageShell>
+      <PageHeader
+        title="Department Settings"
+        subtitle="Manage hospital departments and their resources"
+        actions={<Button icon={faPlus}>Add New Department</Button>}
+      />
+
+      <StatGrid stats={overallStats} icons={STAT_ICONS} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        {mockDepartments.map((dept) => (
+          <div
+            key={dept.id}
+            className="bg-white rounded-xl shadow-sm border border-line p-6"
+          >
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-primary">
-                  Department Settings
-                </h1>
-                <p className="font-poppins text-ink">
-                  Manage hospital departments and their resources
+                <h3 className="font-poppins text-lg font-semibold text-primary">
+                  {dept.name}
+                </h3>
+                <p className="font-poppins text-sm text-ink">
+                  Head: {dept.head}
                 </p>
               </div>
-              <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins font-semibold hover:bg-primary-hover transition-colors duration-200 flex items-center">
-                <FontAwesomeIcon icon={faPlus} />
-                Add New Department
-              </button>
+              <div className="flex gap-2">
+                <IconButton icon={faCog} title="Edit" />
+                <IconButton icon={faExpandAlt} title="View Details" />
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {Object.entries(overallStats).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-line"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-poppins text-ink text-sm">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
-                      </p>
-                      <p className="font-poppins text-2xl font-bold text-primary">
-                        {value}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
-                      <FontAwesomeIcon
-                        icon={
-                          key === "totalDepartments"
-                            ? faHospital
-                            : key === "totalStaff"
-                            ? faUsers
-                            : key === "averageOccupancy"
-                            ? faBed
-                            : faDollarSign
-                        }
-                        className={`fas text-primary text-xl`}
-                      />
-                    </div>
-                  </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-surface rounded-lg p-3">
+                <p className="font-poppins text-sm text-ink">Staff</p>
+                <p className="font-poppins text-lg font-semibold text-primary">
+                  {dept.staffCount}
+                </p>
+              </div>
+              <div className="bg-surface rounded-lg p-3">
+                <p className="font-poppins text-sm text-ink">Rooms</p>
+                <p className="font-poppins text-lg font-semibold text-primary">
+                  {dept.roomCount}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="font-poppins text-sm text-ink">Occupancy</span>
+                <span className="font-poppins text-sm font-semibold text-primary">
+                  {dept.occupancyRate}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-poppins text-sm text-ink">Budget</span>
+                <span className="font-poppins text-sm font-semibold text-primary">
+                  {dept.budget}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-poppins text-sm text-ink">Equipment</span>
+                <span className="font-poppins text-sm font-semibold text-primary">
+                  {dept.equipmentCount} units
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-line">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="font-poppins text-sm text-ink">
+                    Today&apos;s Patients
+                  </p>
+                  <p className="font-poppins text-lg font-semibold text-primary">
+                    {dept.stats.patientsToday}
+                  </p>
                 </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-              {mockDepartments.map((dept) => (
-                <div
-                  key={dept.id}
-                  className="bg-white rounded-xl shadow-sm border border-line p-6"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-poppins text-lg font-semibold text-primary">
-                        {dept.name}
-                      </h3>
-                      <p className="font-poppins text-sm text-ink">
-                        Head: {dept.head}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        className="p-2 text-ink hover:bg-surface rounded-lg"
-                        title="Edit"
-                      >
-                        <FontAwesomeIcon icon={faCog} />
-                      </button>
-                      <button
-                        className="p-2 text-ink hover:bg-surface rounded-lg"
-                        title="View Details"
-                      >
-                        <FontAwesomeIcon icon={faExpandAlt} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="bg-surface rounded-lg p-3">
-                      <p className="font-poppins text-sm text-ink">Staff</p>
-                      <p className="font-poppins text-lg font-semibold text-primary">
-                        {dept.staffCount}
-                      </p>
-                    </div>
-                    <div className="bg-surface rounded-lg p-3">
-                      <p className="font-poppins text-sm text-ink">Rooms</p>
-                      <p className="font-poppins text-lg font-semibold text-primary">
-                        {dept.roomCount}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-ink">
-                        Occupancy
-                      </span>
-                      <span className="font-poppins text-sm font-semibold text-primary">
-                        {dept.occupancyRate}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-ink">
-                        Budget
-                      </span>
-                      <span className="font-poppins text-sm font-semibold text-primary">
-                        {dept.budget}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-poppins text-sm text-ink">
-                        Equipment
-                      </span>
-                      <span className="font-poppins text-sm font-semibold text-primary">
-                        {dept.equipmentCount} units
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-line">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="font-poppins text-sm text-ink">
-                          Today&apos;s Patients
-                        </p>
-                        <p className="font-poppins text-lg font-semibold text-primary">
-                          {dept.stats.patientsToday}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-poppins text-sm text-ink">
-                          Available Beds
-                        </p>
-                        <p className="font-poppins text-lg font-semibold text-primary">
-                          {dept.stats.availableBeds}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                <div>
+                  <p className="font-poppins text-sm text-ink">
+                    Available Beds
+                  </p>
+                  <p className="font-poppins text-lg font-semibold text-primary">
+                    {dept.stats.availableBeds}
+                  </p>
                 </div>
-              ))}
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-              <h3 className="font-poppins text-lg font-semibold text-primary mb-4">
-                Quick Actions
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { name: "Assign Staff", icon: faUserPlus },
-                  { name: "Equipment Request", icon: faUserPlus },
-                  { name: "Budget Planning", icon: faChartPie },
-                  { name: "Generate Report", icon: faFileAlt },
-                ].map((action) => (
-                  <button
-                    key={action.name}
-                    className="p-4 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex flex-col items-center"
-                  >
-                    <FontAwesomeIcon
-                      className={`fas mb-2 text-xl`}
-                      icon={action.icon}
-                    />
-
-                    <span className="text-sm text-center">{action.name}</span>
-                  </button>
-                ))}
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    </div>
+
+      <Card>
+        <h3 className="font-poppins text-lg font-semibold text-primary mb-4">
+          Quick Actions
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { name: "Assign Staff", icon: faUserPlus },
+            { name: "Equipment Request", icon: faUserPlus },
+            { name: "Budget Planning", icon: faChartPie },
+            { name: "Generate Report", icon: faFileAlt },
+          ].map((action) => (
+            <button
+              key={action.name}
+              className="p-4 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex flex-col items-center"
+            >
+              <FontAwesomeIcon className="mb-2 text-xl" icon={action.icon} />
+
+              <span className="text-sm text-center">{action.name}</span>
+            </button>
+          ))}
+        </div>
+      </Card>
+    </PageShell>
   );
 }
 

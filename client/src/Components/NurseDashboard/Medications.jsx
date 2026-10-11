@@ -6,6 +6,24 @@ import {
   faCheckCircle,
   faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
+import { PageHeader, PageShell } from "../common/PageShell";
+import StatusBadge from "../common/StatusBadge";
+import { StatGrid } from "../common/StatCard";
+import { longDate } from "../../utils/format";
+import { Card } from "../common/Card";
+
+const STAT_ICONS = {
+  dueNow: faClock,
+  upcoming: faCalendarAlt,
+  completed: faCheckCircle,
+  alerts: faExclamationTriangle,
+};
+
+const STAT_TONES = {
+  dueNow: "danger",
+  completed: "success",
+  alerts: "warning",
+};
 
 function Medications() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("today");
@@ -84,253 +102,159 @@ function Medications() {
     ],
   };
 
+  const { dueNow, upcoming, completed, alerts } = mockData.medicationSummary;
+  const summaryStats = { dueNow, upcoming, completed, alerts };
+
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="font-poppins text-2xl font-bold text-primary">
-                  Medication Administration
-                </h1>
-                <p className="font-poppins text-ink">
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-              <select
-                value={selectedTimeRange}
-                onChange={(e) => setSelectedTimeRange(e.target.value)}
-                className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-              >
-                <option value="today">Today</option>
-                <option value="tomorrow">Tomorrow</option>
-                <option value="week">This Week</option>
-              </select>
+    <PageShell>
+      <PageHeader
+        title="Medication Administration"
+        subtitle={longDate()}
+        actions={
+          <select
+            value={selectedTimeRange}
+            onChange={(e) => setSelectedTimeRange(e.target.value)}
+            className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
+          >
+            <option value="today">Today</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="week">This Week</option>
+          </select>
+        }
+      />
+
+      <StatGrid stats={summaryStats} icons={STAT_ICONS} tones={STAT_TONES} />
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-1">
+          <Card className="mb-8">
+            <div className="flex gap-4 mb-6">
+              {Object.keys(mockData.scheduleGroups).map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setSelectedPeriod(period)}
+                  className={`px-4 py-2 rounded-lg font-poppins ${
+                    selectedPeriod === period
+                      ? "bg-primary text-white"
+                      : "bg-surface text-ink"
+                  }`}
+                >
+                  {period.charAt(0).toUpperCase() + period.slice(1)}
+                </button>
+              ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-poppins text-ink text-sm">Due Now</p>
-                    <p className="font-poppins text-2xl font-bold text-[#dc2626]">
-                      {mockData.medicationSummary.dueNow}
-                    </p>
+            <div className="space-y-4">
+              {mockData.scheduleGroups[selectedPeriod].medications.map(
+                (med) => (
+                  <div
+                    key={med.id}
+                    className="bg-surface rounded-lg p-4 border border-line"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        <img
+                          src={med.patient.photo}
+                          alt={med.patient.name}
+                          className="w-10 h-10 rounded-full mr-3"
+                        />
+                        <div>
+                          <p className="font-poppins font-semibold text-primary">
+                            {med.patient.name}
+                          </p>
+                          <p className="font-poppins text-sm text-ink">
+                            Room {med.patient.room}
+                          </p>
+                        </div>
+                      </div>
+                      <StatusBadge status={med.status}>{med.time}</StatusBadge>
+                    </div>
+                    <div className="mb-3">
+                      <p className="font-poppins font-semibold text-ink">
+                        {med.medication} - {med.dosage}
+                      </p>
+                      <p className="font-poppins text-sm text-ink">
+                        {med.route} | {med.instructions}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="px-3 py-1 bg-primary text-white rounded font-poppins text-sm">
+                        Mark Given
+                      </button>
+                      <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
+                        Reschedule
+                      </button>
+                      <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
+                        Details
+                      </button>
+                    </div>
                   </div>
-                  <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
-                    <FontAwesomeIcon
-                      icon={faClock}
-                      className="text-[#dc2626] text-xl"
-                    />
-                  </div>
-                </div>
-              </div>
+                )
+              )}
+            </div>
+          </Card>
+        </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-poppins text-ink text-sm">Upcoming</p>
-                    <p className="font-poppins text-2xl font-bold text-primary">
-                      {mockData.medicationSummary.upcoming}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
-                    <FontAwesomeIcon
-                      icon={faCalendarAlt}
-                      className="text-primary text-xl"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-poppins text-ink text-sm">Completed</p>
-                    <p className="font-poppins text-2xl font-bold text-[#059669]">
-                      {mockData.medicationSummary.completed}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
-                    <FontAwesomeIcon
-                      icon={faCheckCircle}
-                      className="text-[#059669] text-xl"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-poppins text-ink text-sm">Alerts</p>
-                    <p className="font-poppins text-2xl font-bold text-[#eab308]">
-                      {mockData.medicationSummary.alerts}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
+        <div className="lg:w-[400px] space-y-8">
+          <Card title="Active Alerts">
+            <div className="space-y-4">
+              {mockData.alerts.map((alert, index) => (
+                <div
+                  key={index}
+                  className="bg-surface rounded-lg p-4 border border-line"
+                >
+                  <div className="flex items-center gap-3 mb-2">
                     <FontAwesomeIcon
                       icon={faExclamationTriangle}
-                      className="text-[#eab308] text-xl"
+                      className={
+                        alert.severity === "high"
+                          ? "text-red-500"
+                          : "text-yellow-500"
+                      }
                     />
+                    <span className="font-poppins font-semibold text-ink">
+                      {alert.patient}
+                    </span>
                   </div>
+                  <p className="font-poppins text-sm text-ink mb-2">
+                    {alert.description}
+                  </p>
+                  <p className="font-poppins text-sm text-primary">
+                    Action: {alert.action}
+                  </p>
                 </div>
-              </div>
+              ))}
             </div>
+          </Card>
 
-            <div className="flex flex-col lg:flex-row gap-8">
-              <div className="flex-1">
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
-                  <div className="flex gap-4 mb-6">
-                    {Object.keys(mockData.scheduleGroups).map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => setSelectedPeriod(period)}
-                        className={`px-4 py-2 rounded-lg font-poppins ${
-                          selectedPeriod === period
-                            ? "bg-primary text-white"
-                            : "bg-surface text-ink"
-                        }`}
-                      >
-                        {period.charAt(0).toUpperCase() + period.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="space-y-4">
-                    {mockData.scheduleGroups[selectedPeriod].medications.map(
-                      (med) => (
-                        <div
-                          key={med.id}
-                          className="bg-surface rounded-lg p-4 border border-line"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center">
-                              <img
-                                src={med.patient.photo}
-                                alt={med.patient.name}
-                                className="w-10 h-10 rounded-full mr-3"
-                              />
-                              <div>
-                                <p className="font-poppins font-semibold text-primary">
-                                  {med.patient.name}
-                                </p>
-                                <p className="font-poppins text-sm text-ink">
-                                  Room {med.patient.room}
-                                </p>
-                              </div>
-                            </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                                med.status === "completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : med.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {med.time}
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <p className="font-poppins font-semibold text-ink">
-                              {med.medication} - {med.dosage}
-                            </p>
-                            <p className="font-poppins text-sm text-ink">
-                              {med.route} | {med.instructions}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <button className="px-3 py-1 bg-primary text-white rounded font-poppins text-sm">
-                              Mark Given
-                            </button>
-                            <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
-                              Reschedule
-                            </button>
-                            <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
-                              Details
-                            </button>
-                          </div>
-                        </div>
-                      )
-                    )}
+          <Card title="Recent Administrations">
+            <div className="space-y-4">
+              {mockData.recentAdministrations.map((admin) => (
+                <div
+                  key={admin.id}
+                  className="bg-surface rounded-lg p-4 border border-line"
+                >
+                  <p className="font-poppins font-semibold text-ink">
+                    {admin.patient}
+                  </p>
+                  <p className="font-poppins text-sm text-ink">
+                    {admin.medication} {admin.dosage}
+                  </p>
+                  <div className="flex justify-between items-center mt-2 text-sm">
+                    <span className="font-poppins text-ink">
+                      {new Date(admin.givenAt).toLocaleTimeString()}
+                    </span>
+                    <span className="font-poppins text-primary">
+                      {admin.givenBy}
+                    </span>
                   </div>
                 </div>
-              </div>
-
-              <div className="lg:w-[400px] space-y-8">
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                    Active Alerts
-                  </h2>
-                  <div className="space-y-4">
-                    {mockData.alerts.map((alert, index) => (
-                      <div
-                        key={index}
-                        className="bg-surface rounded-lg p-4 border border-line"
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <FontAwesomeIcon
-                            icon={faExclamationTriangle}
-                            className={`text-${
-                              alert.severity === "high" ? "red" : "yellow"
-                            }-500`}
-                          />
-                          <span className="font-poppins font-semibold text-ink">
-                            {alert.patient}
-                          </span>
-                        </div>
-                        <p className="font-poppins text-sm text-ink mb-2">
-                          {alert.description}
-                        </p>
-                        <p className="font-poppins text-sm text-primary">
-                          Action: {alert.action}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                    Recent Administrations
-                  </h2>
-                  <div className="space-y-4">
-                    {mockData.recentAdministrations.map((admin) => (
-                      <div
-                        key={admin.id}
-                        className="bg-surface rounded-lg p-4 border border-line"
-                      >
-                        <p className="font-poppins font-semibold text-ink">
-                          {admin.patient}
-                        </p>
-                        <p className="font-poppins text-sm text-ink">
-                          {admin.medication} {admin.dosage}
-                        </p>
-                        <div className="flex justify-between items-center mt-2 text-sm">
-                          <span className="font-poppins text-ink">
-                            {new Date(admin.givenAt).toLocaleTimeString()}
-                          </span>
-                          <span className="font-poppins text-primary">
-                            {admin.givenBy}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

@@ -1,13 +1,14 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { Card, SectionTitle } from "../common/Card";
 const ProfessionalInformationSection = ({ profileData }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-line p-6">
-      <h2 className="font-poppins text-xl font-semibold text-primary mb-6">
-        <FontAwesomeIcon icon={faUser} className="fas fa-user-md mr-2" />
+    <Card>
+      <SectionTitle className="mb-6">
+        <FontAwesomeIcon icon={faUser} className="mr-2" />
         Professional Information
-      </h2>
+      </SectionTitle>
       <div className="space-y-4">
         <div>
           <p className="font-poppins text-sm text-ink">Medical License</p>
@@ -33,7 +34,7 @@ const ProfessionalInformationSection = ({ profileData }) => {
           ))}
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

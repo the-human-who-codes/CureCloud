@@ -9,6 +9,10 @@ import {
   faFileMedical,
   faCommentMedical,
 } from "@fortawesome/free-solid-svg-icons";
+import { PageHeader, PageShell } from "../common/PageShell";
+import StatusBadge from "../common/StatusBadge";
+import { Card } from "../common/Card";
+import InitialsAvatar from "../common/InitialsAvatar";
 
 function MyPatients() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -111,213 +115,173 @@ function MyPatients() {
   ];
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
+    <PageShell>
+      <PageHeader
+        title="My Patients"
+        subtitle={<>Managing {mockPatients.length} active patients</>}
+        actions={
+          <div className="flex gap-4">
+            <input
+              type="text"
+              placeholder="Search patients..."
+              className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <select
+              className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="stable">Stable</option>
+              <option value="needs-attention">Needs Attention</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {mockPatients.map((patient) => (
+          <div
+            key={patient.id}
+            className={`bg-white rounded-xl p-6 shadow-sm border-2 ${
+              patient.status === "stable"
+                ? "border-green-500"
+                : patient.status === "needs-attention"
+                ? "border-yellow-500"
+                : "border-red-500"
+            }`}
+          >
+            <div className="flex items-center mb-4">
+              <InitialsAvatar name={patient.name} className="m-3" />
               <div>
-                <h1 className="font-poppins text-2xl font-bold text-primary">
-                  My Patients
-                </h1>
-                <p className="font-poppins text-ink">
-                  Managing {mockPatients.length} active patients
+                <h3 className="font-poppins text-lg font-semibold text-primary">
+                  {patient.name}
+                </h3>
+                <p className="font-poppins text-sm text-ink">
+                  Room {patient.room}
                 </p>
               </div>
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  placeholder="Search patients..."
-                  className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select
-                  className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="all">All Status</option>
-                  <option value="stable">Stable</option>
-                  <option value="needs-attention">Needs Attention</option>
-                  <option value="critical">Critical</option>
-                </select>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="text-center">
+                <p className="font-poppins text-sm text-ink">Temp</p>
+                <p className="font-poppins font-semibold">
+                  {patient.vitals.temperature}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="font-poppins text-sm text-ink">BP</p>
+                <p className="font-poppins font-semibold">
+                  {patient.vitals.bloodPressure}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="font-poppins text-sm text-ink">HR</p>
+                <p className="font-poppins font-semibold">
+                  {patient.vitals.heartRate}
+                </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {mockPatients.map((patient) => (
-                <div
-                  key={patient.id}
-                  className={`bg-white rounded-xl p-6 shadow-sm border-2 ${
-                    patient.status === "stable"
-                      ? "border-green-500"
-                      : patient.status === "needs-attention"
-                      ? "border-yellow-500"
-                      : "border-red-500"
-                  }`}
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-line flex items-center justify-center m-3">
-                      <span className="font-poppins font-medium text-primary">
-                        {patient.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-poppins text-lg font-semibold text-primary">
-                        {patient.name}
-                      </h3>
-                      <p className="font-poppins text-sm text-ink">
-                        Room {patient.room}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center">
-                      <p className="font-poppins text-sm text-ink">Temp</p>
-                      <p className="font-poppins font-semibold">
-                        {patient.vitals.temperature}
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-poppins text-sm text-ink">BP</p>
-                      <p className="font-poppins font-semibold">
-                        {patient.vitals.bloodPressure}
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-poppins text-sm text-ink">HR</p>
-                      <p className="font-poppins font-semibold">
-                        {patient.vitals.heartRate}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between text-sm mb-4">
-                    <p className="font-poppins text-ink">
-                      Last Med:{" "}
-                      {new Date(patient.lastMedication).toLocaleTimeString()}
-                    </p>
-                    <p className="font-poppins text-ink">
-                      Next Check:{" "}
-                      {new Date(patient.nextCheck).toLocaleTimeString()}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                      <FontAwesomeIcon icon={faHeartbeat} className="mr-2" />
-                      Update Vitals
-                    </button>
-                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                      <FontAwesomeIcon icon={faNotesMedical} className="mr-2" />
-                      Add Notes
-                    </button>
-                    <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                      <FontAwesomeIcon icon={faEye} className="mr-2" />
-                      Details
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div className="flex justify-between text-sm mb-4">
+              <p className="font-poppins text-ink">
+                Last Med:{" "}
+                {new Date(patient.lastMedication).toLocaleTimeString()}
+              </p>
+              <p className="font-poppins text-ink">
+                Next Check: {new Date(patient.nextCheck).toLocaleTimeString()}
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                  Upcoming Tasks
-                </h2>
-                <div className="space-y-4">
-                  {upcomingTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                    >
-                      <div className="flex items-center">
-                        <FontAwesomeIcon
-                          icon={
-                            task.type === "medication"
-                              ? faPills
-                              : faClipboardCheck
-                          }
-                          className={`text-primary text-xl mr-4`}
-                        />
-                        <div>
-                          <p className="font-poppins font-semibold">
-                            {task.patient}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            {task.description}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-poppins font-semibold">
-                          {task.time}
-                        </p>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-poppins ${
-                            task.priority === "urgent"
-                              ? "bg-red-100 text-red-800"
-                              : task.priority === "high"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {task.priority}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-                <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                  Recent Updates
-                </h2>
-                <div className="space-y-4">
-                  {recentUpdates.map((update) => (
-                    <div
-                      key={update.id}
-                      className="flex items-center p-4 bg-surface rounded-lg"
-                    >
-                      <FontAwesomeIcon
-                        icon={
-                          update.type === "vitals"
-                            ? faHeartbeat
-                            : update.type === "order"
-                            ? faFileMedical
-                            : faCommentMedical
-                        }
-                        className={`text-primary text-xl mr-4`}
-                      />
-                      <div className="flex-1">
-                        <div className="flex justify-between">
-                          <p className="font-poppins font-semibold">
-                            {update.patient}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            {update.time}
-                          </p>
-                        </div>
-                        <p className="font-poppins text-sm text-ink">
-                          {update.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="flex gap-2">
+              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
+                <FontAwesomeIcon icon={faHeartbeat} className="mr-2" />
+                Update Vitals
+              </button>
+              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
+                <FontAwesomeIcon icon={faNotesMedical} className="mr-2" />
+                Add Notes
+              </button>
+              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
+                <FontAwesomeIcon icon={faEye} className="mr-2" />
+                Details
+              </button>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card title="Upcoming Tasks">
+          <div className="space-y-4">
+            {upcomingTasks.map((task) => (
+              <div
+                key={task.id}
+                className="flex items-center justify-between p-4 bg-surface rounded-lg"
+              >
+                <div className="flex items-center">
+                  <FontAwesomeIcon
+                    icon={
+                      task.type === "medication" ? faPills : faClipboardCheck
+                    }
+                    className={`text-primary text-xl mr-4`}
+                  />
+                  <div>
+                    <p className="font-poppins font-semibold">{task.patient}</p>
+                    <p className="font-poppins text-sm text-ink">
+                      {task.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-poppins font-semibold">{task.time}</p>
+                  <StatusBadge status={task.priority} size="sm" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card title="Recent Updates">
+          <div className="space-y-4">
+            {recentUpdates.map((update) => (
+              <div
+                key={update.id}
+                className="flex items-center p-4 bg-surface rounded-lg"
+              >
+                <FontAwesomeIcon
+                  icon={
+                    update.type === "vitals"
+                      ? faHeartbeat
+                      : update.type === "order"
+                      ? faFileMedical
+                      : faCommentMedical
+                  }
+                  className={`text-primary text-xl mr-4`}
+                />
+                <div className="flex-1">
+                  <div className="flex justify-between">
+                    <p className="font-poppins font-semibold">
+                      {update.patient}
+                    </p>
+                    <p className="font-poppins text-sm text-ink">
+                      {update.time}
+                    </p>
+                  </div>
+                  <p className="font-poppins text-sm text-ink">
+                    {update.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </PageShell>
   );
 }
 

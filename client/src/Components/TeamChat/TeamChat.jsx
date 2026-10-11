@@ -13,6 +13,7 @@ import {
   faPaperclip,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
+import InitialsAvatar from "../common/InitialsAvatar";
 
 function TeamChat() {
   const [selectedChat, setSelectedChat] = useState("general");
@@ -31,14 +32,7 @@ function TeamChat() {
           <div className="p-4 border-b border-line">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="mr-2 w-10 h-10 rounded-full bg-line flex items-center justify-center">
-                  <span className="font-poppins font-medium text-primary">
-                    {mockUser.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
-                </div>
+                <InitialsAvatar name={mockUser.name} className="mr-2" />
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
               <div>
@@ -116,14 +110,7 @@ function TeamChat() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="mr-2 w-10 h-10 rounded-full bg-line flex items-center justify-center">
-                        <span className="font-poppins font-medium text-primary">
-                          {dm.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </span>
-                      </div>
+                      <InitialsAvatar name={dm.name} className="mr-2" />
                       <div
                         className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${
                           dm.status === "online"
@@ -195,14 +182,7 @@ function TeamChat() {
             {mockMessages[selectedChat]?.map((message) => (
               <div key={message.id} className="mb-6">
                 <div className="flex items-start gap-4">
-                  <div className="mr-2 w-10 h-10 rounded-full bg-line flex items-center justify-center">
-                    <span className="font-poppins font-medium text-primary">
-                      {message.user
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
-                  </div>
+                  <InitialsAvatar name={message.user} className="mr-2" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-poppins font-medium text-primary">

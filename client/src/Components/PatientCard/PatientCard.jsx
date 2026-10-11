@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import defaultAvatar from "../../assets/default-avatar.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { Card } from "../common/Card";
 
 function PatientCard({
   image = defaultAvatar,
@@ -22,7 +23,7 @@ function PatientCard({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-line p-6 hover:shadow-md transition-shadow duration-200 w-[320px]">
+    <Card className="hover:shadow-md transition-shadow duration-200 w-[320px]">
       <div className="flex items-start gap-4">
         <img
           src={image}
@@ -73,7 +74,7 @@ function PatientCard({
           Edit
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
 

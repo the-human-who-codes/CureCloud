@@ -20,11 +20,11 @@ const ProfileCard = ({ profileData }) => {
           </p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
             <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins hover:bg-primary-dark transition-colors duration-200">
-              <FontAwesomeIcon icon={faEdit} className="fas fa-edit mr-2" />
+              <FontAwesomeIcon icon={faEdit} className="mr-2" />
               Edit Profile
             </button>
             <button className="px-6 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200">
-              <FontAwesomeIcon icon={faKey} className="fas fa-key mr-2" />
+              <FontAwesomeIcon icon={faKey} className="mr-2" />
               Change Password
             </button>
           </div>

@@ -12,6 +12,21 @@ import {
   faClock,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
+import { PageHeader, PageShell } from "../common/PageShell";
+import StatusBadge from "../common/StatusBadge";
+import { longDate, capitalize } from "../../utils/format";
+import { StatGrid } from "../common/StatCard";
+import { Button } from "../common/Button";
+import { Card, SectionTitle } from "../common/Card";
+import InitialsAvatar from "../common/InitialsAvatar";
+
+const STAT_ICONS = {
+  urgent: faExclamationCircle,
+  high: faArrowUp,
+  medium: faMinus,
+  low: faArrowDown,
+  total: faTasks,
+};
 
 function Tasks() {
   const [selectedPriority, setSelectedPriority] = useState("all");
@@ -96,250 +111,169 @@ function Tasks() {
   };
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="font-poppins text-2xl font-bold text-primary">
-                  My Tasks
-                </h1>
-                <p className="font-poppins text-ink">
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
+    <PageShell>
+      <PageHeader
+        title="My Tasks"
+        subtitle={longDate()}
+        actions={<Button icon={faPlus}>Add New Task</Button>}
+      />
+
+      <StatGrid
+        stats={mockData.taskSummary}
+        icons={(key) => STAT_ICONS[key] ?? faCheckCircle}
+        label={(key) => `${capitalize(key)} Tasks`}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <Card className="mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <SectionTitle className="">Active Tasks</SectionTitle>
+              <div className="flex gap-4">
+                <select
+                  value={selectedPriority}
+                  onChange={(e) => setSelectedPriority(e.target.value)}
+                  className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
+                >
+                  <option value="all">All Priorities</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+                <select
+                  value={selectedTimeframe}
+                  onChange={(e) => setSelectedTimeframe(e.target.value)}
+                  className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
+                >
+                  <option value="today">Today</option>
+                  <option value="tomorrow">Tomorrow</option>
+                  <option value="week">This Week</option>
+                </select>
               </div>
-              <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins hover:bg-primary-dark transition-colors duration-200">
-                <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                Add New Task
-              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {Object.entries(mockData.taskSummary).map(([key, value]) => (
+            <div className="space-y-4">
+              {Object.entries(mockData.tasks).map(([priority, tasks]) =>
+                tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`p-4 rounded-lg border-l-4 ${
+                      priority === "urgent"
+                        ? "border-l-red-500"
+                        : priority === "high"
+                        ? "border-l-orange-500"
+                        : priority === "medium"
+                        ? "border-l-yellow-500"
+                        : "border-l-blue-500"
+                    } bg-surface`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <InitialsAvatar
+                          name={task.patient.name}
+                          className="m-3"
+                        />
+                        <div>
+                          <h3 className="font-poppins font-semibold text-primary">
+                            {task.patient.name}
+                          </h3>
+                          <p className="font-poppins text-sm text-ink">
+                            Room {task.patient.room}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-poppins text-sm text-ink">
+                          {new Date(task.dueAt).toLocaleTimeString()}
+                        </p>
+                        <StatusBadge status={task.patient.status} />
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <p className="font-poppins text-ink">
+                        {task.description}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex justify-between items-center">
+                      <span className="font-poppins text-sm text-ink">
+                        {task.type}
+                      </span>
+                      <div className="flex gap-2">
+                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
+                          <FontAwesomeIcon icon={faCheck} />
+                        </button>
+                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
+                          <FontAwesomeIcon icon={faClock} />
+                        </button>
+                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
+                          <FontAwesomeIcon icon={faEllipsisH} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <Card title="Today's Schedule" className="mb-8">
+            <div className="space-y-4">
+              {mockData.todaySchedule.map((schedule, index) => (
                 <div
-                  key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-line"
+                  key={index}
+                  className="flex items-center p-3 bg-surface rounded-lg"
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-poppins text-ink text-sm">
-                        {key.charAt(0).toUpperCase() + key.slice(1)} Tasks
-                      </p>
-                      <p className="font-poppins text-2xl font-bold text-primary">
-                        {value}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center">
-                      <FontAwesomeIcon
-                        icon={
-                          key === "urgent"
-                            ? faExclamationCircle
-                            : key === "high"
-                            ? faArrowUp
-                            : key === "medium"
-                            ? faMinus
-                            : key === "low"
-                            ? faArrowDown
-                            : key === "total"
-                            ? faTasks
-                            : faCheckCircle
-                        }
-                        className="text-primary text-xl"
-                      />
-                    </div>
+                  <div className="w-16 text-center">
+                    <p className="font-poppins font-semibold text-primary">
+                      {schedule.time}
+                    </p>
+                  </div>
+                  <div className="flex-1 ml-4">
+                    <p className="font-poppins text-ink">
+                      {schedule.description}
+                    </p>
+                    <p className="font-poppins text-sm text-ink">
+                      {schedule.count} tasks
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
+          </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="font-poppins text-xl font-semibold text-primary">
-                      Active Tasks
-                    </h2>
-                    <div className="flex gap-4">
-                      <select
-                        value={selectedPriority}
-                        onChange={(e) => setSelectedPriority(e.target.value)}
-                        className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-                      >
-                        <option value="all">All Priorities</option>
-                        <option value="urgent">Urgent</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                      </select>
-                      <select
-                        value={selectedTimeframe}
-                        onChange={(e) => setSelectedTimeframe(e.target.value)}
-                        className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-                      >
-                        <option value="today">Today</option>
-                        <option value="tomorrow">Tomorrow</option>
-                        <option value="week">This Week</option>
-                      </select>
+          <Card title="Recently Completed">
+            <div className="space-y-4">
+              {mockData.completedTasks.map((task) => (
+                <div key={task.id} className="p-3 bg-surface rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <InitialsAvatar
+                        name={task.patient.name}
+                        className="mr-2"
+                      />
+                      <div>
+                        <p className="font-poppins text-sm font-semibold text-primary">
+                          {task.patient.name}
+                        </p>
+                        <p className="font-poppins text-xs text-ink">
+                          {task.type}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {Object.entries(mockData.tasks).map(([priority, tasks]) =>
-                      tasks.map((task) => (
-                        <div
-                          key={task.id}
-                          className={`p-4 rounded-lg border-l-4 ${
-                            priority === "urgent"
-                              ? "border-l-red-500"
-                              : priority === "high"
-                              ? "border-l-orange-500"
-                              : priority === "medium"
-                              ? "border-l-yellow-500"
-                              : "border-l-blue-500"
-                          } bg-surface`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <div className="m-3 w-10 h-10 rounded-full bg-line flex items-center justify-center">
-                                <span className="font-poppins font-medium text-primary">
-                                  {task.patient.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </span>
-                              </div>
-                              <div>
-                                <h3 className="font-poppins font-semibold text-primary">
-                                  {task.patient.name}
-                                </h3>
-                                <p className="font-poppins text-sm text-ink">
-                                  Room {task.patient.room}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-poppins text-sm text-ink">
-                                {new Date(task.dueAt).toLocaleTimeString()}
-                              </p>
-                              <span
-                                className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                                  task.patient.status === "critical"
-                                    ? "bg-red-100 text-red-800"
-                                    : task.patient.status === "needs_attention"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : "bg-green-100 text-green-800"
-                                }`}
-                              >
-                                {task.patient.status
-                                  .replace("_", " ")
-                                  .charAt(0)
-                                  .toUpperCase() + task.patient.status.slice(1)}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mt-3">
-                            <p className="font-poppins text-ink">
-                              {task.description}
-                            </p>
-                          </div>
-                          <div className="mt-3 flex justify-between items-center">
-                            <span className="font-poppins text-sm text-ink">
-                              {task.type}
-                            </span>
-                            <div className="flex gap-2">
-                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                                <FontAwesomeIcon icon={faCheck} />
-                              </button>
-                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                                <FontAwesomeIcon icon={faClock} />
-                              </button>
-                              <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                                <FontAwesomeIcon icon={faEllipsisH} />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                    <p className="font-poppins text-xs text-ink">
+                      {new Date(task.completedAt).toLocaleTimeString()}
+                    </p>
                   </div>
                 </div>
-              </div>
-
-              <div>
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6 mb-8">
-                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                    Today&apos;s Schedule
-                  </h2>
-                  <div className="space-y-4">
-                    {mockData.todaySchedule.map((schedule, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center p-3 bg-surface rounded-lg"
-                      >
-                        <div className="w-16 text-center">
-                          <p className="font-poppins font-semibold text-primary">
-                            {schedule.time}
-                          </p>
-                        </div>
-                        <div className="flex-1 ml-4">
-                          <p className="font-poppins text-ink">
-                            {schedule.description}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            {schedule.count} tasks
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm border border-line p-6">
-                  <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-                    Recently Completed
-                  </h2>
-                  <div className="space-y-4">
-                    {mockData.completedTasks.map((task) => (
-                      <div key={task.id} className="p-3 bg-surface rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="mr-2 w-10 h-10 rounded-full bg-line flex items-center justify-center">
-                              <span className="font-poppins font-medium text-primary">
-                                {task.patient.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="font-poppins text-sm font-semibold text-primary">
-                                {task.patient.name}
-                              </p>
-                              <p className="font-poppins text-xs text-ink">
-                                {task.type}
-                              </p>
-                            </div>
-                          </div>
-                          <p className="font-poppins text-xs text-ink">
-                            {new Date(task.completedAt).toLocaleTimeString()}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

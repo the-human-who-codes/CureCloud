@@ -19,7 +19,7 @@ function StaffSchedule({ staffSchedule }) {
                 {staff.shift} Shift
               </p>
             </div>
-            <StatusBadge status={staff.status}>{staff.status}</StatusBadge>
+            <StatusBadge status={staff.status} />
           </div>
         ))}
       </div>

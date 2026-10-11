@@ -1,20 +1,20 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { humanizeKey } from "../../utils/format";
-import { cardClasses } from "./Card";
+import { Card } from "./Card";
 
 const TONES = {
   primary: { value: "text-primary", icon: "bg-surface text-primary" },
-  danger: { value: "text-[#dc2626]", icon: "bg-red-50 text-[#dc2626]" },
-  success: { value: "text-[#059669]", icon: "bg-green-50 text-[#059669]" },
-  warning: { value: "text-[#eab308]", icon: "bg-yellow-50 text-[#eab308]" },
+  danger: { value: "text-red-600", icon: "bg-red-50 text-red-600" },
+  success: { value: "text-emerald-600", icon: "bg-green-50 text-emerald-600" },
+  warning: { value: "text-yellow-500", icon: "bg-yellow-50 text-yellow-500" },
 };
 
 // One headline number with a label and a round icon.
 export function StatCard({ label, value, icon, tone = "primary" }) {
   const colours = TONES[tone];
   return (
-    <div className={`${cardClasses} p-6`}>
+    <Card>
       <div className="flex items-center justify-between">
         <div>
           <p className="font-poppins text-ink text-sm">{label}</p>
@@ -28,7 +28,7 @@ export function StatCard({ label, value, icon, tone = "primary" }) {
           {icon && <FontAwesomeIcon icon={icon} className="text-xl" />}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

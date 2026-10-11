@@ -1,15 +1,16 @@
 import { useId } from "react";
 import PropTypes from "prop-types";
 
-export const inputClasses =
-  "w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins";
+const inputClasses =
+  "w-full px-4 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins";
 
 // Label + input/select pair. Extra props go to the control; pass <option>s as children for selects.
+// `compact` gives a shorter control for filter bars.
 export function FormField({
   label,
   as: Control = "input",
   wrapperClassName,
-  inputClassName = inputClasses,
+  compact = false,
   children,
   ...props
 }) {
@@ -19,7 +20,11 @@ export function FormField({
       <label htmlFor={id} className="block font-poppins text-sm text-ink mb-2">
         {label}
       </label>
-      <Control id={id} className={inputClassName} {...props}>
+      <Control
+        id={id}
+        className={`${inputClasses} ${compact ? "py-2" : "py-3"}`}
+        {...props}
+      >
         {children}
       </Control>
     </div>
@@ -30,6 +35,6 @@ FormField.propTypes = {
   label: PropTypes.node.isRequired,
   as: PropTypes.elementType,
   wrapperClassName: PropTypes.string,
-  inputClassName: PropTypes.string,
+  compact: PropTypes.bool,
   children: PropTypes.node,
 };

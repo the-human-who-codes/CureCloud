@@ -11,6 +11,7 @@ import {
   faFilePdf,
   faFileWord,
 } from "@fortawesome/free-solid-svg-icons";
+import { IconButton } from "../common/Button";
 
 function Messages() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -214,15 +215,9 @@ function Messages() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <FontAwesomeIcon icon={faPhone} />
-                      </button>
-                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <FontAwesomeIcon icon={faVideo} />
-                      </button>
-                      <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                        <FontAwesomeIcon icon={faEllipsisV} />
-                      </button>
+                      <IconButton icon={faPhone} />
+                      <IconButton icon={faVideo} />
+                      <IconButton icon={faEllipsisV} />
                     </div>
                   </div>
                 </div>
@@ -244,17 +239,13 @@ function Messages() {
                         onChange={(e) => setMessageText(e.target.value)}
                       ></textarea>
                       <div className="absolute bottom-2 right-2 flex gap-2">
-                        <button className="p-2 text-ink hover:bg-surface rounded-lg">
-                          <FontAwesomeIcon icon={faPaperclip} />
-                        </button>
-                        <button
-                          className="p-2 text-ink hover:bg-surface rounded-lg"
+                        <IconButton icon={faPaperclip} />
+                        <IconButton
+                          icon={faReply}
                           onClick={() =>
                             setShowQuickResponses(!showQuickResponses)
                           }
-                        >
-                          <FontAwesomeIcon icon={faReply} />
-                        </button>
+                        />
                       </div>
                     </div>
                     <button className="px-6 py-4 bg-primary text-white rounded-lg font-poppins hover:bg-primary-hover transition-colors duration-200">

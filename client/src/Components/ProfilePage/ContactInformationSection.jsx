@@ -7,7 +7,7 @@ import InfoItem from "./InfoItem";
 const ContactInformationSection = ({ profileData }) => {
   return (
     <Card>
-      <SectionTitle className="mb-6">
+      <SectionTitle spacing="lg">
         <FontAwesomeIcon icon={faAddressCard} className="mr-2" />
         Contact Information
       </SectionTitle>

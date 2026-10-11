@@ -5,7 +5,7 @@ import { faCalendarAlt, faStickyNote } from "@fortawesome/free-solid-svg-icons";
 
 const ShiftInfoSection = ({ shiftInfo }) => (
   <Card className="hover:shadow-md transition-shadow">
-    <SectionTitle className="mb-4 flex items-center gap-2">
+    <SectionTitle className="flex items-center gap-2">
       <FontAwesomeIcon icon={faCalendarAlt} className="text-primary" />
       Shift Information
     </SectionTitle>

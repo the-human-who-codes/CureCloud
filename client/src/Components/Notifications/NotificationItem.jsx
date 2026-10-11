@@ -1,4 +1,5 @@
 import NotificationIcon from "./NotificationIcon";
+import { Card } from "../common/Card";
 
 import PropTypes from "prop-types";
 
@@ -14,10 +15,8 @@ function NotificationItem({ notification, handleMarkAsRead }) {
   };
 
   return (
-    <div
-      className={`bg-white rounded-xl p-6 shadow-sm border border-line ${
-        !notification.read ? "border-l-4" : ""
-      } ${
+    <Card
+      className={`${!notification.read ? "border-l-4" : ""} ${
         notification.priority === "urgent"
           ? "border-l-red-500"
           : notification.priority === "important"
@@ -66,7 +65,7 @@ function NotificationItem({ notification, handleMarkAsRead }) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

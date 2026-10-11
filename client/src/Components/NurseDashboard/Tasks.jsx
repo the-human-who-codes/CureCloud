@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faExclamationCircle,
@@ -16,7 +15,7 @@ import { PageHeader, PageShell } from "../common/PageShell";
 import StatusBadge from "../common/StatusBadge";
 import { longDate, capitalize } from "../../utils/format";
 import { StatGrid } from "../common/StatCard";
-import { Button } from "../common/Button";
+import { Button, IconButton } from "../common/Button";
 import { Card, SectionTitle } from "../common/Card";
 import InitialsAvatar from "../common/InitialsAvatar";
 
@@ -128,7 +127,7 @@ function Tasks() {
         <div className="lg:col-span-2">
           <Card className="mb-8">
             <div className="flex justify-between items-center mb-6">
-              <SectionTitle className="">Active Tasks</SectionTitle>
+              <SectionTitle spacing="none">Active Tasks</SectionTitle>
               <div className="flex gap-4">
                 <select
                   value={selectedPriority}
@@ -200,15 +199,18 @@ function Tasks() {
                         {task.type}
                       </span>
                       <div className="flex gap-2">
-                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                          <FontAwesomeIcon icon={faCheck} />
-                        </button>
-                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                          <FontAwesomeIcon icon={faClock} />
-                        </button>
-                        <button className="p-2 text-ink hover:bg-white rounded-lg transition-colors duration-200">
-                          <FontAwesomeIcon icon={faEllipsisH} />
-                        </button>
+                        <IconButton
+                          icon={faCheck}
+                          className="text-ink hover:bg-white transition-colors duration-200"
+                        />
+                        <IconButton
+                          icon={faClock}
+                          className="text-ink hover:bg-white transition-colors duration-200"
+                        />
+                        <IconButton
+                          icon={faEllipsisH}
+                          className="text-ink hover:bg-white transition-colors duration-200"
+                        />
                       </div>
                     </div>
                   </div>

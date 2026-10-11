@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faKey } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "../common/Button";
+
 const ProfileCard = ({ profileData }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-line p-8 mb-8">
@@ -19,10 +21,7 @@ const ProfileCard = ({ profileData }) => {
             {profileData.title}
           </p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            <button className="px-6 py-3 bg-primary text-white rounded-lg font-poppins hover:bg-primary-dark transition-colors duration-200">
-              <FontAwesomeIcon icon={faEdit} className="mr-2" />
-              Edit Profile
-            </button>
+            <Button icon={faEdit}>Edit Profile</Button>
             <button className="px-6 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200">
               <FontAwesomeIcon icon={faKey} className="mr-2" />
               Change Password

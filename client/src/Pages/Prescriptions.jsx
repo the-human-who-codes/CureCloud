@@ -174,7 +174,7 @@ function Prescriptions() {
         <div className="lg:w-2/3">
           <Card padded={false}>
             <div className="px-6 py-4 border-b border-line">
-              <SectionTitle className="">Current Patients</SectionTitle>
+              <SectionTitle spacing="none">Current Patients</SectionTitle>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -231,9 +231,9 @@ function Prescriptions() {
           </Card>
         </div>
         <div className="lg:w-1/3">
-          <div className="bg-white rounded-xl shadow-sm border border-line">
+          <Card padded={false}>
             <div className="px-6 py-4 border-b border-line flex justify-between items-center">
-              <SectionTitle className="">Upcoming Tasks</SectionTitle>
+              <SectionTitle spacing="none">Upcoming Tasks</SectionTitle>
               <span className="font-poppins text-sm text-ink">
                 {getCurrentTime()}
               </span>
@@ -265,13 +265,13 @@ function Prescriptions() {
                 ))}
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 
       <Card>
         <div className="flex justify-between items-center mb-6">
-          <SectionTitle className="">Recent Updates</SectionTitle>
+          <SectionTitle spacing="none">Recent Updates</SectionTitle>
           <button className="text-primary">
             <FontAwesomeIcon icon={faSyncAlt} />
           </button>

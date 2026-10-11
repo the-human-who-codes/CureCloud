@@ -114,10 +114,7 @@ function DepartmentSettings() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         {mockDepartments.map((dept) => (
-          <div
-            key={dept.id}
-            className="bg-white rounded-xl shadow-sm border border-line p-6"
-          >
+          <Card key={dept.id}>
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="font-poppins text-lg font-semibold text-primary">
@@ -189,7 +186,7 @@ function DepartmentSettings() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserPlus,
   faUsers,
@@ -110,7 +109,7 @@ function UserManagement() {
             as="select"
             label="Role"
             wrapperClassName="flex-1 min-w-[200px]"
-            inputClassName="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+            compact
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
           >
@@ -123,7 +122,7 @@ function UserManagement() {
             as="select"
             label="Status"
             wrapperClassName="flex-1 min-w-[200px]"
-            inputClassName="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+            compact
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
@@ -183,12 +182,11 @@ function UserManagement() {
                   <div className="flex gap-2">
                     <IconButton icon={faEdit} title="Edit" />
                     <IconButton icon={faEye} title="View Details" />
-                    <button
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    <IconButton
+                      icon={faBan}
                       title="Deactivate"
-                    >
-                      <FontAwesomeIcon icon={faBan} />
-                    </button>
+                      className="text-red-500 hover:bg-red-50"
+                    />
                   </div>
                 </td>
               </tr>

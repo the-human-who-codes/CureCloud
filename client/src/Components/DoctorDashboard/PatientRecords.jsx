@@ -19,8 +19,9 @@ import {
 import { PageHeader, PageShell } from "../common/PageShell";
 import TableHead from "../common/TableHead";
 import StatusBadge from "../common/StatusBadge";
-import { Button } from "../common/Button";
+import { Button, IconButton } from "../common/Button";
 import InitialsAvatar from "../common/InitialsAvatar";
+import { Card } from "../common/Card";
 
 const formatVitals = (v = {}) =>
   Object.fromEntries(
@@ -173,79 +174,79 @@ function PatientRecords() {
         emptyText="No patients on your care team yet."
       >
         {selectedView === "list" && (
-          <div className="bg-white rounded-xl shadow-sm border border-line overflow-auto">
-            <table className="w-full">
-              <TableHead
-                columns={[
-                  "Patient",
-                  "ID",
-                  "Status",
-                  "Last Visit",
-                  "Next Appointment",
-                  "Actions",
-                ]}
-              />
-              <tbody>
-                {patients.map((patient) => (
-                  <tr
-                    key={patient.id}
-                    className="border-t border-line hover:bg-surface"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <InitialsAvatar name={patient.name} />
-                        <div>
-                          <p className="font-poppins font-medium text-primary">
-                            {patient.name}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            {patient.age} yrs • {patient.gender}
-                          </p>
+          <Card padded={false}>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <TableHead
+                  columns={[
+                    "Patient",
+                    "ID",
+                    "Status",
+                    "Last Visit",
+                    "Next Appointment",
+                    "Actions",
+                  ]}
+                />
+                <tbody>
+                  {patients.map((patient) => (
+                    <tr
+                      key={patient.id}
+                      className="border-t border-line hover:bg-surface"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <InitialsAvatar name={patient.name} />
+                          <div>
+                            <p className="font-poppins font-medium text-primary">
+                              {patient.name}
+                            </p>
+                            <p className="font-poppins text-sm text-ink">
+                              {patient.age} yrs • {patient.gender}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-poppins text-ink">
-                      {patient.id}
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={patient.status} />
-                    </td>
-                    <td className="px-6 py-4 font-poppins text-ink">
-                      {patient.lastVisit}
-                    </td>
-                    <td className="px-6 py-4 font-poppins text-ink">
-                      {patient.nextAppointment}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="p-2 text-primary hover:bg-line rounded-lg"
-                          onClick={() => selectPatient(patient)}
-                        >
-                          <FontAwesomeIcon icon={faEye} />
-                        </button>
-                        <button className="p-2 text-primary hover:bg-line rounded-lg">
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </td>
+                      <td className="px-6 py-4 font-poppins text-ink">
+                        {patient.id}
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge status={patient.status} />
+                      </td>
+                      <td className="px-6 py-4 font-poppins text-ink">
+                        {patient.lastVisit}
+                      </td>
+                      <td className="px-6 py-4 font-poppins text-ink">
+                        {patient.nextAppointment}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <IconButton
+                            icon={faEye}
+                            className="text-primary hover:bg-line"
+                            onClick={() => selectPatient(patient)}
+                          />
+                          <IconButton
+                            icon={faEdit}
+                            className="text-primary hover:bg-line"
+                          />
+                          <IconButton
+                            icon={faTrash}
+                            className="text-red-500 hover:bg-red-50"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         )}
 
         {selectedView === "grid" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {patients.map((patient) => (
-              <div
-                key={patient.id}
-                className="bg-white rounded-xl shadow-sm border border-line p-6"
-              >
+              <Card key={patient.id}>
                 <div className="flex items-center gap-4 mb-4">
                   <InitialsAvatar name={patient.name} large />
                   <div>
@@ -290,15 +291,17 @@ function PatientRecords() {
                     View Details
                   </button>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 text-primary hover:bg-line rounded-lg">
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                    <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    <IconButton
+                      icon={faEdit}
+                      className="text-primary hover:bg-line"
+                    />
+                    <IconButton
+                      icon={faTrash}
+                      className="text-red-500 hover:bg-red-50"
+                    />
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}

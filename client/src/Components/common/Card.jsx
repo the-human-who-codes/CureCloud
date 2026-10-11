@@ -1,19 +1,22 @@
 import PropTypes from "prop-types";
 
-export const cardClasses = "bg-white rounded-xl shadow-sm border border-line";
+const cardClasses = "bg-white rounded-xl shadow-sm border border-line";
 
-// Section heading used inside and above cards.
+const TITLE_SPACING = { none: "", md: "mb-4", lg: "mb-6" };
+
+// Section heading used inside and above cards. `spacing="none"` when it sits in a flex header row.
 export function SectionTitle({
   as: Tag = "h2",
   size = "xl",
-  className = "mb-4",
+  spacing = "md",
+  className = "",
   children,
 }) {
   return (
     <Tag
       className={`font-poppins ${
         size === "lg" ? "text-lg" : "text-xl"
-      } font-semibold text-primary ${className}`}
+      } font-semibold text-primary ${TITLE_SPACING[spacing]} ${className}`}
     >
       {children}
     </Tag>
@@ -23,6 +26,7 @@ export function SectionTitle({
 SectionTitle.propTypes = {
   as: PropTypes.elementType,
   size: PropTypes.oneOf(["lg", "xl"]),
+  spacing: PropTypes.oneOf(Object.keys(TITLE_SPACING)),
   className: PropTypes.string,
   children: PropTypes.node,
 };

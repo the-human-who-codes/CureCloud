@@ -182,7 +182,7 @@ function AdminReports() {
       <Card padded={false}>
         <div className="p-6 border-b border-line">
           <div className="flex justify-between items-center">
-            <SectionTitle className="">Recent Reports</SectionTitle>
+            <SectionTitle spacing="none">Recent Reports</SectionTitle>
             <div className="flex gap-4">
               <select
                 className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins text-sm"

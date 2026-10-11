@@ -1,20 +1,18 @@
 import PropTypes from "prop-types";
 
-// Scrollable page body rendered inside DashboardLayout's <Outlet />.
+// Page body rendered inside DashboardLayout's <Outlet />; .page-content does the scrolling.
 export function PageShell({
   contained = true,
   className = "bg-surface",
   children,
 }) {
   return (
-    <div className={`flex h-screen ${className}`}>
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        {contained ? (
-          <div className="max-w-[1920px] mx-auto">{children}</div>
-        ) : (
-          children
-        )}
-      </div>
+    <div className={`min-h-full px-6 py-8 ${className}`}>
+      {contained ? (
+        <div className="max-w-[1920px] mx-auto">{children}</div>
+      ) : (
+        children
+      )}
     </div>
   );
 }

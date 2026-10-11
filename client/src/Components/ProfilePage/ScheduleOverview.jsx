@@ -5,7 +5,7 @@ import { Card, SectionTitle } from "../common/Card";
 const ScheduleOverview = ({ profileData }) => {
   return (
     <Card>
-      <SectionTitle className="mb-6">
+      <SectionTitle spacing="lg">
         <FontAwesomeIcon icon={faClock} className="mr-2" />
         Schedule Overview
       </SectionTitle>

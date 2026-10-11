@@ -7,7 +7,7 @@ import {
   faSun,
   faMoon,
 } from "@fortawesome/free-solid-svg-icons";
-import { PageShell } from "../common/PageShell";
+import { PageHeader, PageShell } from "../common/PageShell";
 import { ActionList } from "../common/QuickActions";
 import { Card, SectionTitle } from "../common/Card";
 
@@ -31,14 +31,12 @@ function SettingsPage() {
 
   return (
     <PageShell>
-      <h1 className="font-poppins text-2xl font-bold text-primary mb-8">
-        Settings
-      </h1>
+      <PageHeader title="Settings" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-8">
           <Card>
-            <SectionTitle className="mb-6">General Settings</SectionTitle>
+            <SectionTitle spacing="lg">General Settings</SectionTitle>
 
             <div className="space-y-6">
               <div>
@@ -106,7 +104,7 @@ function SettingsPage() {
           </Card>
 
           <Card>
-            <SectionTitle className="mb-6">Security Settings</SectionTitle>
+            <SectionTitle spacing="lg">Security Settings</SectionTitle>
 
             <ActionList className="space-y-6" actions={SECURITY_ACTIONS} />
           </Card>
@@ -114,7 +112,7 @@ function SettingsPage() {
 
         <div>
           <Card>
-            <SectionTitle className="mb-6">System Preferences</SectionTitle>
+            <SectionTitle spacing="lg">System Preferences</SectionTitle>
 
             <div className="space-y-6">
               <div>

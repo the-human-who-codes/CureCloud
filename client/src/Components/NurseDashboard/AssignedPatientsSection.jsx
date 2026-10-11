@@ -1,10 +1,8 @@
 import PropTypes from "prop-types";
+import { Card } from "../common/Card";
 
 const AssignedPatientsSection = ({ patients }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-    <h2 className="text-xl font-semibold text-primary mb-4">
-      Assigned Patients
-    </h2>
+  <Card title="Assigned Patients">
     <div className="grid gap-4">
       {patients.map((patient) => (
         <div
@@ -25,7 +23,7 @@ const AssignedPatientsSection = ({ patients }) => (
         </div>
       ))}
     </div>
-  </div>
+  </Card>
 );
 
 AssignedPatientsSection.propTypes = {

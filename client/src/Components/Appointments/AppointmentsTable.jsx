@@ -1,93 +1,79 @@
 import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { capitalize } from "../../utils/format";
+import TableHead from "../common/TableHead";
+import StatusBadge from "../common/StatusBadge";
+import { IconButton } from "../common/Button";
 
-function AppointmentsTable({ appointments, onConfirm, onCancel }) {
+const cell = "px-6 py-4 font-poppins text-ink";
+
+// Appointments list used by the appointments page and the doctor dashboard.
+// The Doctor column and the confirm/cancel actions are optional.
+function AppointmentsTable({
+  appointments,
+  showDoctor = true,
+  onConfirm,
+  onCancel,
+}) {
+  const showActions = Boolean(onConfirm || onCancel);
+  const columns = [
+    "Patient",
+    showDoctor && "Doctor",
+    "Date & Time",
+    "Type",
+    "Status",
+    showActions && "Actions",
+  ].filter(Boolean);
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="bg-surface">
-          <tr>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Patient
-            </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Doctor
-            </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Date & Time
-            </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Type
-            </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Status
-            </th>
-            <th className="px-6 py-4 text-left font-poppins text-sm text-ink">
-              Actions
-            </th>
-          </tr>
-        </thead>
+        <TableHead columns={columns} />
         <tbody>
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="border-t border-line">
-              <td className="px-6 py-4 flex items-center">
-                <img
-                  src={appointment.patientImage}
-                  alt={appointment.patientName}
-                  className="w-8 h-8 rounded-full mr-3"
-                />
-                <span className="font-poppins text-ink">
+              <td className={cell}>
+                <div className="flex items-center">
+                  {appointment.patientImage && (
+                    <img
+                      src={appointment.patientImage}
+                      alt={appointment.patientName}
+                      className="w-8 h-8 rounded-full mr-3"
+                    />
+                  )}
                   {appointment.patientName}
-                </span>
-              </td>
-              <td className="px-6 py-4 font-poppins text-ink">
-                {appointment.doctorName}
-              </td>
-              <td className="px-6 py-4 font-poppins text-ink">
-                {appointment.date} {appointment.time}
-              </td>
-              <td className="px-6 py-4 font-poppins text-ink">
-                {appointment.type}
-              </td>
-              <td className="px-6 py-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                    appointment.status === "completed"
-                      ? "bg-green-100 text-green-800"
-                      : appointment.status === "confirmed"
-                      ? "bg-blue-100 text-blue-800"
-                      : appointment.status === "cancelled"
-                      ? "bg-gray-100 text-gray-600"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {capitalize(appointment.status)}
-                </span>
-              </td>
-              <td className="px-6 py-4">
-                <div className="flex gap-2">
-                  {appointment.status === "pending" && (
-                    <button
-                      title="Confirm"
-                      onClick={() => onConfirm(appointment.id)}
-                      className="p-2 text-green-600 hover:bg-surface rounded-lg"
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button>
-                  )}
-                  {["pending", "confirmed"].includes(appointment.status) && (
-                    <button
-                      title="Cancel"
-                      onClick={() => onCancel(appointment.id)}
-                      className="p-2 text-red-500 hover:bg-surface rounded-lg"
-                    >
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  )}
                 </div>
               </td>
+              {showDoctor && <td className={cell}>{appointment.doctorName}</td>}
+              <td className={cell}>
+                {appointment.date} {appointment.time}
+              </td>
+              <td className={cell}>{appointment.type}</td>
+              <td className="px-6 py-4">
+                <StatusBadge status={appointment.status} />
+              </td>
+              {showActions && (
+                <td className="px-6 py-4">
+                  <div className="flex gap-2">
+                    {onConfirm && appointment.status === "pending" && (
+                      <IconButton
+                        icon={faCheck}
+                        title="Confirm"
+                        onClick={() => onConfirm(appointment.id)}
+                        className="text-green-600 hover:bg-surface"
+                      />
+                    )}
+                    {onCancel &&
+                      ["pending", "confirmed"].includes(appointment.status) && (
+                        <IconButton
+                          icon={faTimes}
+                          title="Cancel"
+                          onClick={() => onCancel(appointment.id)}
+                          className="text-red-500 hover:bg-surface"
+                        />
+                      )}
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -100,17 +86,18 @@ AppointmentsTable.propTypes = {
   appointments: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      patientImage: PropTypes.string.isRequired,
+      patientImage: PropTypes.string,
       patientName: PropTypes.string.isRequired,
-      doctorName: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      doctorName: PropTypes.string,
+      date: PropTypes.string,
       time: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  showDoctor: PropTypes.bool,
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 export default AppointmentsTable;

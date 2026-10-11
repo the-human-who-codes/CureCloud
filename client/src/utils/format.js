@@ -30,3 +30,16 @@ export function healthStatsFromVitals(vitals) {
     })
   );
 }
+
+// "totalPatients" -> "Total Patients"
+export const humanizeKey = (key) =>
+  capitalize(key.replace(/([A-Z])/g, " $1").trim());
+
+// "Monday, October 12, 2026" - the long date shown under page titles.
+export const longDate = (date = new Date()) =>
+  date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });

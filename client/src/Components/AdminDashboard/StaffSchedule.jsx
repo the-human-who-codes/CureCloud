@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
+import { Card } from "../common/Card";
+import StatusBadge from "../common/StatusBadge";
 
 function StaffSchedule({ staffSchedule }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-      <h2 className="font-poppins text-lg font-semibold text-primary mb-4">
-        Staff Schedule
-      </h2>
+    <Card title="Staff Schedule" titleSize="lg">
       <div className="space-y-4">
         {staffSchedule.map((staff, index) => (
           <div
@@ -20,19 +19,11 @@ function StaffSchedule({ staffSchedule }) {
                 {staff.shift} Shift
               </p>
             </div>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                staff.status === "On Duty"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-yellow-100 text-yellow-800"
-              }`}
-            >
-              {staff.status}
-            </span>
+            <StatusBadge status={staff.status}>{staff.status}</StatusBadge>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 

@@ -1,19 +1,35 @@
-import StatsCard from "./StatsCard";
-import QuickActions from "./QuickActions";
-import AppointmentsTable from "./AppointmentsTable";
-import PatientsSection from "./PatientsSection";
-import { api } from "../../api/client";
-import { useAuth } from "../../auth/AuthProvider";
-import { useApi } from "../../hooks/useApi";
-import { todaySast } from "../../utils/format";
-import { toPatientCard } from "../../utils/patients";
-import AsyncContent from "../common/AsyncContent";
 import {
   faUsers,
   faCalendarCheck,
   faFileMedical,
   faPrescription,
 } from "@fortawesome/free-solid-svg-icons";
+import PatientsSection from "./PatientsSection";
+import AppointmentsTable from "../Appointments/AppointmentsTable";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi } from "../../hooks/useApi";
+import { longDate, todaySast } from "../../utils/format";
+import { toPatientCard } from "../../utils/patients";
+import AsyncContent from "../common/AsyncContent";
+import { Card, Section } from "../common/Card";
+import { PageHeader, PageShell } from "../common/PageShell";
+import { StatGrid } from "../common/StatCard";
+import { ActionList } from "../common/QuickActions";
+
+const STAT_ICONS = {
+  totalPatients: faUsers,
+  todayAppointments: faCalendarCheck,
+  pendingReports: faFileMedical,
+  activePrescriptions: faPrescription,
+};
+
+const QUICK_ACTIONS = [
+  { name: "Add New Patient", icon: faUsers },
+  { name: "Schedule Appointment", icon: faCalendarCheck },
+  { name: "Create Prescription", icon: faPrescription },
+  { name: "Generate Report", icon: faFileMedical },
+];
 
 function DoctorDashboard() {
   const { user } = useAuth();
@@ -44,55 +60,34 @@ function DoctorDashboard() {
   });
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="max-w-[1920px] mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="font-poppins text-2xl font-bold text-primary">
-                Welcome back, {user?.name}
-              </h1>
-              <p className="font-poppins text-ink">
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
-          </div>
+    <PageShell>
+      <PageHeader
+        title={`Welcome back, ${user?.name ?? ""}`}
+        subtitle={longDate()}
+      />
 
-          <AsyncContent loading={loading} error={error}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {Object.entries(data.stats).map(([key, value]) => (
-                <StatsCard
-                  key={key}
-                  title={key.replace(/([A-Z])/g, " $1").trim()}
-                  value={value}
-                  icon={
-                    key === "totalPatients"
-                      ? faUsers
-                      : key === "todayAppointments"
-                      ? faCalendarCheck
-                      : key === "pendingReports"
-                      ? faFileMedical
-                      : faPrescription
-                  }
-                />
-              ))}
-            </div>
+      <AsyncContent loading={loading} error={error}>
+        <StatGrid stats={data?.stats ?? {}} icons={STAT_ICONS} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-              <PatientsSection patients={data.patients} />
-              <QuickActions />
-            </div>
-
-            <AppointmentsTable appointments={data.appointments} />
-          </AsyncContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <PatientsSection patients={data?.patients ?? []} />
+          <Section title="Quick Actions">
+            <Card>
+              <ActionList actions={QUICK_ACTIONS} />
+            </Card>
+          </Section>
         </div>
-      </div>
-    </div>
+
+        <Section title="Upcoming Appointments">
+          <Card padded={false}>
+            <AppointmentsTable
+              appointments={data?.appointments ?? []}
+              showDoctor={false}
+            />
+          </Card>
+        </Section>
+      </AsyncContent>
+    </PageShell>
   );
 }
 

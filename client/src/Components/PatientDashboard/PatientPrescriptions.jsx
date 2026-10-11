@@ -1,18 +1,14 @@
+import PropTypes from "prop-types";
 import { api } from "../../api/client";
 import { useApi } from "../../hooks/useApi";
 import AsyncContent from "../common/AsyncContent";
+import { Card } from "../common/Card";
 import PrescriptionsCard from "./PrescriptionsCard";
 
-const PatientPrescriptions = () => {
-  const prescriptions = useApi(() =>
-    api.listPrescriptions({ status: "active" })
-  );
-
+// Card listing a useApi() result of prescriptions.
+export function PrescriptionsList({ prescriptions }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-        Current Prescriptions
-      </h2>
+    <Card title="Current Prescriptions">
       <div className="space-y-4">
         <AsyncContent
           {...prescriptions}
@@ -27,8 +23,19 @@ const PatientPrescriptions = () => {
           ))}
         </AsyncContent>
       </div>
-    </div>
+    </Card>
   );
+}
+
+PrescriptionsList.propTypes = {
+  prescriptions: PropTypes.object.isRequired,
+};
+
+const PatientPrescriptions = () => {
+  const prescriptions = useApi(() =>
+    api.listPrescriptions({ status: "active" })
+  );
+  return <PrescriptionsList prescriptions={prescriptions} />;
 };
 
 export default PatientPrescriptions;

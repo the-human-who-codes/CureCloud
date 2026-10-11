@@ -1,15 +1,14 @@
+import PropTypes from "prop-types";
 import { api } from "../../api/client";
 import { useApi } from "../../hooks/useApi";
 import AsyncContent from "../common/AsyncContent";
+import { Card } from "../common/Card";
 import AppointmentCard from "./AppointmentCard";
 
-const UpcomingAppointmentsCard = () => {
-  const appointments = useApi(() => api.listAppointments({ upcoming: "true" }));
+// Card listing a useApi() result of appointments.
+export function UpcomingAppointmentsList({ appointments }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-        Upcoming Appointments
-      </h2>
+    <Card title="Upcoming Appointments">
       <div className="space-y-4">
         <AsyncContent
           {...appointments}
@@ -21,8 +20,17 @@ const UpcomingAppointmentsCard = () => {
           ))}
         </AsyncContent>
       </div>
-    </div>
+    </Card>
   );
+}
+
+UpcomingAppointmentsList.propTypes = {
+  appointments: PropTypes.object.isRequired,
+};
+
+const UpcomingAppointmentsCard = () => {
+  const appointments = useApi(() => api.listAppointments({ upcoming: "true" }));
+  return <UpcomingAppointmentsList appointments={appointments} />;
 };
 
 export default UpcomingAppointmentsCard;

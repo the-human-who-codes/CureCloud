@@ -1,10 +1,8 @@
 import PropTypes from "prop-types";
+import { Card } from "../common/Card";
 
 const TodayTasksSection = ({ tasks, onStart = () => {} }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-    <h2 className="text-xl font-semibold text-primary mb-4">
-      Today&apos;s Tasks
-    </h2>
+  <Card title="Today's Tasks">
     <div className="space-y-4">
       {tasks.map((task) => (
         <div key={task.id} className="p-4 bg-surface rounded-lg">
@@ -13,7 +11,7 @@ const TodayTasksSection = ({ tasks, onStart = () => {} }) => (
         </div>
       ))}
     </div>
-  </div>
+  </Card>
 );
 
 TodayTasksSection.propTypes = {

@@ -1,5 +1,11 @@
-import StatsGrid from "./StatsGrid";
-import QuickActions from "./QuickActions";
+import {
+  faUserMd,
+  faUsers,
+  faCalendarCheck,
+  faChartPie,
+  faFileMedical,
+  faCog,
+} from "@fortawesome/free-solid-svg-icons";
 import Analytics from "./Analytics";
 import StaffSchedule from "./StaffSchedule";
 import SystemAlerts from "./SystemAlerts";
@@ -7,6 +13,26 @@ import MockData from "../../data/MockData";
 import { api } from "../../api/client";
 import { useApi } from "../../hooks/useApi";
 import AsyncContent from "../common/AsyncContent";
+import { Card } from "../common/Card";
+import { PageHeader } from "../common/PageShell";
+import { StatGrid } from "../common/StatCard";
+import { ActionTiles } from "../common/QuickActions";
+
+const statIcon = (key) =>
+  key.includes("Doctors")
+    ? faUserMd
+    : key.includes("Patients")
+    ? faUsers
+    : key.includes("Appointments")
+    ? faCalendarCheck
+    : faChartPie;
+
+const QUICK_ACTIONS = [
+  { name: "Add New Doctor", icon: faUserMd },
+  { name: "Add New Patient", icon: faUsers },
+  { name: "Generate Reports", icon: faFileMedical },
+  { name: "System Settings", icon: faCog },
+];
 
 function AdminDashboard() {
   const stats = useApi(() => api.getAdminStats());
@@ -16,17 +42,15 @@ function AdminDashboard() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-poppins text-2xl font-bold text-primary">
-          Admin Dashboard
-        </h1>
-      </div>
+      <PageHeader title="Admin Dashboard" />
       <AsyncContent loading={stats.loading} error={stats.error}>
-        <StatsGrid statsData={stats.data ?? {}} />
+        <StatGrid stats={stats.data ?? {}} icons={statIcon} />
       </AsyncContent>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 grid gap-6">
-          <QuickActions />
+          <Card title="Quick Actions">
+            <ActionTiles actions={QUICK_ACTIONS} />
+          </Card>
           <Analytics />
         </div>
         <div className="space-y-6">

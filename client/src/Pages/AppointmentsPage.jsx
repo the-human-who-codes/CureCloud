@@ -5,6 +5,7 @@ import { useApi } from "../hooks/useApi";
 import { todaySast } from "../utils/format";
 import defaultAvatar from "../assets/default-avatar.svg";
 import AsyncContent from "../Components/common/AsyncContent";
+import { PageShell } from "../Components/common/PageShell";
 import AppointmentsTable from "../Components/Appointments/AppointmentsTable";
 import AppointmentsFilters from "../Components/Appointments/AppointmentsFilters";
 import AppointmentsHeader from "../Components/Appointments/AppointmentsHeader";
@@ -38,37 +39,35 @@ function AppointmentsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-surface">
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        <AppointmentsHeader />
-        <AppointmentsFilters
-          {...{
-            selectedDateRange,
-            setSelectedDateRange,
-            selectedStatus,
-            setSelectedStatus,
-            isCalendarView,
-            setIsCalendarView,
-          }}
-        />
-        {isCalendarView ? (
-          <div>Calendar View Coming Soon</div>
-        ) : (
-          <AsyncContent
-            loading={loading}
-            error={error}
-            empty={appointments.length === 0}
-            emptyText="No appointments match these filters."
-          >
-            <AppointmentsTable
-              appointments={appointments}
-              onConfirm={(id) => updateStatus(id, "confirmed")}
-              onCancel={(id) => updateStatus(id, "cancelled")}
-            />
-          </AsyncContent>
-        )}
-      </div>
-    </div>
+    <PageShell contained={false}>
+      <AppointmentsHeader />
+      <AppointmentsFilters
+        {...{
+          selectedDateRange,
+          setSelectedDateRange,
+          selectedStatus,
+          setSelectedStatus,
+          isCalendarView,
+          setIsCalendarView,
+        }}
+      />
+      {isCalendarView ? (
+        <div>Calendar View Coming Soon</div>
+      ) : (
+        <AsyncContent
+          loading={loading}
+          error={error}
+          empty={appointments.length === 0}
+          emptyText="No appointments match these filters."
+        >
+          <AppointmentsTable
+            appointments={appointments}
+            onConfirm={(id) => updateStatus(id, "confirmed")}
+            onCancel={(id) => updateStatus(id, "cancelled")}
+          />
+        </AsyncContent>
+      )}
+    </PageShell>
   );
 }
 export default AppointmentsPage;

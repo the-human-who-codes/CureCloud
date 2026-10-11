@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { capitalize } from "../../utils/format";
+import StatusBadge from "../common/StatusBadge";
 
 const AppointmentCard = ({ appointment }) => (
   <div className="flex items-center justify-between p-3 bg-surface rounded-lg">
@@ -11,15 +11,7 @@ const AppointmentCard = ({ appointment }) => (
         {appointment.date} {appointment.time}
       </p>
     </div>
-    <span
-      className={`px-3 py-1 rounded-full text-xs font-poppins ${
-        appointment.status === "confirmed"
-          ? "bg-green-100 text-green-800"
-          : "bg-yellow-100 text-yellow-800"
-      }`}
-    >
-      {capitalize(appointment.status)}
-    </span>
+    <StatusBadge status={appointment.status} />
   </div>
 );
 

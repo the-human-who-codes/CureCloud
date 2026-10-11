@@ -1,13 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import { Card } from "../common/Card";
 
 const RecentAlertsSection = ({ alerts }) => {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-line">
-      <h2 className="font-poppins text-xl font-semibold text-primary mb-4">
-        Recent Alerts
-      </h2>
+    <Card title="Recent Alerts">
       <div className="space-y-4">
         {alerts.map((alert, index) => (
           <div
@@ -24,7 +22,7 @@ const RecentAlertsSection = ({ alerts }) => {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 

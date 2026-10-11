@@ -4,7 +4,7 @@
 		"rewrites": [
 			{
 				"source": "/api/**",
-				"function": { "functionId": "api", "region": "us-central1" }
+				"function": { "functionId": "api", "region": "africa-south1" }
 			},
 			{
 				"source": "**",

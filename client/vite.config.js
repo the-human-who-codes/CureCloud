@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
     env.VITE_USE_EMULATORS === "true"
       ? {
           target: "http://127.0.0.1:5001",
-          rewrite: (path) => `/curecloud1/us-central1/api${path}`,
+          rewrite: (path) => `/curecloud1/africa-south1/api${path}`,
         }
       : { target: "https://curecloud1.web.app", changeOrigin: true };
 

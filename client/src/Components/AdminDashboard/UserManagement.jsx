@@ -13,6 +13,7 @@ import {
 import { PageHeader, PageShell } from "../common/PageShell";
 import TableHead from "../common/TableHead";
 import StatusBadge from "../common/StatusBadge";
+import { FormField } from "../common/FormField";
 import { StatGrid } from "../common/StatCard";
 import { Button, IconButton } from "../common/Button";
 import { Card } from "../common/Card";
@@ -105,36 +106,32 @@ function UserManagement() {
 
       <Card className="mb-8">
         <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block font-poppins text-sm text-ink mb-2">
-              Role
-            </label>
-            <select
-              className="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-            >
-              <option value="all">All Roles</option>
-              <option value="doctor">Doctors</option>
-              <option value="nurse">Nurses</option>
-              <option value="admin">Administrators</option>
-            </select>
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <label className="block font-poppins text-sm text-ink mb-2">
-              Status
-            </label>
-            <select
-              className="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
-            </select>
-          </div>
+          <FormField
+            as="select"
+            label="Role"
+            wrapperClassName="flex-1 min-w-[200px]"
+            inputClassName="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+          >
+            <option value="all">All Roles</option>
+            <option value="doctor">Doctors</option>
+            <option value="nurse">Nurses</option>
+            <option value="admin">Administrators</option>
+          </FormField>
+          <FormField
+            as="select"
+            label="Status"
+            wrapperClassName="flex-1 min-w-[200px]"
+            inputClassName="w-full px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending">Pending</option>
+          </FormField>
         </div>
       </Card>
 

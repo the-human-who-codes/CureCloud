@@ -8,7 +8,14 @@ import {
   faMoon,
 } from "@fortawesome/free-solid-svg-icons";
 import { PageShell } from "../common/PageShell";
+import { ActionList } from "../common/QuickActions";
 import { Card, SectionTitle } from "../common/Card";
+
+const SECURITY_ACTIONS = [
+  { name: "Change Password", icon: faKey },
+  { name: "Enable Two-Factor Authentication", icon: faShieldAlt },
+  { name: "View Login History", icon: faHistory },
+];
 
 function SettingsPage() {
   const [notifications, setNotifications] = useState({
@@ -101,22 +108,7 @@ function SettingsPage() {
           <Card>
             <SectionTitle className="mb-6">Security Settings</SectionTitle>
 
-            <div className="space-y-6">
-              <button className="w-full px-4 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex items-center">
-                <FontAwesomeIcon icon={faKey} className="mr-2" />
-                Change Password
-              </button>
-
-              <button className="w-full px-4 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex items-center">
-                <FontAwesomeIcon icon={faShieldAlt} className="mr-2" />
-                Enable Two-Factor Authentication
-              </button>
-
-              <button className="w-full px-4 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line transition-colors duration-200 flex items-center">
-                <FontAwesomeIcon icon={faHistory} className="mr-2" />
-                View Login History
-              </button>
-            </div>
+            <ActionList className="space-y-6" actions={SECURITY_ACTIONS} />
           </Card>
         </div>
 

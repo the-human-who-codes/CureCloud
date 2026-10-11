@@ -1,5 +1,42 @@
 import { useState } from "react";
 import { api } from "../api/client";
+import { FormField } from "../Components/common/FormField";
+
+const FIELDS = [
+  {
+    name: "fullName",
+    label: "Full Name",
+    type: "text",
+    placeholder: "Enter your full name",
+  },
+  {
+    name: "nationalId",
+    label: "National ID Number",
+    type: "text",
+    placeholder: "Enter your ID number",
+  },
+  {
+    name: "email",
+    label: "Email Address",
+    type: "email",
+    placeholder: "Enter your email",
+  },
+  {
+    name: "phoneNumber",
+    label: "Phone Number",
+    type: "tel",
+    placeholder: "Enter your phone number",
+  },
+];
+
+const PASSWORD_FIELDS = [
+  { name: "password", label: "Password", placeholder: "Create a password" },
+  {
+    name: "confirmPassword",
+    label: "Confirm Password",
+    placeholder: "Confirm your password",
+  },
+];
 
 function StaffSignUp() {
   const [formData, setFormData] = useState({
@@ -14,6 +51,9 @@ function StaffSignUp() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,126 +97,42 @@ function StaffSignUp() {
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
+            {FIELDS.map(({ name, label, type, placeholder }) => (
+              <FormField
+                key={name}
+                label={label}
+                type={type}
+                name={name}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Enter your full name"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, fullName: e.target.value })
-                }
+                placeholder={placeholder}
+                value={formData[name]}
+                onChange={handleChange}
               />
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                National ID Number
-              </label>
-              <input
-                type="text"
-                name="nationalId"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Enter your ID number"
-                value={formData.nationalId}
-                onChange={(e) =>
-                  setFormData({ ...formData, nationalId: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Enter your phone number"
-                value={formData.phoneNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, phoneNumber: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Role
-              </label>
-              <select
-                name="role"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({ ...formData, role: e.target.value })
-                }
-              >
-                <option value="nurse">Nurse</option>
-                <option value="doctor">Doctor</option>
-                <option value="admin">Administrator</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Password
-              </label>
-              <input
+            ))}
+            <FormField
+              as="select"
+              label="Role"
+              name="role"
+              required
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="nurse">Nurse</option>
+              <option value="doctor">Doctor</option>
+              <option value="admin">Administrator</option>
+            </FormField>
+            {PASSWORD_FIELDS.map(({ name, label, placeholder }) => (
+              <FormField
+                key={name}
+                label={label}
                 type="password"
-                name="password"
+                name={name}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                placeholder={placeholder}
+                value={formData[name]}
+                onChange={handleChange}
               />
-            </div>
-
-            <div>
-              <label className="block font-poppins text-sm text-ink mb-2">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-              />
-            </div>
+            ))}
           </div>
 
           <button

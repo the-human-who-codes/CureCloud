@@ -9,9 +9,9 @@ const actionShape = PropTypes.shape({
 });
 
 // Full-width stacked action buttons (dashboard side panels).
-export function ActionList({ actions }) {
+export function ActionList({ actions, className = "space-y-4" }) {
   return (
-    <div className="space-y-4">
+    <div className={className}>
       {actions.map(({ name, icon, iconClassName = "", onClick }) => (
         <button
           key={name}
@@ -26,7 +26,10 @@ export function ActionList({ actions }) {
   );
 }
 
-ActionList.propTypes = { actions: PropTypes.arrayOf(actionShape).isRequired };
+ActionList.propTypes = {
+  actions: PropTypes.arrayOf(actionShape).isRequired,
+  className: PropTypes.string,
+};
 
 // Square icon-over-label action tiles in a 2/4 column grid.
 export function ActionTiles({ actions }) {

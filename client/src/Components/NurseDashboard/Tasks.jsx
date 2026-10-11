@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -98,11 +97,7 @@ function Tasks() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
       <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
-
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">

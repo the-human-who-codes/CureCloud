@@ -1,9 +1,7 @@
-"use client";
 import { useState } from "react";
 
 function Messages() {
   const [searchTerm, setSearchTerm] = useState("");
-  //   const [selectedFilter, setSelectedFilter] = useState("all");
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
   const [showQuickResponses, setShowQuickResponses] = useState(false);

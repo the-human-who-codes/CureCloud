@@ -1,5 +1,3 @@
-"use client";
-
 import ContactInformationSection from "./ContactInformationSection";
 import ProfessionalInformationSection from "./ProfessionalInformationSection";
 import ProfileCard from "./ProfileCard";
@@ -55,7 +53,6 @@ function ProfilePage() {
               <ProfessionalInformationSection profileData={profileData} />
               {/* personal contact info */}
               <ContactInformationSection profileData={profileData} />
-              {console.log(profileData)}
             </div>
             <ScheduleOverview profileData={profileData} />
           </div>

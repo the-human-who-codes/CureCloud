@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { api } from "../../api/client";
 import { useApi } from "../../hooks/useApi";
@@ -59,7 +58,6 @@ function toRecordRow(p, appointments) {
 }
 
 function PatientRecords() {
-  //   const [searchTerm, setSearchTerm] = useState("");
   const [selectedView, setSelectedView] = useState("list");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -108,11 +106,7 @@ function PatientRecords() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
       <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
-
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex items-center justify-between mb-8">

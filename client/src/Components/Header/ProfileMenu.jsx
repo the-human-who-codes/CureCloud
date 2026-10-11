@@ -39,7 +39,6 @@ const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
       <button
         onClick={() => {
           navigate("profile");
-          // toggleProfile(true);
         }}
         className="flex items-center  space-x-3 p-2 hover:bg-[#f8faff] rounded-lg"
       >

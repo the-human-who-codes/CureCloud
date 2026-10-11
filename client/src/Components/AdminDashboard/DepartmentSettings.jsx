@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-"use client";
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -12,14 +9,10 @@ import {
   faExpandAlt,
   faUserPlus,
   faChartPie,
-  faTools,
   faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 function DepartmentSettings() {
-  // const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-
   const mockDepartments = [
     {
       id: "DEP001",
@@ -100,11 +93,7 @@ function DepartmentSettings() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
       <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
-
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -181,7 +170,6 @@ function DepartmentSettings() {
                       <button
                         className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
                         title="View Details"
-                        onClick={() => setSelectedDepartment(dept)}
                       >
                         <FontAwesomeIcon icon={faExpandAlt} />
                       </button>

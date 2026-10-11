@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-"use client";
 import { useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,8 +20,6 @@ import {
 function AdminReports() {
   const [selectedDateRange, setSelectedDateRange] = useState("week");
   const [selectedReportType, setSelectedReportType] = useState("all");
-  const [generatingReport, setGeneratingReport] = useState(false);
-  //   const [searchTerm, setSearchTerm] = useState("");
 
   const mockReportStats = {
     totalReports: 156,
@@ -132,11 +128,7 @@ function AdminReports() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
       <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
-
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="max-w-[1920px] mx-auto">
             <div className="flex  justify-between items-center text-center mb-8">
@@ -148,10 +140,7 @@ function AdminReports() {
                   Generate and manage hospital reports and analytics
                 </p>
               </div>
-              <button
-                className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center "
-                onClick={() => setGeneratingReport(true)}
-              >
+              <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center ">
                 <FontAwesomeIcon icon={faFileMedical} className="fas mr-2" />
                 Generate New Report
               </button>

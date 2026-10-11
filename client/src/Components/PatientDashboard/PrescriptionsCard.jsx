@@ -1,4 +1,3 @@
-// PrescriptionCard.jsx
 import PropTypes from "prop-types";
 
 const PrescriptionCard = ({ prescription }) => (

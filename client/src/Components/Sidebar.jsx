@@ -163,32 +163,6 @@ function Sidebar({ userRole = "doctor" }) {
           ))}
         </nav>
       </div>
-
-      {/* Mobile Bottom Navigation (Hidden on larger screens) */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white shadow-lg border-t border-gray-300 p-2">
-        <nav className="flex justify-around">
-          {menuItems.slice(0, 4).map(
-            (
-              item // Show only 4 items for space
-            ) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex flex-col items-center text-sm p-2 ${
-                    isActive
-                      ? "text-[#2c4ecf]"
-                      : "text-gray-500 hover:text-[#1a3baf]"
-                  }`
-                }
-              >
-                <FontAwesomeIcon icon={item.icon} className="text-lg" />
-                <span className="text-xs">{item.name.split(" ")[0]}</span>
-              </NavLink>
-            )
-          )}
-        </nav>
-      </div>
     </>
   );
 }

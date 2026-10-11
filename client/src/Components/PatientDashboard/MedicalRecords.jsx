@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,7 +20,6 @@ import defaultAvatar from "../../assets/default-avatar.svg";
 
 function MedicalRecords() {
   const [activeTab, setActiveTab] = useState("summary");
-  //   const [searchTerm, setSearchTerm] = useState("");
 
   const { patient } = useAuth();
   const vitals = patient?.vitals ?? {};

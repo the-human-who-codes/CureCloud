@@ -26,8 +26,6 @@ function TeamChat() {
 
   return (
     <div className="flex h-screen bg-[#f8faff]">
-      <></>
-
       <div className="flex-1 flex overflow-hidden">
         <div className="w-80 border-r border-[#e1e8ff] bg-white flex flex-col">
           <div className="p-4 border-b border-[#e1e8ff]">

@@ -34,7 +34,6 @@ const Header = ({ onSearch, notificationCount, userName, role }) => {
 
         <div className="flex items-center space-x-4">
           <NotificationBell
-            role={role}
             notificationCount={
               notificationCount ?? unread?.notifications.length ?? 0
             }

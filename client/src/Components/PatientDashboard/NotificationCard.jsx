@@ -1,4 +1,3 @@
-// NotificationCard.jsx
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,

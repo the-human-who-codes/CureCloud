@@ -1,4 +1,3 @@
-// AppointmentCard.jsx
 import PropTypes from "prop-types";
 import { capitalize } from "../../utils/format";
 

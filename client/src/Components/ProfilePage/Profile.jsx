@@ -48,9 +48,7 @@ function ProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-8">
-          {/* professional info */}
           <ProfessionalInformationSection profileData={profileData} />
-          {/* personal contact info */}
           <ContactInformationSection profileData={profileData} />
         </div>
         <ScheduleOverview profileData={profileData} />

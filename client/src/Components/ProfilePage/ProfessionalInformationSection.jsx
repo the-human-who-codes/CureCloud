@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Card, SectionTitle } from "../common/Card";
+import InfoItem from "./InfoItem";
+
 const ProfessionalInformationSection = ({ profileData }) => {
   return (
     <Card>
@@ -10,20 +12,10 @@ const ProfessionalInformationSection = ({ profileData }) => {
         Professional Information
       </SectionTitle>
       <div className="space-y-4">
-        <div>
-          <p className="font-poppins text-sm text-ink">Medical License</p>
-          <p className="font-poppins text-lg">{profileData.license}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Specialization</p>
-          <p className="font-poppins text-lg">{profileData.specialization}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Experience</p>
-          <p className="font-poppins text-lg">{profileData.experience}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Education</p>
+        <InfoItem label="Medical License" value={profileData.license} />
+        <InfoItem label="Specialization" value={profileData.specialization} />
+        <InfoItem label="Experience" value={profileData.experience} />
+        <InfoItem label="Education">
           {profileData.education.map((edu, index) => (
             <div key={index} className="mt-2">
               <p className="font-poppins text-lg">{edu.degree}</p>
@@ -32,7 +24,7 @@ const ProfessionalInformationSection = ({ profileData }) => {
               </p>
             </div>
           ))}
-        </div>
+        </InfoItem>
       </div>
     </Card>
   );

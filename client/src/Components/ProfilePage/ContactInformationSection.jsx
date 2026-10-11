@@ -2,8 +2,9 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard } from "@fortawesome/free-solid-svg-icons";
 import { Card, SectionTitle } from "../common/Card";
+import InfoItem from "./InfoItem";
 
-const ProfessionalInformationSection = ({ profileData }) => {
+const ContactInformationSection = ({ profileData }) => {
   return (
     <Card>
       <SectionTitle className="mb-6">
@@ -11,31 +12,23 @@ const ProfessionalInformationSection = ({ profileData }) => {
         Contact Information
       </SectionTitle>
       <div className="space-y-4">
-        <div>
-          <p className="font-poppins text-sm text-ink">Email</p>
-          <p className="font-poppins text-lg">{profileData.email}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Phone</p>
-          <p className="font-poppins text-lg">{profileData.phone}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Office Location</p>
-          <p className="font-poppins text-lg">{profileData.office}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-ink">Emergency Contact</p>
-          <p className="font-poppins text-lg">{profileData?.emergency?.name}</p>
+        <InfoItem label="Email" value={profileData.email} />
+        <InfoItem label="Phone" value={profileData.phone} />
+        <InfoItem label="Office Location" value={profileData.office} />
+        <InfoItem
+          label="Emergency Contact"
+          value={profileData?.emergency?.name}
+        >
           <p className="font-poppins text-sm text-ink">
             {profileData?.emergency?.relation} • {profileData?.emergency?.phone}
           </p>
-        </div>
+        </InfoItem>
       </div>
     </Card>
   );
 };
 
-ProfessionalInformationSection.propTypes = {
+ContactInformationSection.propTypes = {
   profileData: PropTypes.shape({
     email: PropTypes.string,
     phone: PropTypes.string,
@@ -48,4 +41,4 @@ ProfessionalInformationSection.propTypes = {
   }).isRequired,
 };
 
-export default ProfessionalInformationSection;
+export default ContactInformationSection;

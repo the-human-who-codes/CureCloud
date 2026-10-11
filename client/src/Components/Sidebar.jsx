@@ -20,76 +20,77 @@ import {
   faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 
+// Sidebar entries per role.
+const MENU_ITEMS_BY_ROLE = {
+  doctor: [
+    { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
+    {
+      name: "Patient Records",
+      icon: faUsers,
+      path: "/doctor/patient-records",
+    },
+    {
+      name: "Appointments",
+      icon: faCalendarAlt,
+      path: "/doctor/appointments",
+    },
+    {
+      name: "Prescriptions",
+      icon: faPrescriptionBottleAlt,
+      path: "/doctor/prescriptions",
+    },
+    { name: "Reports", icon: faFileMedicalAlt, path: "/doctor/reports" },
+    { name: "Settings", icon: faCog, path: "/doctor/settings" },
+  ],
+  nurse: [
+    { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
+    { name: "My Patients", icon: faProcedures, path: "/nurse/my-patients" },
+    { name: "Tasks", icon: faTasks, path: "/nurse/tasks" },
+    { name: "Medications", icon: faPills, path: "/nurse/medications" },
+    { name: "Reports", icon: faFileMedicalAlt, path: "/nurse/reports" },
+    { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
+    { name: "Settings", icon: faCog, path: "/nurse/settings" },
+  ],
+  admin: [
+    { name: "Dashboard", icon: faChartLine, path: "/admin/dashboard" },
+    {
+      name: "User Management",
+      icon: faUsersCog,
+      path: "/admin/user-management",
+    },
+    {
+      name: "Department Settings",
+      icon: faHospital,
+      path: "/admin/department-settings",
+    },
+    { name: "Reports", icon: faFileMedicalAlt, path: "/admin/reports" },
+    { name: "System Settings", icon: faCog, path: "/admin/system-settings" },
+  ],
+  patient: [
+    { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
+    {
+      name: "Appointments",
+      icon: faCalendarAlt,
+      path: "/patient/appointments",
+    },
+    {
+      name: "Prescriptions",
+      icon: faPrescriptionBottleAlt,
+      path: "/patient/prescriptions",
+    },
+    {
+      name: "Medical Records",
+      icon: faHistory,
+      path: "/patient/medical-records",
+    },
+    { name: "Settings", icon: faCog, path: "/patient/settings" },
+  ],
+};
+
 function Sidebar({ userRole = "doctor" }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const menuItemsByRole = {
-    doctor: [
-      { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
-      {
-        name: "Patient Records",
-        icon: faUsers,
-        path: "/doctor/patient-records",
-      },
-      {
-        name: "Appointments",
-        icon: faCalendarAlt,
-        path: "/doctor/appointments",
-      },
-      {
-        name: "Prescriptions",
-        icon: faPrescriptionBottleAlt,
-        path: "/doctor/prescriptions",
-      },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/doctor/reports" },
-      { name: "Settings", icon: faCog, path: "/doctor/settings" },
-    ],
-    nurse: [
-      { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
-      { name: "My Patients", icon: faProcedures, path: "/nurse/my-patients" },
-      { name: "Tasks", icon: faTasks, path: "/nurse/tasks" },
-      { name: "Medications", icon: faPills, path: "/nurse/medications" },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/nurse/reports" },
-      { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
-      { name: "Settings", icon: faCog, path: "/nurse/settings" },
-    ],
-    admin: [
-      { name: "Dashboard", icon: faChartLine, path: "/admin/dashboard" },
-      {
-        name: "User Management",
-        icon: faUsersCog,
-        path: "/admin/user-management",
-      },
-      {
-        name: "Department Settings",
-        icon: faHospital,
-        path: "/admin/department-settings",
-      },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/admin/reports" },
-      { name: "System Settings", icon: faCog, path: "/admin/system-settings" },
-    ],
-    patient: [
-      { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
-      {
-        name: "Appointments",
-        icon: faCalendarAlt,
-        path: "/patient/appointments",
-      },
-      {
-        name: "Prescriptions",
-        icon: faPrescriptionBottleAlt,
-        path: "/patient/prescriptions",
-      },
-      {
-        name: "Medical Records",
-        icon: faHistory,
-        path: "/patient/medical-records",
-      },
-      { name: "Settings", icon: faCog, path: "/patient/settings" },
-    ],
-  };
-
-  const menuItems = menuItemsByRole[userRole] || menuItemsByRole.doctor;
+  const menuItems = MENU_ITEMS_BY_ROLE[userRole] || MENU_ITEMS_BY_ROLE.doctor;
 
   return (
     <>

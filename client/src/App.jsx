@@ -1,10 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 // Layouts
-import AdminLayout from "./Layouts/AdminLayout";
-import DoctorLayout from "./Layouts/DoctorLayout";
-import NurseLayout from "./Layouts/NurseLayout";
-import PatientLayout from "./Layouts/PatientLayout";
+import DashboardLayout from "./Layouts/DashboardLayout";
 
 // Admin Pages
 import AdminDashboard from "./Components/AdminDashboard/AdminDashboard";
@@ -62,7 +59,7 @@ const AppRouter = () => {
             path="/admin"
             element={
               <RequireRole role="admin">
-                <AdminLayout />
+                <DashboardLayout role="admin" />
               </RequireRole>
             }
           >
@@ -85,7 +82,7 @@ const AppRouter = () => {
             path="/doctor"
             element={
               <RequireRole role="doctor">
-                <DoctorLayout />
+                <DashboardLayout role="doctor" />
               </RequireRole>
             }
           >
@@ -108,7 +105,7 @@ const AppRouter = () => {
             path="/nurse"
             element={
               <RequireRole role="nurse">
-                <NurseLayout />
+                <DashboardLayout role="nurse" />
               </RequireRole>
             }
           >
@@ -128,7 +125,7 @@ const AppRouter = () => {
             path="/patient"
             element={
               <RequireRole role="patient">
-                <PatientLayout />
+                <DashboardLayout role="patient" />
               </RequireRole>
             }
           >

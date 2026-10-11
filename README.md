@@ -53,7 +53,7 @@ cd ../CureCloud/client
 npm run dev:emulator   # frontend wired to the local emulators
 ```
 
-`npm run dev` (without emulators) proxies `/api` to the deployed API at `curecloud1.web.app`.
+`npm run dev` (without emulators) calls the deployed API directly (`VITE_API_BASE_URL` in `client/.env.development`).
 
 ---
 

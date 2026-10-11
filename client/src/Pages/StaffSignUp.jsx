@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../api/client";
 
 function StaffSignUp() {
   const [formData, setFormData] = useState({
@@ -26,19 +27,7 @@ function StaffSignUp() {
     }
 
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to sign up");
-      }
+      await api.signupStaff(formData);
 
       window.location.href = "/role-selection";
     } catch (err) {

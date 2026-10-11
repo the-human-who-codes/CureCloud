@@ -1,5 +1,8 @@
 import { auth } from "../firebaseConfig";
 
+// Set per mode in .env.development / .env.production / .env.emulator.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
+
 export class ApiError extends Error {
   constructor(status, message, details) {
     super(message);
@@ -27,7 +30,7 @@ async function request(
         Object.entries(query).filter(([, v]) => v !== undefined && v !== null)
       )
     : "";
-  const res = await fetch(`/api${path}${params}`, {
+  const res = await fetch(`${API_BASE_URL}${path}${params}`, {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),

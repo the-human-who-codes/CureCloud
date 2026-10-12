@@ -9,18 +9,16 @@ export const TONE_CLASSES = {
 };
 
 // Status / priority value (any case, "_" / "-" / " " separated) -> tone.
-// Covers every enum in the backend's docs/domain-model.md plus the labels the
-// remaining mock-backed pages still use. Unknown values fall back to "warning".
+// Covers every enum in the backend's docs/domain-model.md section 2. Unknown values fall back to
+// "warning".
 const STATUS_TONES = {
   // Done / healthy
   active: "success",
   completed: "success",
-  complete: "success",
   final: "success",
   given: "success",
   stable: "success",
   "on duty": "success",
-  online: "success",
   low: "success",
   normal: "success",
   mild: "success",
@@ -28,11 +26,16 @@ const STATUS_TONES = {
   confirmed: "info",
   "checked in": "info",
   scheduled: "info",
-  processing: "info",
   amended: "info",
   upcoming: "info",
   info: "info",
   important: "info",
+  "on call": "info",
+  morning: "info",
+  afternoon: "info",
+  night: "info",
+  day: "info",
+  leave: "neutral",
   // Needs attention
   pending: "warning",
   preliminary: "warning",
@@ -40,11 +43,8 @@ const STATUS_TONES = {
   open: "warning",
   "in progress": "warning",
   due: "warning",
-  "needs attention": "warning",
-  medium: "warning",
   moderate: "warning",
   high: "warning",
-  away: "warning",
   warning: "warning",
   "on leave": "warning",
   // Failed / stopped / urgent
@@ -52,7 +52,6 @@ const STATUS_TONES = {
   severe: "danger",
   urgent: "danger",
   overdue: "danger",
-  missed: "danger",
   "no show": "danger",
   "not given": "danger",
   "not done": "danger",
@@ -61,12 +60,14 @@ const STATUS_TONES = {
   inactive: "danger",
   "entered in error": "danger",
   error: "danger",
+  "critical low": "danger",
+  "critical high": "danger",
+  abnormal: "warning",
   // Closed / archived
   cancelled: "neutral",
   archived: "neutral",
   resolved: "neutral",
   deceased: "neutral",
-  offline: "neutral",
 };
 
 export const toneForStatus = (status) =>

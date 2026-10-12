@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { capitalize } from "../../utils/format";
+import { labelFor } from "../../utils/format";
 import { TONE_CLASSES, toneForStatus } from "../../utils/status";
 
 // Rounded status pill. The colour comes from `tone`, or is derived from `status`.
@@ -11,7 +11,7 @@ function StatusBadge({ status, tone, size = "md", children, className = "" }) {
         size === "sm" ? "px-2" : "px-3"
       } py-1 rounded-full text-xs font-poppins ${classes} ${className}`}
     >
-      {children ?? capitalize(String(status ?? "").replace(/[_-]/g, " "))}
+      {children ?? labelFor(status)}
     </span>
   );
 }

@@ -3,11 +3,25 @@ import PropTypes from "prop-types";
 const initials = (name = "") =>
   name
     .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
     .map((n) => n[0])
-    .join("");
+    .join("")
+    .toUpperCase();
 
-// Round placeholder avatar showing a person's initials.
-function InitialsAvatar({ name, large = false, className = "" }) {
+// Round avatar: the person's photo when there is one, otherwise their initials.
+function InitialsAvatar({ name, photoUrl, large = false, className = "" }) {
+  if (photoUrl)
+    return (
+      <img
+        src={photoUrl}
+        alt={name}
+        referrerPolicy="no-referrer"
+        className={`${
+          large ? "w-16 h-16" : "w-10 h-10"
+        } rounded-full object-cover ${className}`}
+      />
+    );
   return (
     <div
       className={`${
@@ -27,6 +41,7 @@ function InitialsAvatar({ name, large = false, className = "" }) {
 
 InitialsAvatar.propTypes = {
   name: PropTypes.string,
+  photoUrl: PropTypes.string,
   large: PropTypes.bool,
   className: PropTypes.string,
 };

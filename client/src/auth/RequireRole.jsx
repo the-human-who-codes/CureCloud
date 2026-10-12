@@ -26,8 +26,10 @@ function RequireRole({ role, children }) {
     return (
       <div className="p-8 font-poppins text-ink">
         {user.status === "pending"
-          ? "Your account is awaiting admin approval."
-          : "Your account has been disabled. Contact an administrator."}
+          ? "Your account is awaiting admin approval. Make sure you have verified your email address."
+          : `Your account has been disabled${
+              user.statusReason ? ` (${user.statusReason})` : ""
+            }. Contact an administrator.`}
       </div>
     );
   }

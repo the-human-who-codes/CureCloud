@@ -1,380 +1,328 @@
-import {
-  faBell,
-  faCog,
-  faDatabase,
-  faExclamationTriangle,
-  faFileAlt,
-  faFileMedical,
-  faFlask,
-  faNotesMedical,
-  faPlug,
-  faPrescriptionBottleAlt,
-  faShieldAlt,
-  faSync,
-  faTools,
-  faXRay,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
-import { PageHeader, PageShell } from "../common/PageShell";
-import { Card } from "../common/Card";
+import { useEffect, useState } from "react";
+import { faSave, faServer } from "@fortawesome/free-solid-svg-icons";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useAction, useApi } from "../../hooks/useApi";
+import { formatDateTime, labelFor } from "../../utils/format";
+import { checks, validate } from "../../utils/validation";
+import AsyncContent, { ErrorMessage } from "../common/AsyncContent";
 import { Button } from "../common/Button";
+import { Card } from "../common/Card";
+import { Checkbox, FormField } from "../common/FormField";
+import { PageHeader, PageShell } from "../common/PageShell";
+import Tabs from "../common/Tabs";
 
+const LANGUAGES = ["en", "af", "zu", "xh"];
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const TIME_ZONES = ["Africa/Johannesburg", "UTC"];
+const TABS = [
+  { value: "general", label: "General" },
+  { value: "appointments", label: "Appointments" },
+  { value: "security", label: "Security" },
+];
+const REGION = "africa-south1";
+
+// SystemSettings -> flat form state (strings for inputs).
+const toForm = (s) => ({
+  organisationName: s.organisationName ?? "",
+  supportEmail: s.supportEmail ?? "",
+  supportPhone: s.supportPhone ?? "",
+  defaultTimeZone: s.defaultTimeZone,
+  defaultLanguage: s.defaultLanguage,
+  maintenanceBanner: s.maintenanceBanner ?? "",
+  defaultDurationMinutes: String(s.appointments.defaultDurationMinutes),
+  bookingWindowDays: String(s.appointments.bookingWindowDays),
+  minLeadTimeMinutes: String(s.appointments.minLeadTimeMinutes),
+  patientCancellationCutoffHours: String(
+    s.appointments.patientCancellationCutoffHours
+  ),
+  openingStart: s.appointments.openingHours.start,
+  openingEnd: s.appointments.openingHours.end,
+  openingDays: s.appointments.openingHours.days,
+  sessionTimeoutMinutes: String(s.security.sessionTimeoutMinutes),
+});
+
+const quarterHour = (v) =>
+  checks.time(v) ??
+  (Number(v.slice(3)) % 15 ? "Use a 15-minute boundary" : null);
+
+// Mirrors SystemSettingsUpdateRequest (src/models/preferences.js).
+const RULES = {
+  organisationName: [checks.required, checks.maxLength(120)],
+  supportEmail: checks.email,
+  supportPhone: checks.phone,
+  maintenanceBanner: checks.maxLength(300),
+  bookingWindowDays: [checks.required, checks.intRange(1, 365)],
+  minLeadTimeMinutes: [checks.required, checks.intRange(0, 1440)],
+  patientCancellationCutoffHours: [checks.required, checks.intRange(0, 72)],
+  openingStart: quarterHour,
+  openingEnd: [
+    quarterHour,
+    (v, f) => (v <= f.openingStart ? "Must be after the opening time" : null),
+  ],
+  openingDays: (v) => (v.length ? null : "Choose at least one day"),
+  sessionTimeoutMinutes: [checks.required, checks.intRange(5, 480)],
+};
+
+const toBody = (f) => ({
+  organisationName: f.organisationName.trim(),
+  supportEmail: f.supportEmail.trim() || null,
+  supportPhone: f.supportPhone.trim() || null,
+  defaultTimeZone: f.defaultTimeZone,
+  defaultLanguage: f.defaultLanguage,
+  maintenanceBanner: f.maintenanceBanner.trim() || null,
+  appointments: {
+    defaultDurationMinutes: Number(f.defaultDurationMinutes),
+    bookingWindowDays: Number(f.bookingWindowDays),
+    minLeadTimeMinutes: Number(f.minLeadTimeMinutes),
+    patientCancellationCutoffHours: Number(f.patientCancellationCutoffHours),
+    openingHours: {
+      start: f.openingStart,
+      end: f.openingEnd,
+      days: [...f.openingDays].sort(),
+    },
+  },
+  security: { sessionTimeoutMinutes: Number(f.sessionTimeoutMinutes) },
+});
+
+// GET / PATCH /system-settings. Everyone can read them; only system admins may save (§2.16).
 function SystemSettings() {
+  const { isSystemAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("general");
-  const [saving, setSaving] = useState(false);
+  const settings = useApi(() => api.getSystemSettings());
+  const health = useApi(() => api.health());
+  const [form, setForm] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [saved, setSaved] = useState(false);
 
-  const mockSystemInfo = {
-    version: "2.5.0",
-    lastUpdate: "2024-02-15",
-    serverStatus: "Operational",
-    storageUsed: "756.4 GB",
-    totalStorage: "1 TB",
-    activeUsers: 234,
-    lastBackup: "2024-02-20 03:00 AM",
-    uptime: "99.9%",
+  useEffect(() => {
+    if (settings.data) setForm(toForm(settings.data));
+  }, [settings.data]);
+
+  const save = useAction(async () => {
+    settings.setData(await api.updateSystemSettings(toBody(form)));
+    setSaved(true);
+  });
+  const submit = (e) => {
+    e.preventDefault();
+    setSaved(false);
+    const found = validate(form, RULES);
+    setErrors(found);
+    if (!Object.keys(found).length) save.run();
   };
 
-  const mockSettings = {
-    general: {
-      hospitalName: "CureCloud Medical Center",
-      address: "123 Healthcare Ave, Medical District",
-      phone: "+1 (555) 123-4567",
-      email: "admin@curecloud.com",
-      timezone: "America/New_York",
-      dateFormat: "MM/DD/YYYY",
-      language: "English",
-    },
-    security: {
-      passwordExpiration: 90,
-      sessionTimeout: 30,
-      twoFactorAuth: true,
-      ipWhitelist: ["192.168.1.*", "10.0.0.*"],
-      loginAttempts: 3,
-      passwordComplexity: "high",
-    },
-    notifications: {
-      emailNotifications: true,
-      smsNotifications: true,
-      systemAlerts: true,
-      maintenanceAlerts: true,
-      securityAlerts: true,
-      reportNotifications: true,
-    },
-    backup: {
-      autoBackup: true,
-      backupFrequency: "daily",
-      backupTime: "03:00",
-      retentionPeriod: 30,
-      backupLocation: "cloud",
-    },
-  };
-
-  const tabs = [
-    { id: "general", name: "General", icon: faCog },
-    { id: "security", name: "Security", icon: faShieldAlt },
-    { id: "notifications", name: "Notifications", icon: faBell },
-    { id: "backup", name: "Backup & Recovery", icon: faDatabase },
-    { id: "integrations", name: "Integrations", icon: faPlug },
-    { id: "maintenance", name: "Maintenance", icon: faTools },
-  ];
+  const field = (key, label, props = {}) => (
+    <FormField
+      label={label}
+      value={form[key]}
+      error={errors[key]}
+      disabled={!isSystemAdmin}
+      onChange={(e) => {
+        setSaved(false);
+        setForm({ ...form, [key]: e.target.value });
+      }}
+      {...props}
+    />
+  );
+  const toggleDay = (day, on) =>
+    setForm({
+      ...form,
+      openingDays: on
+        ? [...form.openingDays, day]
+        : form.openingDays.filter((d) => d !== day),
+    });
 
   return (
     <PageShell>
       <PageHeader
         title="System Settings"
-        subtitle="Manage system configuration and preferences"
+        subtitle={
+          isSystemAdmin
+            ? undefined
+            : "Only system administrators can change these settings."
+        }
       />
-
-      <Card title="System Status" titleSize="lg" className="mb-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {Object.entries(mockSystemInfo).map(([key, value]) => (
-            <div key={key} className="bg-surface rounded-lg p-4">
-              <p className="font-poppins text-sm text-ink">
-                {key.replace(/([A-Z])/g, " $1").trim()}
-              </p>
-              <p className="font-poppins text-lg font-semibold text-primary">
-                {value}
-              </p>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card padded={false}>
-        <div className="border-b border-line">
-          <div className="flex overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={`px-6 py-4 font-poppins font-medium flex items-center whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-ink hover:text-primary"
-                }`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                <FontAwesomeIcon icon={tab.icon} className="mr-2" />
-                {tab.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6">
-          {activeTab === "general" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {Object.entries(mockSettings.general).map(([key, value]) => (
-                  <div key={key} className="space-y-2">
-                    <label className="block font-poppins text-sm font-medium text-ink">
-                      {key.replace(/([A-Z])/g, " $1").trim()}
-                    </label>
-                    <input
-                      type="text"
-                      value={value}
-                      className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                    />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <Card padded={false} className="lg:col-span-2">
+          <Tabs tabs={TABS} value={activeTab} onChange={setActiveTab} />
+          <AsyncContent
+            loading={settings.loading || !form}
+            error={settings.error}
+          >
+            {form && (
+              <form onSubmit={submit} noValidate className="p-6 space-y-6">
+                <ErrorMessage error={save.error} />
+                {saved && (
+                  <p className="p-3 bg-green-50 text-green-800 rounded-lg font-poppins text-sm">
+                    Settings saved.
+                  </p>
+                )}
+                {activeTab === "general" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {field("organisationName", "Organisation name", {
+                      maxLength: 120,
+                    })}
+                    {field("supportEmail", "Support email", { type: "email" })}
+                    {field("supportPhone", "Support phone", { type: "tel" })}
+                    {field("defaultTimeZone", "Default time zone", {
+                      as: "select",
+                      children: TIME_ZONES.map((tz) => (
+                        <option key={tz} value={tz}>
+                          {tz}
+                        </option>
+                      )),
+                    })}
+                    {field("defaultLanguage", "Default language", {
+                      as: "select",
+                      hint: "Only English UI text exists for now.",
+                      children: LANGUAGES.map((l) => (
+                        <option key={l} value={l}>
+                          {labelFor(l)}
+                        </option>
+                      )),
+                    })}
+                    {field(
+                      "maintenanceBanner",
+                      "Maintenance banner (shown to all users)",
+                      {
+                        as: "textarea",
+                        rows: 2,
+                        maxLength: 300,
+                        wrapperClassName: "md:col-span-2",
+                      }
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "security" && (
-            <div className="space-y-6">
-              {Object.entries(mockSettings.security).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                >
-                  <div>
-                    <p className="font-poppins font-medium text-primary">
-                      {key.replace(/([A-Z])/g, " $1").trim()}
-                    </p>
-                    <p className="font-poppins text-sm text-ink">
-                      Current value:{" "}
-                      {typeof value === "boolean"
-                        ? value
-                          ? "Enabled"
-                          : "Disabled"
-                        : value}
-                    </p>
-                  </div>
-                  {typeof value === "boolean" ? (
-                    <div className="relative inline-block w-12 h-6 rounded-full bg-line">
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        className="absolute w-6 h-6 rounded-full bg-primary transform transition-transform duration-200 ease-in-out"
-                        style={{ left: value ? "24px" : "0" }}
-                      />
-                    </div>
-                  ) : (
-                    <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
-                      Configure
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "notifications" && (
-            <div className="space-y-6">
-              {Object.entries(mockSettings.notifications).map(
-                ([key, value]) => (
-                  <div
-                    key={key}
-                    className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                  >
-                    <div>
-                      <p className="font-poppins font-medium text-primary">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
-                      </p>
-                      <p className="font-poppins text-sm text-ink">
-                        {value ? "Enabled" : "Disabled"}
-                      </p>
-                    </div>
-                    <div className="relative inline-block w-12 h-6 rounded-full bg-line">
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        className="absolute w-6 h-6 rounded-full bg-primary transform transition-transform duration-200 ease-in-out"
-                        style={{ left: value ? "24px" : "0" }}
-                      />
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          )}
-
-          {activeTab === "backup" && (
-            <div className="space-y-6">
-              {Object.entries(mockSettings.backup).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                >
-                  <div>
-                    <p className="font-poppins font-medium text-primary">
-                      {key.replace(/([A-Z])/g, " $1").trim()}
-                    </p>
-                    <p className="font-poppins text-sm text-ink">
-                      {typeof value === "boolean"
-                        ? value
-                          ? "Enabled"
-                          : "Disabled"
-                        : value}
-                    </p>
-                  </div>
-                  <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
-                    Configure
-                  </button>
-                </div>
-              ))}
-              <div className="flex gap-4">
-                <Button>Backup Now</Button>
-                <button className="px-6 py-3 border border-primary text-primary rounded-lg font-poppins font-semibold hover:bg-surface transition-colors duration-200">
-                  Restore from Backup
-                </button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "integrations" && (
-            <div className="space-y-6">
-              {[
-                {
-                  name: "Electronic Health Records (EHR)",
-                  status: "Connected",
-                  icon: faNotesMedical,
-                },
-                {
-                  name: "Laboratory Information System",
-                  status: "Connected",
-                  icon: faFlask,
-                },
-                {
-                  name: "Pharmacy Management",
-                  status: "Not Connected",
-                  icon: faPrescriptionBottleAlt,
-                },
-                {
-                  name: "Medical Imaging (PACS)",
-                  status: "Connected",
-                  icon: faXRay,
-                },
-                {
-                  name: "Insurance Verification",
-                  status: "Connected",
-                  icon: faFileMedical,
-                },
-              ].map((integration) => (
-                <div
-                  key={integration.name}
-                  className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <FontAwesomeIcon
-                        icon={integration.icon}
-                        className="text-primary"
-                      />
+                )}
+                {activeTab === "appointments" && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {field("defaultDurationMinutes", "Default duration", {
+                        as: "select",
+                        children: [15, 30, 45, 60].map((d) => (
+                          <option key={d} value={d}>
+                            {d} minutes
+                          </option>
+                        )),
+                      })}
+                      {field(
+                        "bookingWindowDays",
+                        "Booking window (days ahead)",
+                        { type: "number", min: 1, max: 365 }
+                      )}
+                      {field(
+                        "minLeadTimeMinutes",
+                        "Minimum lead time (minutes)",
+                        { type: "number", min: 0, max: 1440 }
+                      )}
+                      {field(
+                        "patientCancellationCutoffHours",
+                        "Patient cancellation cutoff (hours)",
+                        {
+                          type: "number",
+                          min: 0,
+                          max: 72,
+                        }
+                      )}
+                      {field("openingStart", "Opening time", {
+                        type: "time",
+                        step: 900,
+                      })}
+                      {field("openingEnd", "Closing time", {
+                        type: "time",
+                        step: 900,
+                      })}
                     </div>
                     <div>
-                      <p className="font-poppins font-medium text-primary">
-                        {integration.name}
+                      <p className="font-poppins text-sm text-ink mb-2">
+                        Open on
                       </p>
-                      <p className="font-poppins text-sm text-ink">
-                        {integration.status}
-                      </p>
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 text-primary hover:bg-line rounded-lg">
-                    Configure
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "maintenance" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  {
-                    name: "System Logs",
-                    description: "View and download system logs",
-                    icon: faFileAlt,
-                  },
-                  {
-                    name: "Cache Management",
-                    description: "Clear system cache",
-                    icon: faSync,
-                  },
-                  {
-                    name: "Database Optimization",
-                    description: "Optimize database performance",
-                    icon: faDatabase,
-                  },
-                  {
-                    name: "Error Reports",
-                    description: "View system error reports",
-                    icon: faExclamationTriangle,
-                  },
-                ].map((tool) => (
-                  <div key={tool.name} className="p-6 bg-surface rounded-xl">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <FontAwesomeIcon
-                          icon={tool.icon}
-                          className="text-primary text-xl"
-                        />
+                      <div className="flex flex-wrap gap-4">
+                        {WEEKDAYS.map((name, i) => (
+                          <Checkbox
+                            key={name}
+                            label={name}
+                            disabled={!isSystemAdmin}
+                            checked={form.openingDays.includes(i + 1)}
+                            onChange={(on) => toggleDay(i + 1, on)}
+                          />
+                        ))}
                       </div>
-                      <div>
-                        <h3 className="font-poppins font-semibold text-primary">
-                          {tool.name}
-                        </h3>
-                        <p className="font-poppins text-sm text-ink">
-                          {tool.description}
+                      {errors.openingDays && (
+                        <p className="mt-1 font-poppins text-xs text-red-600">
+                          {errors.openingDays}
                         </p>
-                      </div>
+                      )}
                     </div>
-                    <button className="w-full px-4 py-2 bg-white text-primary rounded-lg hover:bg-line transition-colors duration-200">
-                      Access
-                    </button>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-6 bg-surface border-t border-line">
-          <div className="flex justify-end gap-4">
-            <button className="px-6 py-3 border border-primary text-primary rounded-lg font-poppins font-semibold hover:bg-surface transition-colors duration-200">
-              Cancel
-            </button>
-            <Button
-              onClick={() => {
-                setSaving(true);
-                setTimeout(() => setSaving(false), 1500);
-              }}
-            >
-              {saving ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
+                )}
+                {activeTab === "security" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {field("sessionTimeoutMinutes", "Idle sign-out (minutes)", {
+                      type: "number",
+                      min: 5,
+                      max: 480,
+                    })}
+                  </div>
+                )}
+                {isSystemAdmin && (
+                  <div className="flex justify-end gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setForm(toForm(settings.data));
+                        setErrors({});
+                        setSaved(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" icon={faSave} disabled={save.busy}>
+                      {save.busy ? "Saving…" : "Save Changes"}
+                    </Button>
+                  </div>
+                )}
+              </form>
+            )}
+          </AsyncContent>
+        </Card>
+        <Card title="System Status" titleSize="lg">
+          <AsyncContent loading={health.loading} error={health.error}>
+            <div className="space-y-3 font-poppins text-sm text-ink">
+              <p>
+                <span className="text-ink-muted">API: </span>
+                <span className="text-primary">
+                  {health.data?.status === "ok" ? "Online" : "Unknown"}
+                </span>
+              </p>
+              <p>
+                <span className="text-ink-muted">Version: </span>
+                <span className="text-primary">{health.data?.version}</span>
+              </p>
+              <p>
+                <span className="text-ink-muted">Region: </span>
+                <span className="text-primary">{REGION}</span>
+              </p>
+              {settings.data?.updatedAt && (
+                <p>
+                  <span className="text-ink-muted">
+                    Settings last changed:{" "}
+                  </span>
+                  {formatDateTime(settings.data.updatedAt)}
+                </p>
               )}
-            </Button>
-          </div>
-        </div>
-      </Card>
+            </div>
+          </AsyncContent>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={faServer}
+            className="mt-4"
+            onClick={() => health.reload()}
+          >
+            Check again
+          </Button>
+        </Card>
+      </div>
     </PageShell>
   );
 }

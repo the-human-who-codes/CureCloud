@@ -7,6 +7,7 @@ import DashboardLayout from "./Layouts/DashboardLayout";
 import AdminDashboard from "./Components/AdminDashboard/AdminDashboard";
 import UserManagement from "./Components/AdminDashboard/UserManagement";
 import DepartmentSettings from "./Components/AdminDashboard/DepartmentSettings";
+import AdminPatients from "./Components/AdminDashboard/AdminPatients";
 import SystemSettings from "./Components/AdminDashboard/SystemSettings";
 
 // Doctor Pages
@@ -67,6 +68,7 @@ const AppRouter = () => {
               element={<DepartmentSettings />}
             />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="patients" element={<AdminPatients />} />
             <Route path="system-settings" element={<SystemSettings />} />
             <Route path="settings" element={<Settings role="admin" />} />
             <Route path="notifications" element={<Notifications />} />

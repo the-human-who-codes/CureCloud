@@ -1,259 +1,295 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faClock,
-  faCalendarAlt,
   faCheckCircle,
+  faClock,
   faExclamationTriangle,
+  faPills,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import { PageHeader, PageShell } from "../common/PageShell";
-import StatusBadge from "../common/StatusBadge";
-import { StatGrid } from "../common/StatCard";
-import { longDate } from "../../utils/format";
+import { api } from "../../api/client";
+import { useAction, useApi } from "../../hooks/useApi";
+import {
+  addDays,
+  formatDate,
+  formatDateTime,
+  formatTime,
+  labelFor,
+  sastTime,
+  todaySast,
+} from "../../utils/format";
+import { frequencyLabel } from "../../utils/prescriptions";
+import AsyncContent, { ErrorMessage } from "../common/AsyncContent";
+import { Button } from "../common/Button";
 import { Card } from "../common/Card";
+import { FilterSelect } from "../common/FormField";
+import { PageHeader, PageShell } from "../common/PageShell";
+import ReasonModal from "../common/ReasonModal";
+import { StatCard } from "../common/StatCard";
+import StatusBadge from "../common/StatusBadge";
+import Tabs from "../common/Tabs";
 
-const STAT_ICONS = {
-  dueNow: faClock,
-  upcoming: faCalendarAlt,
-  completed: faCheckCircle,
-  alerts: faExclamationTriangle,
+// Medication rounds by time of day (SAST), grouped client-side from scheduledFor.
+const PERIODS = [
+  { value: "morning", label: "Morning (06–12)", from: "06", to: "12" },
+  { value: "afternoon", label: "Afternoon (12–18)", from: "12", to: "18" },
+  { value: "evening", label: "Evening (18–24)", from: "18", to: "24" },
+  { value: "night", label: "Night (00–06)", from: "00", to: "06" },
+];
+const periodOf = (iso) => {
+  const hour = sastTime(iso).slice(0, 2);
+  return PERIODS.find((p) => hour >= p.from && hour < p.to)?.value;
+};
+const currentPeriod = () => periodOf(new Date().toISOString());
+
+const NOT_GIVEN_REASONS = [
+  "patient-refused",
+  "patient-unavailable",
+  "clinically-held",
+  "medication-unavailable",
+  "other",
+].map((value) => ({ value, label: labelFor(value) }));
+
+function DoseRow({ dose, onCharted }) {
+  const [asking, setAsking] = useState(false);
+  const chart = useAction(async (status, statusReason) => {
+    try {
+      await api.recordAdministration({
+        prescriptionId: dose.prescriptionId,
+        scheduledFor: dose.scheduledFor,
+        status,
+        ...(statusReason && { statusReason }),
+      });
+    } catch (err) {
+      // Someone else charted it first: show the current schedule.
+      if (err.code === "already-charted") onCharted();
+      throw err;
+    }
+    onCharted();
+  });
+  const charted = dose.status === "given" || dose.status === "not-given";
+  return (
+    <div className="p-4 bg-surface rounded-lg">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-poppins font-medium text-primary">
+            {formatTime(dose.scheduledFor)} · {dose.medication} {dose.dose}
+          </p>
+          <p className="font-poppins text-sm text-ink">
+            {dose.patientName}
+            {dose.room ? ` · Room ${dose.room}` : ""}
+            {dose.bed ? ` · Bed ${dose.bed}` : ""} · {labelFor(dose.route)}
+          </p>
+          {dose.instructions && (
+            <p className="font-poppins text-sm text-ink">{dose.instructions}</p>
+          )}
+          {dose.allergies.length > 0 && (
+            <p className="font-poppins text-sm text-red-700 mt-1">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-1" />
+              Allergies: {dose.allergies.join(", ")}
+            </p>
+          )}
+        </div>
+        <StatusBadge status={dose.status} />
+      </div>
+      {!charted && (
+        <div className="flex gap-2 mt-3">
+          <Button
+            size="sm"
+            disabled={chart.busy}
+            onClick={() => chart.run("completed")}
+          >
+            Given
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            disabled={chart.busy}
+            onClick={() => setAsking(true)}
+          >
+            Not given
+          </Button>
+        </div>
+      )}
+      {chart.error && (
+        <p className="mt-2 font-poppins text-xs text-red-600">
+          {chart.error.code === "already-charted"
+            ? "This dose has already been charted. Refreshing…"
+            : chart.error.message}
+        </p>
+      )}
+      {asking && (
+        <ReasonModal
+          title={`${dose.medication} not given`}
+          options={NOT_GIVEN_REASONS}
+          confirmLabel="Record not given"
+          onClose={() => setAsking(false)}
+          onSubmit={(reason) => chart.run("not-done", reason)}
+        />
+      )}
+    </div>
+  );
+}
+
+DoseRow.propTypes = {
+  dose: PropTypes.object.isRequired,
+  onCharted: PropTypes.func.isRequired,
 };
 
-const STAT_TONES = {
-  dueNow: "danger",
-  completed: "success",
-  alerts: "warning",
-};
-
+// The nurse's medication rounds (GET /medication-schedule) and their recent charting.
 function Medications() {
-  const [selectedTimeRange, setSelectedTimeRange] = useState("today");
-  const [selectedPeriod, setSelectedPeriod] = useState("morning");
+  const [date, setDate] = useState(todaySast());
+  const [period, setPeriod] = useState(currentPeriod);
+  const [retracting, setRetracting] = useState(null);
+  const schedule = useApi(() => api.getMedicationSchedule({ date }), [date]);
+  const recent = useApi(() =>
+    api.listAdministrations({ performerId: "me", limit: 10 })
+  );
+  const retract = useAction(async (id, reason) => {
+    await api.retractAdministration(id, reason);
+    recent.reload();
+    schedule.reload();
+  });
 
-  const mockData = {
-    medicationSummary: {
-      dueNow: 4,
-      upcoming: 8,
-      completed: 16,
-      total: 28,
-      alerts: 2,
-    },
-    scheduleGroups: {
-      morning: {
-        label: "Morning (6AM - 12PM)",
-        medications: [
-          {
-            id: 1,
-            patient: {
-              name: "John Smith",
-              photo: "/default-avatar.png",
-              room: "201A",
-              status: "stable",
-            },
-            medication: "Lisinopril",
-            dosage: "10mg",
-            route: "Oral",
-            time: "8:00 AM",
-            instructions: "Take with food",
-            status: "pending",
-            priority: "high",
-          },
-        ],
-      },
-      afternoon: {
-        label: "Afternoon (12PM - 6PM)",
-        medications: [],
-      },
-      evening: {
-        label: "Evening (6PM - 12AM)",
-        medications: [],
-      },
-      night: {
-        label: "Night (12AM - 6AM)",
-        medications: [],
-      },
-    },
-    alerts: [
-      {
-        type: "interaction",
-        severity: "high",
-        patient: "Sarah Johnson",
-        description:
-          "Potential interaction between Warfarin and new antibiotics",
-        action: "Verify with physician",
-      },
-      {
-        type: "allergy",
-        severity: "high",
-        patient: "Michael Brown",
-        description: "Documented penicillin allergy",
-        action: "Use alternative antibiotic",
-      },
-    ],
-    recentAdministrations: [
-      {
-        id: 101,
-        patient: "Emma Wilson",
-        medication: "Metoprolol",
-        dosage: "25mg",
-        givenAt: "2024-01-20T08:15:00Z",
-        givenBy: "Nurse Anderson",
-        notes: "Patient reported no side effects",
-      },
-    ],
+  const doses = schedule.data?.data ?? [];
+  const count = (...statuses) =>
+    doses.filter((d) => statuses.includes(d.status)).length;
+  const shown = doses.filter((d) => periodOf(d.scheduledFor) === period);
+  const refresh = () => {
+    schedule.reload();
+    recent.reload();
   };
-
-  const { dueNow, upcoming, completed, alerts } = mockData.medicationSummary;
-  const summaryStats = { dueNow, upcoming, completed, alerts };
 
   return (
     <PageShell>
       <PageHeader
-        title="Medication Administration"
-        subtitle={longDate()}
+        title="Medications"
+        subtitle={formatDate(date)}
         actions={
-          <select
-            value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value)}
-            className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-          >
-            <option value="today">Today</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="week">This Week</option>
-          </select>
+          <FilterSelect
+            label="Day"
+            value={date}
+            onChange={setDate}
+            options={[
+              { value: todaySast(), label: "Today" },
+              { value: addDays(todaySast(), 1), label: "Tomorrow" },
+            ]}
+          />
         }
       />
-
-      <StatGrid stats={summaryStats} icons={STAT_ICONS} tones={STAT_TONES} />
-
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-1">
-          <Card className="mb-8">
-            <div className="flex gap-4 mb-6">
-              {Object.keys(mockData.scheduleGroups).map((period) => (
-                <button
-                  key={period}
-                  onClick={() => setSelectedPeriod(period)}
-                  className={`px-4 py-2 rounded-lg font-poppins ${
-                    selectedPeriod === period
-                      ? "bg-primary text-white"
-                      : "bg-surface text-ink"
-                  }`}
-                >
-                  {period.charAt(0).toUpperCase() + period.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-4">
-              {mockData.scheduleGroups[selectedPeriod].medications.map(
-                (med) => (
-                  <div
-                    key={med.id}
-                    className="bg-surface rounded-lg p-4 border border-line"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
-                        <img
-                          src={med.patient.photo}
-                          alt={med.patient.name}
-                          className="w-10 h-10 rounded-full mr-3"
-                        />
-                        <div>
-                          <p className="font-poppins font-semibold text-primary">
-                            {med.patient.name}
-                          </p>
-                          <p className="font-poppins text-sm text-ink">
-                            Room {med.patient.room}
-                          </p>
-                        </div>
-                      </div>
-                      <StatusBadge status={med.status}>{med.time}</StatusBadge>
-                    </div>
-                    <div className="mb-3">
-                      <p className="font-poppins font-semibold text-ink">
-                        {med.medication} - {med.dosage}
-                      </p>
-                      <p className="font-poppins text-sm text-ink">
-                        {med.route} | {med.instructions}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="px-3 py-1 bg-primary text-white rounded font-poppins text-sm">
-                        Mark Given
-                      </button>
-                      <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
-                        Reschedule
-                      </button>
-                      <button className="px-3 py-1 bg-surface text-ink border border-line rounded font-poppins text-sm">
-                        Details
-                      </button>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          </Card>
-        </div>
-
-        <div className="lg:w-[400px] space-y-8">
-          <Card title="Active Alerts">
-            <div className="space-y-4">
-              {mockData.alerts.map((alert, index) => (
-                <div
-                  key={index}
-                  className="bg-surface rounded-lg p-4 border border-line"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <FontAwesomeIcon
-                      icon={faExclamationTriangle}
-                      className={
-                        alert.severity === "high"
-                          ? "text-red-500"
-                          : "text-yellow-500"
-                      }
-                    />
-                    <span className="font-poppins font-semibold text-ink">
-                      {alert.patient}
-                    </span>
-                  </div>
-                  <p className="font-poppins text-sm text-ink mb-2">
-                    {alert.description}
-                  </p>
-                  <p className="font-poppins text-sm text-primary">
-                    Action: {alert.action}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card title="Recent Administrations">
-            <div className="space-y-4">
-              {mockData.recentAdministrations.map((admin) => (
-                <div
-                  key={admin.id}
-                  className="bg-surface rounded-lg p-4 border border-line"
-                >
-                  <p className="font-poppins font-semibold text-ink">
-                    {admin.patient}
-                  </p>
-                  <p className="font-poppins text-sm text-ink">
-                    {admin.medication} {admin.dosage}
-                  </p>
-                  <div className="flex justify-between items-center mt-2 text-sm">
-                    <span className="font-poppins text-ink">
-                      {new Date(admin.givenAt).toLocaleTimeString()}
-                    </span>
-                    <span className="font-poppins text-primary">
-                      {admin.givenBy}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <StatCard
+          label="Due"
+          value={count("due")}
+          icon={faClock}
+          tone="warning"
+        />
+        <StatCard
+          label="Overdue"
+          value={count("overdue")}
+          icon={faExclamationTriangle}
+          tone="danger"
+        />
+        <StatCard label="Upcoming" value={count("upcoming")} icon={faPills} />
+        <StatCard
+          label="Given"
+          value={count("given")}
+          icon={faCheckCircle}
+          tone="success"
+        />
+        <StatCard
+          label="Not Given"
+          value={count("not-given")}
+          icon={faTimesCircle}
+        />
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          <Card padded={false}>
+            <Tabs tabs={PERIODS} value={period} onChange={setPeriod} />
+            <div className="p-6 space-y-4">
+              <AsyncContent
+                loading={schedule.loading}
+                error={schedule.error}
+                empty={shown.length === 0}
+                emptyText="No scheduled doses in this period."
+              >
+                {shown.map((d) => (
+                  <DoseRow
+                    key={`${d.prescriptionId}-${d.scheduledFor}`}
+                    dose={d}
+                    onCharted={refresh}
+                  />
+                ))}
+              </AsyncContent>
+            </div>
+          </Card>
+          {schedule.data?.prn.length > 0 && (
+            <Card title="As needed (PRN)" titleSize="lg">
+              <ul className="space-y-2">
+                {schedule.data.prn.map((rx) => (
+                  <li
+                    key={rx.id}
+                    className="p-3 bg-surface rounded-lg font-poppins text-sm text-ink"
+                  >
+                    <span className="text-primary font-medium">
+                      {rx.medication}
+                    </span>{" "}
+                    {rx.dose} · {labelFor(rx.route)} · {frequencyLabel(rx)} ·{" "}
+                    {rx.patientName}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+        </div>
+        <Card title="My recent administrations" titleSize="lg">
+          <ErrorMessage error={retract.error} className="mb-3" />
+          <AsyncContent
+            {...recent}
+            empty={recent.data?.data.length === 0}
+            emptyText="Nothing charted yet."
+          >
+            <ul className="space-y-3">
+              {recent.data?.data.map((a) => (
+                <li
+                  key={a.id}
+                  className="p-3 bg-surface rounded-lg font-poppins"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm text-primary">
+                      {a.medication} {a.dose}
+                    </p>
+                    <StatusBadge status={a.status} size="sm" />
+                  </div>
+                  <p className="text-xs text-ink">
+                    {a.patientName} · {formatDateTime(a.occurredAt)}
+                    {a.statusReason ? ` · ${labelFor(a.statusReason)}` : ""}
+                  </p>
+                  {a.status !== "entered-in-error" && (
+                    <button
+                      type="button"
+                      className="mt-1 text-xs text-red-600 hover:underline"
+                      onClick={() => setRetracting(a)}
+                    >
+                      Entered in error
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </AsyncContent>
+        </Card>
+      </div>
+      {retracting && (
+        <ReasonModal
+          title="Retract administration"
+          onClose={() => setRetracting(null)}
+          onSubmit={(reason) => retract.run(retracting.id, reason)}
+        />
+      )}
     </PageShell>
   );
 }

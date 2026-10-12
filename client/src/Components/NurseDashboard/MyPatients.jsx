@@ -1,286 +1,276 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
+  faBed,
+  faEye,
   faHeartbeat,
   faNotesMedical,
-  faEye,
-  faPills,
-  faClipboardCheck,
-  faFileMedical,
-  faCommentMedical,
 } from "@fortawesome/free-solid-svg-icons";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi, usePagedApi } from "../../hooks/useApi";
+import {
+  formatBloodPressure,
+  formatDateTime,
+  formatTime,
+  labelFor,
+} from "../../utils/format";
+import { ACUITIES, admissionLabel } from "../../utils/patients";
+import AsyncContent, { LoadMore } from "../common/AsyncContent";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
+import { FilterSelect, FormField } from "../common/FormField";
+import InitialsAvatar from "../common/InitialsAvatar";
 import { PageHeader, PageShell } from "../common/PageShell";
 import StatusBadge from "../common/StatusBadge";
-import { Card } from "../common/Card";
-import InitialsAvatar from "../common/InitialsAvatar";
+import AllergyList from "../Clinical/AllergyList";
+import AdmissionForm from "../Patients/AdmissionForm";
+import PatientDetail from "../Patients/PatientDetail";
+import RecordForm from "../Patients/RecordForm";
+import VitalsForm from "../Patients/VitalsForm";
 
+function PatientTile({ patient, onAction }) {
+  const { can } = useAuth();
+  const v = patient.latestVitals;
+  return (
+    <Card>
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-center gap-3">
+          <InitialsAvatar name={patient.name} />
+          <div>
+            <h3 className="font-poppins font-semibold text-primary">
+              {patient.name}
+            </h3>
+            <p className="font-poppins text-sm text-ink">
+              {admissionLabel(patient.admission) ?? "Not admitted"}
+            </p>
+          </div>
+        </div>
+        {patient.acuity && <StatusBadge status={patient.acuity} />}
+      </div>
+      <div className="grid grid-cols-3 gap-2 mb-4 font-poppins text-sm">
+        <div className="bg-surface rounded-lg p-2">
+          <p className="text-xs text-ink-muted">Temp</p>
+          <p className="text-primary">
+            {v?.temperature != null ? `${v.temperature} °C` : "—"}
+          </p>
+        </div>
+        <div className="bg-surface rounded-lg p-2">
+          <p className="text-xs text-ink-muted">BP</p>
+          <p className="text-primary">
+            {formatBloodPressure(v?.bloodPressure) ?? "—"}
+          </p>
+        </div>
+        <div className="bg-surface rounded-lg p-2">
+          <p className="text-xs text-ink-muted">HR</p>
+          <p className="text-primary">
+            {v?.heartRate != null ? `${v.heartRate} bpm` : "—"}
+          </p>
+        </div>
+      </div>
+      {v?.recordedAt && (
+        <p className="font-poppins text-xs text-ink mb-3">
+          Vitals from {formatDateTime(v.recordedAt)}
+        </p>
+      )}
+      <div className="mb-4">
+        <AllergyList
+          allergies={patient.allergies}
+          noKnownAllergies={patient.noKnownAllergies}
+        />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {can("vitals:create") && (
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={faHeartbeat}
+            onClick={() => onAction("vitals", patient)}
+          >
+            Vitals
+          </Button>
+        )}
+        {can("medical-record:create") && (
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={faNotesMedical}
+            onClick={() => onAction("note", patient)}
+          >
+            Note
+          </Button>
+        )}
+        {patient.admission && can("patient:admit") && (
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={faBed}
+            onClick={() => onAction("move", patient)}
+          >
+            Room/bed
+          </Button>
+        )}
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={faEye}
+          onClick={() => onAction("view", patient)}
+        >
+          Details
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
+PatientTile.propTypes = {
+  patient: PropTypes.object.isRequired,
+  onAction: PropTypes.func.isRequired,
+};
+
+// The nurse's patients: care team plus their ward's admitted patients.
 function MyPatients() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [params, setParams] = useSearchParams();
+  const q = params.get("q") ?? "";
+  const [search, setSearch] = useState(q);
+  const [acuity, setAcuity] = useState("all");
+  const [dialog, setDialog] = useState(null);
+  useEffect(() => setSearch(q), [q]);
 
-  const mockPatients = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      photo: "/patient1.png",
-      room: "201A",
-      vitals: {
-        temperature: "98.6°F",
-        bloodPressure: "120/80",
-        heartRate: "72 bpm",
-      },
-      status: "stable",
-      lastMedication: "2025-02-20T08:30:00",
-      nextCheck: "2025-02-20T14:30:00",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      photo: "/patient2.png",
-      room: "205B",
-      vitals: {
-        temperature: "99.2°F",
-        bloodPressure: "135/85",
-        heartRate: "88 bpm",
-      },
-      status: "needs-attention",
-      lastMedication: "2025-02-20T09:15:00",
-      nextCheck: "2025-02-20T13:15:00",
-    },
-    {
-      id: 3,
-      name: "Emily Brown",
-      photo: "/patient3.png",
-      room: "210A",
-      vitals: {
-        temperature: "101.3°F",
-        bloodPressure: "145/95",
-        heartRate: "96 bpm",
-      },
-      status: "critical",
-      lastMedication: "2025-02-20T10:00:00",
-      nextCheck: "2025-02-20T12:00:00",
-    },
-  ];
+  const patients = usePagedApi(
+    (cursor) =>
+      api.listPatients({
+        q: q || undefined,
+        acuity: acuity === "all" ? undefined : acuity,
+        cursor,
+      }),
+    [q, acuity]
+  );
+  const tasks = useApi(() =>
+    api.listCareTasks({
+      assigneeId: "me",
+      status: "open,in-progress",
+      limit: 10,
+    })
+  );
 
-  const upcomingTasks = [
-    {
-      id: 1,
-      type: "medication",
-      patient: "Sarah Johnson",
-      time: "14:30",
-      priority: "normal",
-      description: "Administer 500mg Acetaminophen",
-    },
-    {
-      id: 2,
-      type: "check",
-      patient: "Michael Chen",
-      time: "13:15",
-      priority: "high",
-      description: "Blood pressure check",
-    },
-    {
-      id: 3,
-      type: "medication",
-      patient: "Emily Brown",
-      time: "12:00",
-      priority: "urgent",
-      description: "IV Antibiotics",
-    },
-  ];
-
-  const recentUpdates = [
-    {
-      id: 1,
-      type: "vitals",
-      patient: "Emily Brown",
-      time: "10:15 AM",
-      description: "Temperature increased to 101.3°F",
-    },
-    {
-      id: 2,
-      type: "order",
-      patient: "Michael Chen",
-      time: "09:45 AM",
-      description: "New medication order from Dr. Wilson",
-    },
-    {
-      id: 3,
-      type: "note",
-      patient: "Sarah Johnson",
-      time: "09:30 AM",
-      description: "Patient reports improved mobility",
-    },
-  ];
+  const replace = (p) =>
+    patients.setItems((items) => items.map((x) => (x.id === p.id ? p : x)));
+  const refreshPatient = async (id) => replace(await api.getPatient(id));
 
   return (
     <PageShell>
       <PageHeader
         title="My Patients"
-        subtitle={<>Managing {mockPatients.length} active patients</>}
-        actions={
-          <div className="flex gap-4">
-            <input
-              type="text"
-              placeholder="Search patients..."
-              className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <select
-              className="px-4 py-2 rounded-lg border border-line focus:border-primary focus:ring-1 focus:ring-primary font-poppins"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="stable">Stable</option>
-              <option value="needs-attention">Needs Attention</option>
-              <option value="critical">Critical</option>
-            </select>
-          </div>
-        }
+        subtitle="Your ward and care-team patients"
       />
+      <Card className="mb-6">
+        <form
+          className="flex flex-wrap items-end gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setParams(search.trim() ? { q: search.trim() } : {});
+          }}
+        >
+          <FormField
+            compact
+            label="Search by name"
+            type="search"
+            value={search}
+            maxLength={60}
+            onChange={(e) => setSearch(e.target.value)}
+            wrapperClassName="flex-1 min-w-[200px]"
+          />
+          <FilterSelect
+            label="Acuity"
+            value={acuity}
+            onChange={setAcuity}
+            options={[
+              { value: "all", label: "All patients" },
+              ...ACUITIES.map((a) => ({ value: a, label: labelFor(a) })),
+            ]}
+          />
+          <Button type="submit" variant="secondary">
+            Search
+          </Button>
+        </form>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {mockPatients.map((patient) => (
-          <div
-            key={patient.id}
-            className={`bg-white rounded-xl p-6 shadow-sm border-2 ${
-              patient.status === "stable"
-                ? "border-green-500"
-                : patient.status === "needs-attention"
-                ? "border-yellow-500"
-                : "border-red-500"
-            }`}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="xl:col-span-3">
+          <AsyncContent
+            loading={patients.loading}
+            error={patients.error}
+            empty={patients.items.length === 0}
+            emptyText={
+              q ? "No patients match this search." : "No patients yet."
+            }
           >
-            <div className="flex items-center mb-4">
-              <InitialsAvatar name={patient.name} className="m-3" />
-              <div>
-                <h3 className="font-poppins text-lg font-semibold text-primary">
-                  {patient.name}
-                </h3>
-                <p className="font-poppins text-sm text-ink">
-                  Room {patient.room}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-center">
-                <p className="font-poppins text-sm text-ink">Temp</p>
-                <p className="font-poppins font-semibold">
-                  {patient.vitals.temperature}
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="font-poppins text-sm text-ink">BP</p>
-                <p className="font-poppins font-semibold">
-                  {patient.vitals.bloodPressure}
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="font-poppins text-sm text-ink">HR</p>
-                <p className="font-poppins font-semibold">
-                  {patient.vitals.heartRate}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-between text-sm mb-4">
-              <p className="font-poppins text-ink">
-                Last Med:{" "}
-                {new Date(patient.lastMedication).toLocaleTimeString()}
-              </p>
-              <p className="font-poppins text-ink">
-                Next Check: {new Date(patient.nextCheck).toLocaleTimeString()}
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                <FontAwesomeIcon icon={faHeartbeat} className="mr-2" />
-                Update Vitals
-              </button>
-              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                <FontAwesomeIcon icon={faNotesMedical} className="mr-2" />
-                Add Notes
-              </button>
-              <button className="flex-1 px-3 py-2 bg-surface text-primary rounded-lg font-poppins hover:bg-line">
-                <FontAwesomeIcon icon={faEye} className="mr-2" />
-                Details
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card title="Upcoming Tasks">
-          <div className="space-y-4">
-            {upcomingTasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center justify-between p-4 bg-surface rounded-lg"
-              >
-                <div className="flex items-center">
-                  <FontAwesomeIcon
-                    icon={
-                      task.type === "medication" ? faPills : faClipboardCheck
-                    }
-                    className={`text-primary text-xl mr-4`}
-                  />
-                  <div>
-                    <p className="font-poppins font-semibold">{task.patient}</p>
-                    <p className="font-poppins text-sm text-ink">
-                      {task.description}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-poppins font-semibold">{task.time}</p>
-                  <StatusBadge status={task.priority} size="sm" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card title="Recent Updates">
-          <div className="space-y-4">
-            {recentUpdates.map((update) => (
-              <div
-                key={update.id}
-                className="flex items-center p-4 bg-surface rounded-lg"
-              >
-                <FontAwesomeIcon
-                  icon={
-                    update.type === "vitals"
-                      ? faHeartbeat
-                      : update.type === "order"
-                      ? faFileMedical
-                      : faCommentMedical
-                  }
-                  className={`text-primary text-xl mr-4`}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {patients.items.map((p) => (
+                <PatientTile
+                  key={p.id}
+                  patient={p}
+                  onAction={(type, patient) => setDialog({ type, patient })}
                 />
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <p className="font-poppins font-semibold">
-                      {update.patient}
-                    </p>
-                    <p className="font-poppins text-sm text-ink">
-                      {update.time}
-                    </p>
-                  </div>
-                  <p className="font-poppins text-sm text-ink">
-                    {update.description}
+              ))}
+            </div>
+            <LoadMore {...patients} />
+          </AsyncContent>
+        </div>
+        <Card title="Upcoming tasks" titleSize="lg">
+          <AsyncContent
+            {...tasks}
+            empty={tasks.data?.data.length === 0}
+            emptyText="No open tasks."
+          >
+            <ul className="space-y-3">
+              {tasks.data?.data.map((t) => (
+                <li
+                  key={t.id}
+                  className="p-3 bg-surface rounded-lg font-poppins"
+                >
+                  <p className="text-sm text-primary">{t.title}</p>
+                  <p className="text-xs text-ink">
+                    {t.patientName ?? "Ward task"} · {formatTime(t.dueAt)} ·{" "}
+                    {labelFor(t.priority)}
                   </p>
-                </div>
-              </div>
-            ))}
-          </div>
+                </li>
+              ))}
+            </ul>
+          </AsyncContent>
         </Card>
       </div>
+
+      {dialog?.type === "vitals" && (
+        <VitalsForm
+          patient={dialog.patient}
+          onClose={() => setDialog(null)}
+          onSaved={() => refreshPatient(dialog.patient.id)}
+        />
+      )}
+      {dialog?.type === "note" && (
+        <RecordForm
+          patient={dialog.patient}
+          onClose={() => setDialog(null)}
+          onSaved={() => {}}
+        />
+      )}
+      {dialog?.type === "move" && (
+        <AdmissionForm
+          patient={dialog.patient}
+          onClose={() => setDialog(null)}
+          onSaved={replace}
+        />
+      )}
+      {dialog?.type === "view" && (
+        <PatientDetail
+          patientId={dialog.patient.id}
+          onClose={() => setDialog(null)}
+          onChanged={replace}
+        />
+      )}
     </PageShell>
   );
 }

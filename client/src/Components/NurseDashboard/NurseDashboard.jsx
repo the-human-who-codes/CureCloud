@@ -9,65 +9,74 @@ import TodayTasksSection from "./TodayTasksSection";
 import ShiftInfoSection from "./ShiftInfoSection";
 import QuickActionsSection from "./QuickActionsSection";
 import RecentAlertsSection from "./RecentAlertsSection";
-import MockData from "../../data/MockData";
 import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
 import { useApi } from "../../hooks/useApi";
-import { toPatientCard } from "../../utils/patients";
+import { addDays, longDate, sastInstant, todaySast } from "../../utils/format";
 import AsyncContent from "../common/AsyncContent";
-import { PageShell } from "../common/PageShell";
-import { StatGrid } from "../common/StatCard";
-
-const STAT_ICONS = {
-  patientsUnderCare: faHospitalUser,
-  tasksForToday: faTasks,
-  upcomingMedications: faPills,
-  criticalAlerts: faExclamationTriangle,
-};
+import { PageHeader, PageShell } from "../common/PageShell";
+import { StatCard } from "../common/StatCard";
 
 function NurseDashboard() {
-  const { data, error, loading } = useApi(async () => {
-    const { patients } = await api.listPatients({ limit: 100 });
-    const critical = patients.filter((p) => p.priority === "critical");
-    return {
-      // Tasks, medications and shift info have no backend yet.
-      stats: {
-        ...MockData.stats,
-        patientsUnderCare: patients.length,
-        criticalAlerts: critical.length,
-      },
-      tasks: MockData.tasks,
-      shiftInfo: MockData.shiftInfo,
-      patients: patients.map(toPatientCard),
-      alerts: critical.map((p) => ({
-        id: p.id,
-        message: `${p.name}${
-          p.room ? ` (room ${p.room})` : ""
-        } is in critical condition.`,
-        level: "Critical",
-      })),
-    };
-  });
+  const { user } = useAuth();
+  const dashboard = useApi(() => api.getDashboard());
+  const patients = useApi(() => api.listPatients({ limit: 10 }));
+  const tasks = useApi(() =>
+    api.listCareTasks({
+      assigneeId: "me",
+      status: "open,in-progress",
+      dueBefore: sastInstant(addDays(todaySast(), 1)),
+      limit: 20,
+    })
+  );
+  const current = useApi(() => api.getCurrentShift());
+  const counters = dashboard.data?.counters;
 
   return (
     <PageShell>
-      <AsyncContent loading={loading} error={error}>
-        {data && (
-          <>
-            <StatGrid stats={data.stats} icons={STAT_ICONS} />
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              <div className="lg:col-span-3 space-y-8">
-                <AssignedPatientsSection patients={data.patients} />
-                <TodayTasksSection tasks={data.tasks} />
-                <ShiftInfoSection shiftInfo={data.shiftInfo} />
-              </div>
-              <div className="space-y-8">
-                <QuickActionsSection />
-                <RecentAlertsSection alerts={data.alerts} />
-              </div>
-            </div>
-          </>
+      <PageHeader
+        title={`Welcome back, ${user?.name ?? ""}`}
+        subtitle={longDate()}
+      />
+      <AsyncContent loading={dashboard.loading} error={dashboard.error}>
+        {counters && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              label="Patients Under Care"
+              value={counters.patientsUnderCare}
+              icon={faHospitalUser}
+            />
+            <StatCard
+              label="Tasks Due Today"
+              value={counters.tasksDueToday}
+              icon={faTasks}
+            />
+            <StatCard
+              label="Medications Due Now"
+              value={counters.medicationsDueNow}
+              icon={faPills}
+              tone={counters.medicationsDueNow ? "warning" : "primary"}
+            />
+            <StatCard
+              label="Critical Patients"
+              value={counters.criticalPatients}
+              icon={faExclamationTriangle}
+              tone={counters.criticalPatients ? "danger" : "primary"}
+            />
+          </div>
         )}
       </AsyncContent>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3 space-y-8">
+          <AssignedPatientsSection patients={patients} />
+          <TodayTasksSection tasks={tasks} />
+          <ShiftInfoSection current={current} />
+        </div>
+        <div className="space-y-8">
+          <QuickActionsSection />
+          <RecentAlertsSection alerts={dashboard.data?.alerts ?? []} />
+        </div>
+      </div>
     </PageShell>
   );
 }

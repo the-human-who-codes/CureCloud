@@ -18,9 +18,11 @@ import {
   faAngleRight,
   faAngleLeft,
   faHistory,
+  faHospitalUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../auth/AuthProvider";
 
-// Sidebar entries per role.
+// Sidebar entries per role. `permission` hides an entry the account cannot use (from GET /me).
 const MENU_ITEMS_BY_ROLE = {
   doctor: [
     { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
@@ -28,6 +30,7 @@ const MENU_ITEMS_BY_ROLE = {
       name: "Patient Records",
       icon: faUsers,
       path: "/doctor/patient-records",
+      permission: "patient:list",
     },
     {
       name: "Appointments",
@@ -38,16 +41,43 @@ const MENU_ITEMS_BY_ROLE = {
       name: "Prescriptions",
       icon: faPrescriptionBottleAlt,
       path: "/doctor/prescriptions",
+      permission: "prescription:create",
     },
-    { name: "Reports", icon: faFileMedicalAlt, path: "/doctor/reports" },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/doctor/reports",
+      permission: "report:read",
+    },
+    { name: "Team Chat", icon: faComments, path: "/doctor/team-chat" },
     { name: "Settings", icon: faCog, path: "/doctor/settings" },
   ],
   nurse: [
     { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
-    { name: "My Patients", icon: faProcedures, path: "/nurse/my-patients" },
-    { name: "Tasks", icon: faTasks, path: "/nurse/tasks" },
-    { name: "Medications", icon: faPills, path: "/nurse/medications" },
-    { name: "Reports", icon: faFileMedicalAlt, path: "/nurse/reports" },
+    {
+      name: "My Patients",
+      icon: faProcedures,
+      path: "/nurse/my-patients",
+      permission: "patient:list",
+    },
+    {
+      name: "Tasks",
+      icon: faTasks,
+      path: "/nurse/tasks",
+      permission: "care-task:read",
+    },
+    {
+      name: "Medications",
+      icon: faPills,
+      path: "/nurse/medications",
+      permission: "medication-schedule:read",
+    },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/nurse/reports",
+      permission: "report:read",
+    },
     { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
     { name: "Settings", icon: faCog, path: "/nurse/settings" },
   ],
@@ -57,14 +87,33 @@ const MENU_ITEMS_BY_ROLE = {
       name: "User Management",
       icon: faUsersCog,
       path: "/admin/user-management",
+      permission: "user:list",
+    },
+    {
+      name: "Patients",
+      icon: faHospitalUser,
+      path: "/admin/patients",
+      permission: "patient:list",
     },
     {
       name: "Department Settings",
       icon: faHospital,
       path: "/admin/department-settings",
+      permission: "department:manage",
     },
-    { name: "Reports", icon: faFileMedicalAlt, path: "/admin/reports" },
-    { name: "System Settings", icon: faCog, path: "/admin/system-settings" },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/admin/reports",
+      permission: "report:read",
+    },
+    {
+      name: "System Settings",
+      icon: faCog,
+      path: "/admin/system-settings",
+      permission: "system-settings:read",
+    },
+    { name: "Team Chat", icon: faComments, path: "/admin/team-chat" },
   ],
   patient: [
     { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
@@ -77,12 +126,15 @@ const MENU_ITEMS_BY_ROLE = {
       name: "Prescriptions",
       icon: faPrescriptionBottleAlt,
       path: "/patient/prescriptions",
+      permission: "prescription:read",
     },
     {
       name: "Medical Records",
       icon: faHistory,
       path: "/patient/medical-records",
+      permission: "medical-record:read",
     },
+    { name: "Messages", icon: faComments, path: "/patient/messages" },
     { name: "Settings", icon: faCog, path: "/patient/settings" },
   ],
 };
@@ -90,7 +142,10 @@ const MENU_ITEMS_BY_ROLE = {
 function Sidebar({ userRole = "doctor" }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const menuItems = MENU_ITEMS_BY_ROLE[userRole] || MENU_ITEMS_BY_ROLE.doctor;
+  const { can } = useAuth();
+  const menuItems = (
+    MENU_ITEMS_BY_ROLE[userRole] || MENU_ITEMS_BY_ROLE.doctor
+  ).filter((item) => !item.permission || can(item.permission));
 
   return (
     <>

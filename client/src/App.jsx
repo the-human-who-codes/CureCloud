@@ -33,7 +33,6 @@ import UpcomingAppointmentsCard from "./Components/PatientDashboard/UpcomingAppo
 
 // General Pages
 import LandingPage from "./Pages/LandingPage";
-import RoleSelection from "./Pages/RoleSelection";
 import StaffSignUp from "./Pages/StaffSignUp";
 import Notifications from "./Components/Notifications/Notifications";
 import Profile from "./Components/ProfilePage/Profile";
@@ -50,7 +49,6 @@ const AppRouter = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/staff-sign-up" element={<StaffSignUp />} />
           <Route path="/dashboard" element={<RequireRole />} />
 

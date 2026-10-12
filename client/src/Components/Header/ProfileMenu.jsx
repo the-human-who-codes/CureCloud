@@ -11,8 +11,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 import { useAuth } from "../../auth/AuthProvider";
+import InitialsAvatar from "../common/InitialsAvatar";
 
-const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
+const ProfileMenu = ({
+  isProfileOpen,
+  toggleProfile,
+  userName,
+  photoUrl,
+  role,
+}) => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const { signOut } = useAuth();
@@ -42,7 +49,11 @@ const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
         }}
         className="flex items-center  space-x-3 p-2 hover:bg-surface rounded-lg"
       >
-        <FontAwesomeIcon icon={faUserCircle} className="w-8 h-8 text-ink" />
+        {photoUrl ? (
+          <InitialsAvatar name={userName} photoUrl={photoUrl} />
+        ) : (
+          <FontAwesomeIcon icon={faUserCircle} className="w-8 h-8 text-ink" />
+        )}
         <span className="font-poppins text-ink min-w-min">{userName}</span>
       </button>
       <button
@@ -67,18 +78,16 @@ const ProfileMenu = ({ isProfileOpen, toggleProfile, userName, role }) => {
             <FontAwesomeIcon icon={faCog} className="mr-2" />
             Settings
           </button>
-          {role !== "patient" && (
-            <button
-              onClick={() => {
-                navigate("team-chat");
-                toggleProfile(false);
-              }}
-              className="block w-full text-left px-4 py-2 text-ink hover:bg-surface font-poppins"
-            >
-              <FontAwesomeIcon icon={faComments} className="mr-2" />
-              Team Chat
-            </button>
-          )}
+          <button
+            onClick={() => {
+              navigate(role === "patient" ? "messages" : "team-chat");
+              toggleProfile(false);
+            }}
+            className="block w-full text-left px-4 py-2 text-ink hover:bg-surface font-poppins"
+          >
+            <FontAwesomeIcon icon={faComments} className="mr-2" />
+            {role === "patient" ? "Messages" : "Team Chat"}
+          </button>
           <button
             onClick={async () => {
               await signOut();
@@ -99,6 +108,7 @@ ProfileMenu.propTypes = {
   isProfileOpen: PropTypes.bool.isRequired,
   toggleProfile: PropTypes.func.isRequired,
   userName: PropTypes.string.isRequired,
+  photoUrl: PropTypes.string,
   role: PropTypes.string.isRequired,
 };
 

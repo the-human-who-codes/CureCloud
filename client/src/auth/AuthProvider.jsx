@@ -23,6 +23,8 @@ async function loadProfile() {
   }
 }
 
+const signOut = () => firebaseSignOut(auth);
+
 const SIGNED_OUT = {
   user: null,
   patient: null,
@@ -88,7 +90,7 @@ export function AuthProvider({ children }) {
     refresh,
     applyMe,
     setPatient,
-    signOut: () => firebaseSignOut(auth),
+    signOut,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

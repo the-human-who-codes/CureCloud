@@ -1,23 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendarAlt,
-  faPrescriptionBottle,
-} from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import { iconForNotification } from "../../utils/notifications";
 
 const NotificationCard = ({ notification }) => (
   <div
     className={`p-4 rounded-lg ${
-      notification.priority === "normal" ? "bg-yellow-50" : "bg-red-50"
+      notification.priority === "important" ? "bg-yellow-50" : "bg-surface"
     }`}
   >
     <div className="flex items-start">
       <FontAwesomeIcon
-        icon={
-          notification.type === "appointment"
-            ? faCalendarAlt
-            : faPrescriptionBottle
-        }
+        icon={iconForNotification(notification.type)}
         className="text-primary mt-1 mr-3"
       />
       <div>

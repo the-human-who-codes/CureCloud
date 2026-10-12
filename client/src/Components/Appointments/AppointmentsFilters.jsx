@@ -1,7 +1,18 @@
 import PropTypes from "prop-types";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faList } from "@fortawesome/free-solid-svg-icons";
+import { APPOINTMENT_STATUSES } from "../../utils/appointments";
+import { labelFor } from "../../utils/format";
+import { FilterSelect } from "../common/FormField";
+
+const DATE_RANGES = [
+  { value: "upcoming", label: "Upcoming" },
+  { value: "today", label: "Today" },
+  { value: "week", label: "Next 7 Days" },
+  { value: "month", label: "Next 30 Days" },
+  { value: "past", label: "Past" },
+  { value: "all", label: "All Dates" },
+];
 
 function AppointmentsFilters({
   selectedDateRange,
@@ -11,55 +22,52 @@ function AppointmentsFilters({
   isCalendarView,
   setIsCalendarView,
 }) {
+  const toggle = (calendar, icon, label) => (
+    <button
+      type="button"
+      onClick={() => setIsCalendarView(calendar)}
+      className={`px-4 py-2 rounded-lg font-poppins ${
+        isCalendarView === calendar
+          ? "bg-primary text-white"
+          : "bg-surface text-ink"
+      }`}
+    >
+      <FontAwesomeIcon icon={icon} className="mr-2" />
+      {label}
+    </button>
+  );
+
   return (
-    <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
+    <div className="flex flex-wrap gap-4 items-end justify-between mb-6">
       <div className="flex gap-4">
-        <button
-          onClick={() => setIsCalendarView(true)}
-          className={`px-4 py-2 rounded-lg font-poppins ${
-            isCalendarView ? "bg-primary text-white" : "bg-surface text-ink"
-          }`}
-        >
-          <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
-          Calendar
-        </button>
-        <button
-          onClick={() => setIsCalendarView(false)}
-          className={`px-4 py-2 rounded-lg font-poppins ${
-            !isCalendarView ? "bg-primary text-white" : "bg-surface text-ink"
-          }`}
-        >
-          <FontAwesomeIcon icon={faList} className="mr-2" />
-          List
-        </button>
+        {toggle(true, faCalendarAlt, "Calendar")}
+        {toggle(false, faList, "List")}
       </div>
 
       <div className="flex gap-4">
-        <select
+        <FilterSelect
+          label="Dates"
           value={selectedDateRange}
-          onChange={(e) => setSelectedDateRange(e.target.value)}
-          className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-        >
-          <option value="all">All Dates</option>
-          <option value="today">Today</option>
-          <option value="week">Next 7 Days</option>
-          <option value="month">Next 30 Days</option>
-        </select>
-        <select
+          onChange={setSelectedDateRange}
+          options={DATE_RANGES}
+        />
+        <FilterSelect
+          label="Status"
           value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          className="px-4 py-2 bg-surface border border-line rounded-lg font-poppins text-ink"
-        >
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
+          onChange={setSelectedStatus}
+          options={[
+            { value: "all", label: "All Status" },
+            ...APPOINTMENT_STATUSES.map((s) => ({
+              value: s,
+              label: labelFor(s),
+            })),
+          ]}
+        />
       </div>
     </div>
   );
 }
+
 AppointmentsFilters.propTypes = {
   selectedDateRange: PropTypes.string.isRequired,
   setSelectedDateRange: PropTypes.func.isRequired,

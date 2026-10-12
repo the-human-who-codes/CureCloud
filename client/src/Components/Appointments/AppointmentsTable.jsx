@@ -1,103 +1,80 @@
 import PropTypes from "prop-types";
-import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
-import TableHead from "../common/TableHead";
+import { formatDateTime, labelFor } from "../../utils/format";
+import { DataTable, Td } from "../common/TableHead";
 import StatusBadge from "../common/StatusBadge";
-import { IconButton } from "../common/Button";
+import AppointmentActions from "./AppointmentActions";
 
-const cell = "px-6 py-4 font-poppins text-ink";
-
-// Appointments list used by the appointments page and the doctor dashboard.
-// The Doctor column and the confirm/cancel actions are optional.
+// Appointments list used by the appointments page and the doctor dashboard. The Doctor column
+// and the per-row actions are optional; `onChanged(updated)` enables the actions.
 function AppointmentsTable({
   appointments,
   showDoctor = true,
-  onConfirm,
-  onCancel,
+  settings,
+  onChanged,
 }) {
-  const showActions = Boolean(onConfirm || onCancel);
   const columns = [
     "Patient",
     showDoctor && "Doctor",
     "Date & Time",
     "Type",
     "Status",
-    showActions && "Actions",
+    onChanged && "Actions",
   ].filter(Boolean);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <TableHead columns={columns} />
-        <tbody>
-          {appointments.map((appointment) => (
-            <tr key={appointment.id} className="border-t border-line">
-              <td className={cell}>
-                <div className="flex items-center">
-                  {appointment.patientImage && (
-                    <img
-                      src={appointment.patientImage}
-                      alt={appointment.patientName}
-                      className="w-8 h-8 rounded-full mr-3"
-                    />
-                  )}
-                  {appointment.patientName}
-                </div>
-              </td>
-              {showDoctor && <td className={cell}>{appointment.doctorName}</td>}
-              <td className={cell}>
-                {appointment.date} {appointment.time}
-              </td>
-              <td className={cell}>{appointment.type}</td>
-              <td className="px-6 py-4">
-                <StatusBadge status={appointment.status} />
-              </td>
-              {showActions && (
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    {onConfirm && appointment.status === "pending" && (
-                      <IconButton
-                        icon={faCheck}
-                        title="Confirm"
-                        onClick={() => onConfirm(appointment.id)}
-                        className="text-green-600 hover:bg-surface"
-                      />
-                    )}
-                    {onCancel &&
-                      ["pending", "confirmed"].includes(appointment.status) && (
-                        <IconButton
-                          icon={faTimes}
-                          title="Cancel"
-                          onClick={() => onCancel(appointment.id)}
-                          className="text-red-500 hover:bg-surface"
-                        />
-                      )}
-                  </div>
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable columns={columns}>
+      {appointments.map((appointment) => (
+        <tr key={appointment.id}>
+          <Td>{appointment.patientName}</Td>
+          {showDoctor && <Td>{appointment.doctorName}</Td>}
+          <Td>
+            {formatDateTime(appointment.start)}
+            <span className="block text-xs">
+              {appointment.durationMinutes} min
+            </span>
+          </Td>
+          <Td>
+            {labelFor(appointment.type)}
+            {appointment.reason && (
+              <span className="block text-xs max-w-xs truncate">
+                {appointment.reason}
+              </span>
+            )}
+          </Td>
+          <Td>
+            <StatusBadge status={appointment.status} />
+          </Td>
+          {onChanged && (
+            <Td>
+              <AppointmentActions
+                appointment={appointment}
+                settings={settings}
+                onChanged={onChanged}
+              />
+            </Td>
+          )}
+        </tr>
+      ))}
+    </DataTable>
   );
 }
 
 AppointmentsTable.propTypes = {
   appointments: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      patientImage: PropTypes.string,
+      id: PropTypes.string.isRequired,
       patientName: PropTypes.string.isRequired,
       doctorName: PropTypes.string,
-      date: PropTypes.string,
-      time: PropTypes.string.isRequired,
+      start: PropTypes.string.isRequired,
+      durationMinutes: PropTypes.number,
       type: PropTypes.string.isRequired,
+      reason: PropTypes.string,
       status: PropTypes.string.isRequired,
     })
   ).isRequired,
   showDoctor: PropTypes.bool,
-  onConfirm: PropTypes.func,
-  onCancel: PropTypes.func,
+  settings: PropTypes.object,
+  onChanged: PropTypes.func,
 };
 
 export default AppointmentsTable;

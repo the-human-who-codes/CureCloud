@@ -3,11 +3,10 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const NotificationBell = ({ notificationCount, role }) => {
+const NotificationBell = ({ notificationCount }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log(role);
     navigate(`notifications`);
   };
 
@@ -15,7 +14,7 @@ const NotificationBell = ({ notificationCount, role }) => {
     <div className="relative">
       <button
         onClick={handleClick}
-        className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
+        className="p-2 text-ink hover:bg-surface rounded-lg"
       >
         <FontAwesomeIcon icon={faBell} className="text-xl" />
         {notificationCount > 0 && (
@@ -30,7 +29,6 @@ const NotificationBell = ({ notificationCount, role }) => {
 
 NotificationBell.propTypes = {
   notificationCount: PropTypes.number.isRequired,
-  role: PropTypes.string.isRequired,
 };
 
 export default NotificationBell;

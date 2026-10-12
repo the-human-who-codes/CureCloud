@@ -1,279 +1,606 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
-  faUserPlus,
-  faUsers,
+  faCopy,
+  faEye,
   faUserCheck,
   faUserClock,
-  faUserTimes,
-  faEdit,
-  faEye,
-  faBan,
+  faUserSlash,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import { api, listAll } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useAction, useApi, usePagedApi } from "../../hooks/useApi";
+import { formatDateTime, labelFor, relativeTime } from "../../utils/format";
+import { checks } from "../../utils/validation";
+import AsyncContent, { ErrorMessage, LoadMore } from "../common/AsyncContent";
+import { Button, IconButton } from "../common/Button";
+import { Card } from "../common/Card";
+import { FilterSelect, FormField } from "../common/FormField";
+import InitialsAvatar from "../common/InitialsAvatar";
+import Modal from "../common/Modal";
+import { PageHeader, PageShell } from "../common/PageShell";
+import ReasonModal from "../common/ReasonModal";
+import { StatCard } from "../common/StatCard";
+import StatusBadge from "../common/StatusBadge";
+import { DataTable, Td } from "../common/TableHead";
 
-function UserManagement() {
-  const [filterRole, setFilterRole] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
+const STAFF = ["doctor", "nurse"];
 
-  const mockUsers = [
-    {
-      id: "USR001",
-      name: "Dr. Sarah Wilson",
-      email: "sarah.wilson@hospital.com",
-      role: "doctor",
-      department: "Cardiology",
-      status: "active",
-      lastActive: "2024-02-20T10:30:00",
-      nationalId: "ID78901234",
-      image: "/default-avatar.png",
-    },
-    {
-      id: "USR002",
-      name: "Nurse John Davis",
-      email: "john.davis@hospital.com",
-      role: "nurse",
-      department: "Emergency",
-      status: "active",
-      lastActive: "2024-02-20T09:15:00",
-      nationalId: "ID78901235",
-      image: "/default-avatar.png",
-    },
-    {
-      id: "USR003",
-      name: "Admin Mary Johnson",
-      email: "mary.johnson@hospital.com",
-      role: "admin",
-      department: "Administration",
-      status: "active",
-      lastActive: "2024-02-19T16:45:00",
-      nationalId: "ID78901236",
-      image: "/default-avatar.png",
-    },
-    {
-      id: "USR004",
-      name: "Dr. James Brown",
-      email: "james.brown@hospital.com",
-      role: "doctor",
-      department: "Pediatrics",
-      status: "inactive",
-      lastActive: "2024-02-18T14:20:00",
-      nationalId: "ID78901237",
-      image: "/default-avatar.png",
-    },
-    {
-      id: "USR005",
-      name: "Nurse Emma Davis",
-      email: "emma.davis@hospital.com",
-      role: "nurse",
-      department: "ICU",
-      status: "pending",
-      lastActive: "2024-02-20T11:00:00",
-      nationalId: "ID78901238",
-      image: "/default-avatar.png",
-    },
-  ];
+// Approve a pending signup, or move an active doctor/nurse, or change their role. Activating
+// staff needs a facility, a licence number and (nurses) a department of that facility (§2.1).
+function AccountForm({ target, mode, facilities, onClose, onSaved }) {
+  const { user, isSystemAdmin } = useAuth();
+  const [role, setRole] = useState(target.role);
+  const [facilityId, setFacilityId] = useState(
+    target.facilityId ??
+      (isSystemAdmin ? facilities[0]?.id ?? "" : user.facilityId)
+  );
+  const [departmentId, setDepartmentId] = useState(target.departmentId ?? "");
+  const [licenceNumber, setLicenceNumber] = useState(
+    target.practitioner?.licenceNumber ?? ""
+  );
+  const [formError, setFormError] = useState(null);
+  const departments = useApi(
+    () =>
+      facilityId && STAFF.includes(role)
+        ? listAll(api.listDepartments, {
+            facilityId: isSystemAdmin ? facilityId : undefined,
+            status: "active",
+          })
+        : Promise.resolve([]),
+    [facilityId, role]
+  );
 
-  const stats = {
-    totalUsers: 156,
-    activeUsers: 142,
-    pendingApprovals: 8,
-    inactiveUsers: 6,
+  const roleChanged = role !== target.role;
+  const save = useAction(async () => {
+    const body = {};
+    if (mode === "approve") body.status = "active";
+    if (roleChanged) body.role = role;
+    if (STAFF.includes(role)) {
+      if (
+        facilityId !== target.facilityId ||
+        departmentId !== (target.departmentId ?? "")
+      ) {
+        body.facilityId = facilityId;
+        body.departmentId = departmentId || null;
+      }
+      if (
+        licenceNumber.trim() !== (target.practitioner?.licenceNumber ?? "") ||
+        roleChanged
+      )
+        body.practitioner = { licenceNumber: licenceNumber.trim() };
+    }
+    if (!Object.keys(body).length) return onClose();
+    onSaved(await api.updateUser(target.id, body));
+    onClose();
+  });
+
+  const submit = (e) => {
+    e.preventDefault();
+    setFormError(null);
+    if (STAFF.includes(role)) {
+      if (!facilityId) return setFormError("Choose a facility.");
+      if (role === "nurse" && !departmentId)
+        return setFormError("Nurses need a department (their ward).");
+      if (!licenceNumber.trim() || checks.licenceNumber(licenceNumber))
+        return setFormError(
+          `Enter a valid ${
+            role === "doctor" ? "HPCSA" : "SANC"
+          } number (4–20 letters, digits, / or -).`
+        );
+    }
+    save.run();
   };
 
+  const roles = isSystemAdmin ? ["doctor", "nurse", "admin"] : STAFF;
+  const title =
+    mode === "approve" ? `Approve ${target.name}` : `Edit ${target.name}`;
+
   return (
-    <div className="flex h-screen bg-[#f8faff]">
-      <></>
+    <Modal
+      title={title}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" form="account-form" disabled={save.busy}>
+            {save.busy ? "Saving…" : mode === "approve" ? "Approve" : "Save"}
+          </Button>
+        </>
+      }
+    >
+      <form
+        id="account-form"
+        onSubmit={submit}
+        noValidate
+        className="space-y-4"
+      >
+        <ErrorMessage error={save.error ?? departments.error} />
+        {formError && <ErrorMessage error={{ message: formError }} />}
+        <FormField
+          as="select"
+          label="Role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          {roles.map((r) => (
+            <option key={r} value={r}>
+              {labelFor(r)}
+            </option>
+          ))}
+        </FormField>
+        {STAFF.includes(role) && (
+          <>
+            {isSystemAdmin ? (
+              <FormField
+                as="select"
+                label="Facility"
+                value={facilityId}
+                onChange={(e) => {
+                  setFacilityId(e.target.value);
+                  setDepartmentId("");
+                }}
+              >
+                <option value="">Choose a facility</option>
+                {facilities.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name}
+                  </option>
+                ))}
+              </FormField>
+            ) : (
+              <p className="font-poppins text-sm text-ink">
+                Facility: your facility
+              </p>
+            )}
+            <FormField
+              as="select"
+              label={
+                role === "nurse" ? "Department (ward)" : "Department (optional)"
+              }
+              value={departmentId}
+              onChange={(e) => setDepartmentId(e.target.value)}
+            >
+              <option value="">None</option>
+              {(departments.data ?? []).map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </FormField>
+            <FormField
+              label={`${
+                role === "doctor" ? "HPCSA" : "SANC"
+              } registration number`}
+              value={licenceNumber}
+              maxLength={20}
+              hint={
+                roleChanged
+                  ? "Licence numbers are body-specific: enter the new one."
+                  : undefined
+              }
+              onChange={(e) => setLicenceNumber(e.target.value)}
+            />
+          </>
+        )}
+      </form>
+    </Modal>
+  );
+}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <></>
+AccountForm.propTypes = {
+  target: PropTypes.object.isRequired,
+  mode: PropTypes.oneOf(["approve", "edit"]).isRequired,
+  facilities: PropTypes.array.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSaved: PropTypes.func.isRequired,
+};
 
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1920px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-                  User Management
-                </h1>
-                <p className="font-poppins text-[#4a5568]">
-                  Manage and monitor system users
-                </p>
-              </div>
-              <button className="px-6 py-3 bg-[#2c4ecf] text-white rounded-lg font-poppins font-semibold hover:bg-[#2341b0] transition-colors duration-200 flex items-center">
-                <FontAwesomeIcon icon={faUserPlus} />
-                Add New User
-              </button>
-            </div>
+function Detail({ label, children }) {
+  return (
+    <div>
+      <p className="font-poppins text-xs text-ink-muted">{label}</p>
+      <p className="font-poppins text-primary">{children || "—"}</p>
+    </div>
+  );
+}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {Object.entries(stats).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
-                >
-                  <div className="flex items-center justify-between">
+Detail.propTypes = {
+  label: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
+
+// Account details (GET /users/{id}): identity, contact and practitioner profile.
+function UserDetail({ userId, departmentName, facilityName, onClose }) {
+  const detail = useApi(() => api.getUser(userId), [userId]);
+  const u = detail.data;
+  const p = u?.practitioner;
+  return (
+    <Modal title={u?.name ?? "User"} onClose={onClose} size="lg">
+      <AsyncContent loading={detail.loading} error={detail.error}>
+        {u && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Detail label="Email">
+              {u.email}
+              {u.emailVerified === false && " (not verified)"}
+            </Detail>
+            <Detail label="Phone">{u.phone}</Detail>
+            <Detail label="Role">{labelFor(u.role)}</Detail>
+            <Detail label="Status">
+              {labelFor(u.status)}
+              {u.statusReason ? ` — ${u.statusReason}` : ""}
+            </Detail>
+            <Detail label="Facility">{facilityName(u.facilityId)}</Detail>
+            <Detail label="Department">{departmentName(u.departmentId)}</Detail>
+            <Detail label="Identity document">
+              {u.identifier &&
+                `${labelFor(u.identifier.type)}: ${u.identifier.value}`}
+            </Detail>
+            <Detail label="Emergency contact">
+              {u.emergencyContact &&
+                `${u.emergencyContact.name} (${u.emergencyContact.relationship}) · ${u.emergencyContact.phone}`}
+            </Detail>
+            {p && (
+              <>
+                <Detail label="Licence">
+                  {labelFor(p.licenceBody)} {p.licenceNumber}
+                </Detail>
+                <Detail label="Specialisation">{p.specialization}</Detail>
+                <Detail label="Practising since">{p.practisingSince}</Detail>
+                <Detail label="Office">{p.officeLocation}</Detail>
+                <Detail label="Qualifications">
+                  {p.qualifications
+                    ?.map((q) => `${q.title}, ${q.institution} (${q.year})`)
+                    .join("; ")}
+                </Detail>
+              </>
+            )}
+            <Detail label="Last sign-in">
+              {u.lastSignInAt && formatDateTime(u.lastSignInAt)}
+            </Detail>
+            <Detail label="Created">{formatDateTime(u.createdAt)}</Detail>
+          </div>
+        )}
+      </AsyncContent>
+    </Modal>
+  );
+}
+
+UserDetail.propTypes = {
+  userId: PropTypes.string.isRequired,
+  departmentName: PropTypes.func.isRequired,
+  facilityName: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+function UserManagement() {
+  const { user, isSystemAdmin } = useAuth();
+  const [params, setParams] = useSearchParams();
+  const q = params.get("q") ?? "";
+  const role = params.get("role") ?? "all";
+  const status = params.get("status") ?? "all";
+  const departmentId = params.get("departmentId") ?? "";
+  const [search, setSearch] = useState(q);
+  const [dialog, setDialog] = useState(null);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => setSearch(q), [q]);
+
+  const dashboard = useApi(() => api.getDashboard());
+  const facilities = useApi(() => listAll(api.listFacilities));
+  const departments = useApi(() => listAll(api.listDepartments));
+  const users = usePagedApi(
+    (cursor) =>
+      api.listUsers({
+        // The API combines the name search only with role and status (§2.19).
+        q: departmentId ? undefined : q || undefined,
+        role: role === "all" ? undefined : role,
+        status: status === "all" ? undefined : status,
+        departmentId: departmentId || undefined,
+        cursor,
+      }),
+    [q, role, status, departmentId]
+  );
+
+  const setParam = (key, value) =>
+    setParams((p) => {
+      const next = new URLSearchParams(p);
+      if (value && value !== "all") next.set(key, value);
+      else next.delete(key);
+      return next;
+    });
+
+  const departmentName = (id) =>
+    id ? departments.data?.find((d) => d.id === id)?.name ?? "—" : "—";
+  const facilityName = (id) =>
+    id ? facilities.data?.find((f) => f.id === id)?.name ?? "—" : "Unassigned";
+
+  const replace = (u) => {
+    users.setItems((items) =>
+      items.map((x) => (x.id === u.id ? { ...x, ...u } : x))
+    );
+    dashboard.reload();
+  };
+  const enable = useAction(async (target) =>
+    replace(await api.updateUser(target.id, { status: "active" }))
+  );
+
+  const c = dashboard.data?.counters;
+  const roleOptions = [
+    { value: "all", label: "All roles" },
+    ...["doctor", "nurse", "admin", ...(isSystemAdmin ? ["patient"] : [])].map(
+      (r) => ({ value: r, label: labelFor(r) })
+    ),
+  ];
+  const copyLink = async () => {
+    await navigator.clipboard?.writeText(
+      `${window.location.origin}/staff-sign-up`
+    );
+    setCopied(true);
+  };
+
+  // Only system admins manage admin and patient accounts; nobody manages their own (§2.1).
+  const manageable = (target) =>
+    target.id !== user.id && (isSystemAdmin || STAFF.includes(target.role));
+
+  return (
+    <PageShell>
+      <PageHeader
+        title="User Management"
+        actions={
+          <Button icon={faCopy} variant="secondary" onClick={copyLink}>
+            {copied ? "Link copied" : "Copy staff sign-up link"}
+          </Button>
+        }
+      />
+      {c && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard label="Total Users" value={c.totalUsers} icon={faUsers} />
+          <StatCard
+            label="Active Users"
+            value={c.activeUsers}
+            icon={faUserCheck}
+            tone="success"
+          />
+          <StatCard
+            label="Pending Staff"
+            value={c.pendingStaff}
+            icon={faUserClock}
+            tone="warning"
+          />
+          <StatCard
+            label="Disabled"
+            value={c.disabledUsers}
+            icon={faUserSlash}
+            tone="danger"
+          />
+        </div>
+      )}
+
+      <Card className="mb-6">
+        <form
+          className="flex flex-wrap items-end gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setParam("q", search.trim());
+          }}
+        >
+          <FormField
+            compact
+            label="Search by name"
+            type="search"
+            value={search}
+            maxLength={60}
+            disabled={Boolean(departmentId)}
+            onChange={(e) => setSearch(e.target.value)}
+            wrapperClassName="flex-1 min-w-[200px]"
+          />
+          <FilterSelect
+            label="Role"
+            value={role}
+            onChange={(v) => setParam("role", v)}
+            options={roleOptions}
+          />
+          <FilterSelect
+            label="Status"
+            value={status}
+            onChange={(v) => setParam("status", v)}
+            options={["all", "active", "pending", "disabled"].map((s) => ({
+              value: s,
+              label: s === "all" ? "All statuses" : labelFor(s),
+            }))}
+          />
+          <FilterSelect
+            label="Department"
+            value={departmentId}
+            onChange={(v) => setParam("departmentId", v)}
+            options={[
+              { value: "", label: "All departments" },
+              ...(departments.data ?? []).map((d) => ({
+                value: d.id,
+                label: d.name,
+              })),
+            ]}
+          />
+          <Button type="submit" variant="secondary">
+            Search
+          </Button>
+        </form>
+      </Card>
+
+      <ErrorMessage error={enable.error} className="mb-4" />
+      <AsyncContent
+        loading={users.loading}
+        error={users.error}
+        empty={users.items.length === 0}
+        emptyText="No users match these filters."
+      >
+        <Card padded={false}>
+          <DataTable
+            columns={[
+              "User",
+              "Role",
+              isSystemAdmin ? "Facility / Department" : "Department",
+              "Status",
+              "Last sign-in",
+              "Actions",
+            ]}
+          >
+            {users.items.map((u) => (
+              <tr key={u.id}>
+                <Td>
+                  <div className="flex items-center gap-3">
+                    <InitialsAvatar
+                      name={u.name}
+                      photoUrl={u.photoUrl ?? undefined}
+                    />
                     <div>
-                      <p className="font-poppins text-[#4a5568] text-sm">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
-                      </p>
-                      <p className="font-poppins text-2xl font-bold text-[#2c4ecf]">
-                        {value}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 rounded-full bg-[#f8faff] flex items-center justify-center">
-                      <FontAwesomeIcon
-                        icon={
-                          key === "totalUsers"
-                            ? faUsers
-                            : key === "activeUsers"
-                            ? faUserCheck
-                            : key === "pendingApprovals"
-                            ? faUserClock
-                            : faUserTimes
-                        }
-                        className={`fas text-[#2c4ecf] text-xl`}
-                      />
+                      <p className="font-medium text-primary">{u.name}</p>
+                      <p className="text-sm">{u.email}</p>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff] mb-8">
-              <div className="flex flex-wrap gap-4">
-                <div className="flex-1 min-w-[200px]">
-                  <label className="block font-poppins text-sm text-[#4a5568] mb-2">
-                    Role
-                  </label>
-                  <select
-                    className="w-full px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
-                    value={filterRole}
-                    onChange={(e) => setFilterRole(e.target.value)}
-                  >
-                    <option value="all">All Roles</option>
-                    <option value="doctor">Doctors</option>
-                    <option value="nurse">Nurses</option>
-                    <option value="admin">Administrators</option>
-                  </select>
-                </div>
-                <div className="flex-1 min-w-[200px]">
-                  <label className="block font-poppins text-sm text-[#4a5568] mb-2">
-                    Status
-                  </label>
-                  <select
-                    className="w-full px-4 py-2 rounded-lg border border-[#e1e8ff] focus:border-[#2c4ecf] focus:ring-1 focus:ring-[#2c4ecf] font-poppins"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="pending">Pending</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-[#f8faff]">
-                  <tr>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      User
-                    </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      Role
-                    </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      Department
-                    </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      Last Active
-                    </th>
-                    <th className="px-6 py-4 font-poppins text-sm text-[#4a5568] text-left">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockUsers.map((user) => (
-                    <tr key={user.id} className="border-t border-[#e1e8ff]">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <img
-                            src={user.image}
-                            alt={user.name}
-                            className="w-10 h-10 rounded-full mr-3"
-                          />
-                          <div>
-                            <p className="font-poppins text-[#2c4ecf] font-semibold">
-                              {user.name}
-                            </p>
-                            <p className="font-poppins text-sm text-[#4a5568]">
-                              {user.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-3 py-1 rounded-full text-xs font-poppins bg-[#f8faff] text-[#2c4ecf]">
-                          {user.role.charAt(0).toUpperCase() +
-                            user.role.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                        {user.department}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-poppins ${
-                            user.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : user.status === "inactive"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
+                </Td>
+                <Td>{labelFor(u.role)}</Td>
+                <Td className="text-sm">
+                  {isSystemAdmin && (
+                    <span className="block">{facilityName(u.facilityId)}</span>
+                  )}
+                  {departmentName(u.departmentId)}
+                </Td>
+                <Td>
+                  <StatusBadge status={u.status} />
+                  {u.emailVerified === false && (
+                    <StatusBadge
+                      tone="warning"
+                      size="sm"
+                      className="block mt-1 w-fit"
+                    >
+                      Email not verified
+                    </StatusBadge>
+                  )}
+                </Td>
+                <Td className="text-sm">
+                  {u.lastSignInAt ? relativeTime(u.lastSignInAt) : "Never"}
+                </Td>
+                <Td>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <IconButton
+                      icon={faEye}
+                      title="View details"
+                      className="text-primary hover:bg-line"
+                      onClick={() => setParam("user", u.id)}
+                    />
+                    {manageable(u) && u.status === "pending" && (
+                      <>
+                        <Button
+                          size="sm"
+                          disabled={u.emailVerified === false}
+                          title={
+                            u.emailVerified === false
+                              ? "The user must verify their email address first"
+                              : undefined
+                          }
+                          onClick={() =>
+                            setDialog({ type: "approve", target: u })
+                          }
                         >
-                          {user.status.charAt(0).toUpperCase() +
-                            user.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-poppins text-[#4a5568]">
-                        {new Date(user.lastActive).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <button
-                            className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
-                            title="Edit"
+                          Approve
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() =>
+                            setDialog({ type: "reject", target: u })
+                          }
+                        >
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                    {manageable(u) && u.status === "active" && (
+                      <>
+                        {u.role !== "patient" && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() =>
+                              setDialog({ type: "edit", target: u })
+                            }
                           >
-                            <FontAwesomeIcon icon={faEdit} />
-                          </button>
-                          <button
-                            className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
-                            title="View Details"
-                          >
-                            <FontAwesomeIcon icon={faEye} />
-                          </button>
-                          <button
-                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                            title="Deactivate"
-                          >
-                            <FontAwesomeIcon icon={faBan} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                            Edit
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() =>
+                            setDialog({ type: "disable", target: u })
+                          }
+                        >
+                          Disable
+                        </Button>
+                      </>
+                    )}
+                    {manageable(u) && u.status === "disabled" && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        disabled={enable.busy}
+                        onClick={() => enable.run(u)}
+                      >
+                        Enable
+                      </Button>
+                    )}
+                  </div>
+                </Td>
+              </tr>
+            ))}
+          </DataTable>
+          <LoadMore {...users} />
+        </Card>
+      </AsyncContent>
+
+      {params.get("user") && (
+        <UserDetail
+          userId={params.get("user")}
+          departmentName={departmentName}
+          facilityName={facilityName}
+          onClose={() => setParam("user", null)}
+        />
+      )}
+      {(dialog?.type === "approve" || dialog?.type === "edit") && (
+        <AccountForm
+          target={dialog.target}
+          mode={dialog.type}
+          facilities={facilities.data ?? []}
+          onClose={() => setDialog(null)}
+          onSaved={replace}
+        />
+      )}
+      {(dialog?.type === "reject" || dialog?.type === "disable") && (
+        <ReasonModal
+          title={`${dialog.type === "reject" ? "Reject" : "Disable"} ${
+            dialog.target.name
+          }`}
+          confirmLabel={
+            dialog.type === "reject" ? "Reject signup" : "Disable account"
+          }
+          required={dialog.type === "reject"}
+          onClose={() => setDialog(null)}
+          onSubmit={async (statusReason) =>
+            replace(
+              await api.updateUser(dialog.target.id, {
+                status: "disabled",
+                ...(statusReason && { statusReason }),
+              })
+            )
+          }
+        />
+      )}
+    </PageShell>
   );
 }
 

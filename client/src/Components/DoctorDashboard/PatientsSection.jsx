@@ -1,23 +1,20 @@
-import PatientCard from "../PatientCard/PatientCard";
 import PropTypes from "prop-types";
+import PatientCard from "../PatientCard/PatientCard";
+import { Section } from "../common/Card";
 
-const PatientsSection = ({ patients }) => {
+const PatientsSection = ({ patients, onView }) => {
   return (
-    <div className="lg:col-span-2">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-4">
-        Recent Patients
-      </h2>
+    <Section title="My Patients" className="lg:col-span-2">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {patients.map((patient) => (
           <PatientCard
             key={patient.patientId}
             {...patient}
-            onView={() => {}}
-            onEdit={() => {}}
+            onView={onView ? () => onView(patient.patientId) : undefined}
           />
         ))}
       </div>
-    </div>
+    </Section>
   );
 };
 
@@ -27,6 +24,7 @@ PatientsSection.propTypes = {
       patientId: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onView: PropTypes.func,
 };
 
 export default PatientsSection;

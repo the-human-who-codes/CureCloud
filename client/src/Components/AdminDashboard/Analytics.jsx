@@ -1,23 +1,41 @@
+import { api } from "../../api/client";
+import { useApi } from "../../hooks/useApi";
+import { labelFor } from "../../utils/format";
+import AsyncContent from "../common/AsyncContent";
+import { Card } from "../common/Card";
+import { BarList } from "../Reports/ReportsPage";
+
+// Demographics and appointment distribution from GET /reports/summary (last 30 days). The admin
+// dashboard shows no clinical aggregates (§2.18).
 function Analytics() {
+  const report = useApi(() => api.getReportSummary());
+  const r = report.data;
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {[
-        "Patient Demographics",
-        "Appointment Distribution",
-        "Revenue Analytics",
-        "Resource Utilization",
-      ].map((title) => (
-        <div
-          key={title}
-          className="bg-white rounded-xl p-6 shadow-sm border border-[#e1e8ff]"
-        >
-          <h2 className="font-poppins text-lg font-semibold text-[#2c4ecf] mb-4">
-            {title}
-          </h2>
-          <div className="h-[200px] bg-[#f8faff] rounded-lg"></div>
+    <AsyncContent loading={report.loading} error={report.error}>
+      {r && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card title="Patients by sex" titleSize="lg">
+            <BarList
+              entries={Object.entries(r.patients.bySex).map(([k, v]) => [
+                labelFor(k),
+                v,
+              ])}
+            />
+          </Card>
+          <Card title="Patients by age" titleSize="lg">
+            <BarList entries={Object.entries(r.patients.byAgeGroup)} />
+          </Card>
+          <Card title="Appointment distribution" titleSize="lg">
+            <BarList
+              entries={Object.entries(r.appointments.byStatus).map(([k, v]) => [
+                labelFor(k),
+                v,
+              ])}
+            />
+          </Card>
         </div>
-      ))}
-    </div>
+      )}
+    </AsyncContent>
   );
 }
 

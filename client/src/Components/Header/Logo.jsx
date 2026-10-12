@@ -14,7 +14,7 @@ const Logo = ({ role }) => {
 
   return (
     <div className="flex items-center cursor-pointer" onClick={handleClick}>
-      <FontAwesomeIcon icon={faHeartPulse} className="text-xl text-[#2c4ecf]" />
+      <FontAwesomeIcon icon={faHeartPulse} className="text-xl text-primary" />
     </div>
   );
 };

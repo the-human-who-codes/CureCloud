@@ -1,0 +1,27 @@
+import PropTypes from "prop-types";
+import { labelFor } from "../../utils/format";
+import { TONE_CLASSES, toneForStatus } from "../../utils/status";
+
+// Rounded status pill. The colour comes from `tone`, or is derived from `status`.
+function StatusBadge({ status, tone, size = "md", children, className = "" }) {
+  const classes = TONE_CLASSES[tone ?? toneForStatus(status)];
+  return (
+    <span
+      className={`${
+        size === "sm" ? "px-2" : "px-3"
+      } py-1 rounded-full text-xs font-poppins ${classes} ${className}`}
+    >
+      {children ?? labelFor(status)}
+    </span>
+  );
+}
+
+StatusBadge.propTypes = {
+  status: PropTypes.string,
+  tone: PropTypes.oneOf(Object.keys(TONE_CLASSES)),
+  size: PropTypes.oneOf(["sm", "md"]),
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
+
+export default StatusBadge;

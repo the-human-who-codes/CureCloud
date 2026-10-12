@@ -196,8 +196,8 @@ const Footer = () => (
 			</a>{" "}
 		</p>
 		<p className="mt-2 text-sm text-gray-400">
-			Currently, the software uses mock data to illustrate its intended
-			functionality.
+			CureCloud is a portfolio project. Please use demo data only, never real
+			patient information.
 		</p>
 		<p className="mt-2 text-sm text-gray-400">
 			Contributors:

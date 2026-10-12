@@ -1,94 +1,83 @@
-/* eslint-disable no-unused-vars */
-"use client";
-import { useState, useEffect } from "react";
-import QuickStats from "./QuickStats";
+import {
+  faTasks,
+  faPills,
+  faExclamationTriangle,
+  faHospitalUser,
+} from "@fortawesome/free-solid-svg-icons";
 import AssignedPatientsSection from "./AssignedPatientsSection";
 import TodayTasksSection from "./TodayTasksSection";
 import ShiftInfoSection from "./ShiftInfoSection";
 import QuickActionsSection from "./QuickActionsSection";
 import RecentAlertsSection from "./RecentAlertsSection";
-import MockData from "../../data/MockData";
 import { api } from "../../api/client";
-import { toPatientCard } from "../../utils/patients";
+import { useAuth } from "../../auth/AuthProvider";
+import { useApi } from "../../hooks/useApi";
+import { addDays, longDate, sastInstant, todaySast } from "../../utils/format";
+import AsyncContent from "../common/AsyncContent";
+import { PageHeader, PageShell } from "../common/PageShell";
+import { StatCard } from "../common/StatCard";
 
 function NurseDashboard() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeTask, setActiveTask] = useState(null);
-  const [timer, setTimer] = useState(0);
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    let interval;
-    if (activeTask) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeTask]);
-
-  useEffect(() => {
-    api
-      .listPatients({ limit: 100 })
-      .then(({ patients }) => {
-        const critical = patients.filter((p) => p.priority === "critical");
-        setDashboardData({
-          ...MockData, // tasks, medications and shift info have no backend yet
-          stats: {
-            ...MockData.stats,
-            patientsUnderCare: patients.length,
-            criticalAlerts: critical.length,
-          },
-          patients: patients.map(toPatientCard),
-          alerts: critical.map((p) => ({
-            id: p.id,
-            message: `${p.name}${
-              p.room ? ` (room ${p.room})` : ""
-            } is in critical condition.`,
-            level: "Critical",
-          })),
-        });
-      })
-      .catch((err) => setError(`Could not load dashboard data: ${err.message}`))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <div className="loading-screen">Loading...</div>;
-  if (error) return <div className="error-screen">{error}</div>;
+  const { user } = useAuth();
+  const dashboard = useApi(() => api.getDashboard());
+  const patients = useApi(() => api.listPatients({ limit: 10 }));
+  const tasks = useApi(() =>
+    api.listCareTasks({
+      assigneeId: "me",
+      status: "open,in-progress",
+      dueBefore: sastInstant(addDays(todaySast(), 1)),
+      limit: 20,
+    })
+  );
+  const current = useApi(() => api.getCurrentShift());
+  const counters = dashboard.data?.counters;
 
   return (
-    <div className="flex min-h-fit bg-[#f8faff]">
-      <div className="flex-1 px-6 py-8">
-        <div className="max-w-[1920px] mx-auto">
-          <QuickStats stats={dashboardData?.stats} />
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div className="lg:col-span-3 space-y-8">
-              <AssignedPatientsSection patients={dashboardData?.patients} />
-              <TodayTasksSection
-                tasks={dashboardData?.tasks}
-                setActiveTask={setActiveTask}
-                setTimer={setTimer}
-              />
-              <ShiftInfoSection shiftInfo={dashboardData?.shiftInfo} />
-            </div>
-            <div className="space-y-8">
-              <QuickActionsSection />
-              <RecentAlertsSection alerts={dashboardData?.alerts} />
-            </div>
+    <PageShell>
+      <PageHeader
+        title={`Welcome back, ${user?.name ?? ""}`}
+        subtitle={longDate()}
+      />
+      <AsyncContent loading={dashboard.loading} error={dashboard.error}>
+        {counters && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              label="Patients Under Care"
+              value={counters.patientsUnderCare}
+              icon={faHospitalUser}
+            />
+            <StatCard
+              label="Tasks Due Today"
+              value={counters.tasksDueToday}
+              icon={faTasks}
+            />
+            <StatCard
+              label="Medications Due Now"
+              value={counters.medicationsDueNow}
+              icon={faPills}
+              tone={counters.medicationsDueNow ? "warning" : "primary"}
+            />
+            <StatCard
+              label="Critical Patients"
+              value={counters.criticalPatients}
+              icon={faExclamationTriangle}
+              tone={counters.criticalPatients ? "danger" : "primary"}
+            />
           </div>
+        )}
+      </AsyncContent>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3 space-y-8">
+          <AssignedPatientsSection patients={patients} />
+          <TodayTasksSection tasks={tasks} />
+          <ShiftInfoSection current={current} />
+        </div>
+        <div className="space-y-8">
+          <QuickActionsSection />
+          <RecentAlertsSection alerts={dashboard.data?.alerts ?? []} />
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

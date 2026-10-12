@@ -1,52 +1,81 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-const ProfessionalInformationSection = ({ profileData }) => {
+import { labelFor } from "../../utils/format";
+import { Card, SectionTitle } from "../common/Card";
+import InfoItem from "./InfoItem";
+
+// Practitioner profile of a doctor or nurse (users/{uid}.practitioner).
+const ProfessionalInformationSection = ({ practitioner }) => {
+  const years =
+    practitioner.practisingSince != null
+      ? new Date().getFullYear() - practitioner.practisingSince
+      : null;
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-[#e1e8ff] p-6">
-      <h2 className="font-poppins text-xl font-semibold text-[#2c4ecf] mb-6">
-        <FontAwesomeIcon icon={faUser} className="fas fa-user-md mr-2" />
+    <Card>
+      <SectionTitle spacing="lg">
+        <FontAwesomeIcon icon={faUser} className="mr-2" />
         Professional Information
-      </h2>
+      </SectionTitle>
       <div className="space-y-4">
-        <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Medical License</p>
-          <p className="font-poppins text-lg">{profileData.license}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Specialization</p>
-          <p className="font-poppins text-lg">{profileData.specialization}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Experience</p>
-          <p className="font-poppins text-lg">{profileData.experience}</p>
-        </div>
-        <div>
-          <p className="font-poppins text-sm text-[#4a5568]">Education</p>
-          {profileData.education.map((edu, index) => (
-            <div key={index} className="mt-2">
-              <p className="font-poppins text-lg">{edu.degree}</p>
-              <p className="font-poppins text-sm text-[#4a5568]">
-                {edu.institution}, {edu.year}
-              </p>
-            </div>
-          ))}
-        </div>
+        <InfoItem
+          label={`${labelFor(practitioner.licenceBody)} registration`}
+          value={practitioner.licenceNumber ?? "Not recorded"}
+        />
+        <InfoItem
+          label="Specialisation"
+          value={practitioner.specialization ?? "—"}
+        />
+        <InfoItem
+          label="Experience"
+          value={
+            years == null
+              ? "—"
+              : `${years} year${years === 1 ? "" : "s"} (since ${
+                  practitioner.practisingSince
+                })`
+          }
+        />
+        <InfoItem label="Office" value={practitioner.officeLocation ?? "—"} />
+        <InfoItem label="Qualifications">
+          {practitioner.qualifications?.length ? (
+            practitioner.qualifications.map((q) => (
+              <div key={`${q.title}-${q.year}`} className="mt-2">
+                <p className="font-poppins text-lg">{q.title}</p>
+                <p className="font-poppins text-sm text-ink">
+                  {q.institution}, {q.year}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="font-poppins text-lg">—</p>
+          )}
+        </InfoItem>
+        {practitioner.bio && (
+          <InfoItem label="About">
+            <p className="font-poppins whitespace-pre-line">
+              {practitioner.bio}
+            </p>
+          </InfoItem>
+        )}
       </div>
-    </div>
+    </Card>
   );
 };
 
 ProfessionalInformationSection.propTypes = {
-  profileData: PropTypes.shape({
-    license: PropTypes.string,
+  practitioner: PropTypes.shape({
+    licenceBody: PropTypes.string,
+    licenceNumber: PropTypes.string,
     specialization: PropTypes.string,
-    experience: PropTypes.string,
-    education: PropTypes.arrayOf(
+    practisingSince: PropTypes.number,
+    officeLocation: PropTypes.string,
+    bio: PropTypes.string,
+    qualifications: PropTypes.arrayOf(
       PropTypes.shape({
-        degree: PropTypes.string,
+        title: PropTypes.string,
         institution: PropTypes.string,
-        year: PropTypes.string,
+        year: PropTypes.number,
       })
     ),
   }).isRequired,

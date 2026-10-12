@@ -9,6 +9,7 @@ import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
 import PropTypes from "prop-types";
 import { auth } from "../firebaseConfig";
 import { api } from "../api/client";
+import { setDisplayTimeZone } from "../utils/format";
 
 const AuthContext = createContext(null);
 
@@ -18,49 +19,78 @@ async function loadProfile() {
     return await api.getMe();
   } catch (err) {
     if (err.status !== 404) throw err;
-    await api.createMe();
-    return api.getMe();
+    return api.createMe();
   }
 }
+
+const signOut = () => firebaseSignOut(auth);
+
+const SIGNED_OUT = {
+  user: null,
+  patient: null,
+  permissions: [],
+  error: null,
+};
 
 export function AuthProvider({ children }) {
   const [state, setState] = useState({
     firebaseUser: undefined,
-    user: null,
-    patient: null,
-    error: null,
+    ...SIGNED_OUT,
   });
 
   const refresh = useCallback(async () => {
     if (!auth.currentUser)
-      return setState({
-        firebaseUser: null,
-        user: null,
-        patient: null,
-        error: null,
-      });
+      return setState({ firebaseUser: null, ...SIGNED_OUT });
     try {
-      const { user, patient = null } = await loadProfile();
-      setState({ firebaseUser: auth.currentUser, user, patient, error: null });
-    } catch (error) {
+      const { user, patient = null, permissions = [] } = await loadProfile();
       setState({
         firebaseUser: auth.currentUser,
-        user: null,
-        patient: null,
-        error,
+        user,
+        patient,
+        permissions,
+        error: null,
       });
+      if (user.status === "active")
+        api
+          .getPreferences()
+          .then((p) => setDisplayTimeZone(p.timeZone))
+          .catch(() => {});
+    } catch (error) {
+      setState({ firebaseUser: auth.currentUser, ...SIGNED_OUT, error });
     }
   }, []);
 
   useEffect(() => onAuthStateChanged(auth, () => refresh()), [refresh]);
+
+  // GET/PATCH /me responses ({ user, patient, permissions }) update the context in place.
+  const applyMe = useCallback(
+    (me) =>
+      setState((s) => ({
+        ...s,
+        user: me.user ?? s.user,
+        patient: me.patient !== undefined ? me.patient : s.patient,
+        permissions: me.permissions ?? s.permissions,
+      })),
+    []
+  );
+  const setPatient = useCallback(
+    (patient) => setState((s) => ({ ...s, patient })),
+    []
+  );
 
   const value = {
     ...state,
     loading:
       state.firebaseUser === undefined ||
       (state.firebaseUser && !state.user && !state.error),
+    // Role permission from GET /me. The UI uses it to show or hide actions; the API enforces.
+    can: (permission) => state.permissions.includes(permission),
+    // A system admin is an admin without a facility (docs/domain-model.md §3.3).
+    isSystemAdmin: state.user?.role === "admin" && !state.user?.facilityId,
     refresh,
-    signOut: () => firebaseSignOut(auth),
+    applyMe,
+    setPatient,
+    signOut,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,322 +1,205 @@
-"use client";
 import { useState } from "react";
+import PropTypes from "prop-types";
+import { useSearchParams } from "react-router-dom";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useAction, useApi, usePagedApi } from "../../hooks/useApi";
+import { conversationTitle } from "../../utils/conversations";
+import { labelFor, relativeTime } from "../../utils/format";
+import AsyncContent, { ErrorMessage, LoadMore } from "../common/AsyncContent";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
+import { Checkbox, FormField } from "../common/FormField";
+import Modal from "../common/Modal";
+import { PageHeader, PageShell } from "../common/PageShell";
+import ConversationThread from "../Chat/ConversationThread";
 
-function Messages() {
-  const [searchTerm, setSearchTerm] = useState("");
-  //   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [selectedConversation, setSelectedConversation] = useState(null);
-  const [messageText, setMessageText] = useState("");
-  const [showQuickResponses, setShowQuickResponses] = useState(false);
-
-  const mockData = {
-    messageStats: {
-      unread: 8,
-      urgent: 3,
-      followUps: 5,
-      total: 42,
-    },
-    conversations: [
-      {
-        id: "msg1",
-        patient: {
-          id: "P12345",
-          name: "Sarah Johnson",
-          photo: "https://placehold.co/100",
-          room: "201A",
-          status: "stable",
-        },
-        lastMessage: {
-          content: "When should I take the new medication?",
-          timestamp: "2024-01-20T10:30:00Z",
-          isUnread: true,
-          isUrgent: true,
-        },
-        messageCount: 4,
-      },
-      {
-        id: "msg2",
-        patient: {
-          id: "P12346",
-          name: "Michael Brown",
-          photo: "https://placehold.co/100",
-          room: "105B",
-          status: "stable",
-        },
-        lastMessage: {
-          content: "My symptoms have improved since yesterday",
-          timestamp: "2024-01-20T09:15:00Z",
-          isUnread: true,
-          isUrgent: false,
-        },
-        messageCount: 6,
-      },
-    ],
-    quickResponses: [
-      {
-        id: "qr1",
-        title: "Medication Instructions",
-        content:
-          "Please take your medication with food, once daily in the morning.",
-      },
-      {
-        id: "qr2",
-        title: "Follow-up Reminder",
-        content:
-          "Don't forget your follow-up appointment scheduled for tomorrow.",
-      },
-      {
-        id: "qr3",
-        title: "Lab Results Normal",
-        content: "Your lab results have come back and everything looks normal.",
-      },
-    ],
-    recentAttachments: [
-      {
-        id: "att1",
-        name: "Lab Results.pdf",
-        type: "pdf",
-        size: "1.2MB",
-        uploadedAt: "2024-01-19T14:20:00Z",
-      },
-      {
-        id: "att2",
-        name: "Care Instructions.docx",
-        type: "document",
-        size: "850KB",
-        uploadedAt: "2024-01-19T11:45:00Z",
-      },
-    ],
-  };
-
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+// Starts a `patient` conversation with members of the patient's care team.
+function NewConversation({ patientId, onClose, onCreated }) {
+  const careTeam = useApi(() => api.getCareTeam(patientId), [patientId]);
+  const [selected, setSelected] = useState([]);
+  const [title, setTitle] = useState("");
+  const create = useAction(async () => {
+    const conversation = await api.createConversation({
+      type: "patient",
+      patientId,
+      participantIds: selected,
+      ...(title.trim() && { title: title.trim() }),
     });
+    onCreated(conversation);
+  });
+  const toggle = (id, on) =>
+    setSelected((s) => (on ? [...s, id] : s.filter((x) => x !== id)));
+
+  return (
+    <Modal
+      title="New message"
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => create.run()}
+            disabled={create.busy || selected.length === 0}
+          >
+            Start conversation
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <ErrorMessage error={create.error} />
+        <p className="font-poppins text-sm text-ink">
+          Choose who on your care team should receive your messages.
+        </p>
+        <AsyncContent
+          {...careTeam}
+          empty={careTeam.data?.data.length === 0}
+          emptyText="You have no care team yet. Book an appointment first."
+        >
+          {careTeam.data?.data.map((p) => (
+            <Checkbox
+              key={p.id}
+              label={`${p.name} · ${labelFor(p.role)}${
+                p.specialization ? ` (${p.specialization})` : ""
+              }`}
+              checked={selected.includes(p.id)}
+              onChange={(on) => toggle(p.id, on)}
+            />
+          ))}
+        </AsyncContent>
+        <FormField
+          label="Subject (optional)"
+          value={title}
+          maxLength={100}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+    </Modal>
+  );
+}
+
+NewConversation.propTypes = {
+  patientId: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onCreated: PropTypes.func.isRequired,
+};
+
+// The patient's conversations with their care team (the staff side lives in TeamChat).
+function Messages() {
+  const { user, patient } = useAuth();
+  const [params, setParams] = useSearchParams();
+  const [creating, setCreating] = useState(false);
+  const conversations = usePagedApi((cursor) =>
+    api.listConversations({ type: "patient", cursor })
+  );
+  const selectedId = params.get("c") ?? conversations.items[0]?.id;
+  const selected = conversations.items.find((c) => c.id === selectedId);
+
+  const select = (id) => {
+    setParams({ c: id });
+    conversations.setItems((items) =>
+      items.map((c) => (c.id === id ? { ...c, unreadCount: 0 } : c))
+    );
   };
 
   return (
-    <div className="flex h-screen bg-[#f8faff]">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 flex flex-col md:flex-row">
-          <div className="w-full md:w-[320px] lg:w-[380px] border-r border-[#e1e8ff] bg-white">
-            <div className="p-6">
-              <h1 className="font-poppins text-2xl font-bold text-[#2c4ecf] mb-6">
-                Patient Messages
-              </h1>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {Object.entries(mockData.messageStats).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="bg-[#f8faff] rounded-xl p-4 border border-[#e1e8ff]"
+    <PageShell>
+      <PageHeader
+        title="Messages"
+        subtitle="Talk to your care team"
+        actions={
+          patient && (
+            <Button icon={faPlus} onClick={() => setCreating(true)}>
+              New message
+            </Button>
+          )
+        }
+      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card padded={false}>
+          <AsyncContent
+            loading={conversations.loading}
+            error={conversations.error}
+            empty={conversations.items.length === 0}
+            emptyText="No conversations yet."
+          >
+            <ul className="divide-y divide-line">
+              {conversations.items.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => select(c.id)}
+                    className={`w-full text-left p-4 hover:bg-surface ${
+                      c.id === selectedId ? "bg-surface" : ""
+                    }`}
                   >
-                    <p className="font-poppins text-sm text-[#4a5568]">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </p>
-                    <p className="font-poppins text-xl font-bold text-[#2c4ecf]">
-                      {value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="relative mb-6">
-                <input
-                  type="text"
-                  placeholder="Search conversations..."
-                  className="w-full pl-10 pr-4 py-2 border border-[#e1e8ff] rounded-lg focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#4a5568]"></i>
-              </div>
-
-              <div className="space-y-4">
-                {mockData.conversations.map((conv) => (
-                  <div
-                    key={conv.id}
-                    onClick={() => setSelectedConversation(conv)}
-                    className={`p-4 rounded-xl border ${
-                      selectedConversation?.id === conv.id
-                        ? "border-[#2c4ecf] bg-[#f8faff]"
-                        : "border-[#e1e8ff] hover:border-[#2c4ecf]"
-                    } cursor-pointer transition-colors duration-200`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={conv.patient.photo}
-                        alt={conv.patient.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-poppins font-semibold text-[#2c4ecf] truncate">
-                            {conv.patient.name}
-                          </h3>
-                          <span className="font-poppins text-xs text-[#4a5568]">
-                            {formatTimestamp(conv.lastMessage.timestamp)}
-                          </span>
-                        </div>
-                        <p className="font-poppins text-sm text-[#4a5568] truncate">
-                          {conv.lastMessage.content}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="px-2 py-0.5 bg-[#e1e8ff] text-[#2c4ecf] rounded-full text-xs">
-                            Room {conv.patient.room}
-                          </span>
-                          {conv.lastMessage.isUrgent && (
-                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs">
-                              Urgent
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 flex flex-col bg-white">
-            {selectedConversation ? (
-              <>
-                <div className="p-6 border-b border-[#e1e8ff]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={selectedConversation.patient.photo}
-                        alt={selectedConversation.patient.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div>
-                        <h2 className="font-poppins font-semibold text-[#2c4ecf]">
-                          {selectedConversation.patient.name}
-                        </h2>
-                        <p className="font-poppins text-sm text-[#4a5568]">
-                          Room {selectedConversation.patient.room}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                        <i className="fas fa-phone"></i>
-                      </button>
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                        <i className="fas fa-video"></i>
-                      </button>
-                      <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                        <i className="fas fa-ellipsis-v"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-6">
-                  <div className="space-y-4">
-                    {/* Message bubbles would go here */}
-                  </div>
-                </div>
-
-                <div className="p-6 border-t border-[#e1e8ff]">
-                  <div className="flex items-end gap-4">
-                    <div className="flex-1 relative">
-                      <textarea
-                        placeholder="Type your message..."
-                        className="w-full p-4 border border-[#e1e8ff] rounded-lg focus:ring-2 focus:ring-[#2c4ecf] focus:border-transparent resize-none"
-                        rows="3"
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                      ></textarea>
-                      <div className="absolute bottom-2 right-2 flex gap-2">
-                        <button className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg">
-                          <i className="fas fa-paperclip"></i>
-                        </button>
-                        <button
-                          className="p-2 text-[#4a5568] hover:bg-[#f8faff] rounded-lg"
-                          onClick={() =>
-                            setShowQuickResponses(!showQuickResponses)
-                          }
-                        >
-                          <i className="fas fa-reply"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <button className="px-6 py-4 bg-[#2c4ecf] text-white rounded-lg font-poppins hover:bg-[#2341b0] transition-colors duration-200">
-                      Send
-                    </button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <i className="fas fa-comments text-6xl text-[#2c4ecf]/20 mb-4"></i>
-                  <p className="font-poppins text-[#4a5568]">
-                    Select a conversation to start messaging
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="hidden lg:block w-[300px] border-l border-[#e1e8ff] bg-white p-6">
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-poppins font-semibold text-[#2c4ecf] mb-4">
-                  Quick Responses
-                </h3>
-                <div className="space-y-2">
-                  {mockData.quickResponses.map((response) => (
-                    <button
-                      key={response.id}
-                      className="w-full p-3 text-left bg-[#f8faff] hover:bg-[#e1e8ff] rounded-lg transition-colors duration-200"
-                    >
-                      <p className="font-poppins text-sm font-semibold text-[#2c4ecf]">
-                        {response.title}
+                    <div className="flex items-center justify-between">
+                      <p className="font-poppins font-medium text-primary">
+                        {conversationTitle(c, user.id)}
                       </p>
-                      <p className="font-poppins text-xs text-[#4a5568] mt-1">
-                        {response.content}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-poppins font-semibold text-[#2c4ecf] mb-4">
-                  Recent Attachments
-                </h3>
-                <div className="space-y-2">
-                  {mockData.recentAttachments.map((attachment) => (
-                    <div
-                      key={attachment.id}
-                      className="flex items-center gap-3 p-3 bg-[#f8faff] rounded-lg"
-                    >
-                      <i
-                        className={`fas fa-${
-                          attachment.type === "pdf" ? "file-pdf" : "file-word"
-                        } text-[#2c4ecf]`}
-                      ></i>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-poppins text-sm font-semibold text-[#2c4ecf] truncate">
-                          {attachment.name}
-                        </p>
-                        <p className="font-poppins text-xs text-[#4a5568]">
-                          {attachment.size}
-                        </p>
-                      </div>
+                      {c.unreadCount > 0 && (
+                        <span className="bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                          {c.unreadCount}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
+                    <p className="font-poppins text-sm text-ink truncate">
+                      {c.lastMessage
+                        ? `${c.lastMessage.senderName}: ${c.lastMessage.text}`
+                        : "No messages yet"}
+                    </p>
+                    <p className="font-poppins text-xs text-ink-muted">
+                      {relativeTime(c.lastMessageAt)}
+                    </p>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <LoadMore {...conversations} />
+          </AsyncContent>
+        </Card>
+        <Card padded={false} className="lg:col-span-2">
+          {selected ? (
+            <>
+              <div className="p-4 border-b border-line">
+                <h2 className="font-poppins font-semibold text-primary">
+                  {conversationTitle(selected, user.id)}
+                </h2>
+                <p className="font-poppins text-xs text-ink">
+                  {Object.values(selected.participants)
+                    .map((p) => `${p.name} (${labelFor(p.role)})`)
+                    .join(", ")}
+                </p>
               </div>
-            </div>
-          </div>
-        </div>
+              <ConversationThread
+                key={selected.id}
+                conversation={selected}
+                onActivity={() => conversations.reload()}
+              />
+            </>
+          ) : (
+            <p className="p-6 font-poppins text-ink">
+              Select a conversation or start a new one.
+            </p>
+          )}
+        </Card>
       </div>
-    </div>
+      {creating && patient && (
+        <NewConversation
+          patientId={patient.id}
+          onClose={() => setCreating(false)}
+          onCreated={(c) => {
+            setCreating(false);
+            conversations.reload();
+            setParams({ c: c.id });
+          }}
+        />
+      )}
+    </PageShell>
   );
 }
 

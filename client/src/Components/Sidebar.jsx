@@ -18,97 +18,153 @@ import {
   faAngleRight,
   faAngleLeft,
   faHistory,
+  faHospitalUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../auth/AuthProvider";
+
+// Sidebar entries per role. `permission` hides an entry the account cannot use (from GET /me).
+const MENU_ITEMS_BY_ROLE = {
+  doctor: [
+    { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
+    {
+      name: "Patient Records",
+      icon: faUsers,
+      path: "/doctor/patient-records",
+      permission: "patient:list",
+    },
+    {
+      name: "Appointments",
+      icon: faCalendarAlt,
+      path: "/doctor/appointments",
+    },
+    {
+      name: "Prescriptions",
+      icon: faPrescriptionBottleAlt,
+      path: "/doctor/prescriptions",
+      permission: "prescription:create",
+    },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/doctor/reports",
+      permission: "report:read",
+    },
+    { name: "Team Chat", icon: faComments, path: "/doctor/team-chat" },
+    { name: "Settings", icon: faCog, path: "/doctor/settings" },
+  ],
+  nurse: [
+    { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
+    {
+      name: "My Patients",
+      icon: faProcedures,
+      path: "/nurse/my-patients",
+      permission: "patient:list",
+    },
+    {
+      name: "Tasks",
+      icon: faTasks,
+      path: "/nurse/tasks",
+      permission: "care-task:read",
+    },
+    {
+      name: "Medications",
+      icon: faPills,
+      path: "/nurse/medications",
+      permission: "medication-schedule:read",
+    },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/nurse/reports",
+      permission: "report:read",
+    },
+    { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
+    { name: "Settings", icon: faCog, path: "/nurse/settings" },
+  ],
+  admin: [
+    { name: "Dashboard", icon: faChartLine, path: "/admin/dashboard" },
+    {
+      name: "User Management",
+      icon: faUsersCog,
+      path: "/admin/user-management",
+      permission: "user:list",
+    },
+    {
+      name: "Patients",
+      icon: faHospitalUser,
+      path: "/admin/patients",
+      permission: "patient:list",
+    },
+    {
+      name: "Department Settings",
+      icon: faHospital,
+      path: "/admin/department-settings",
+      permission: "department:manage",
+    },
+    {
+      name: "Reports",
+      icon: faFileMedicalAlt,
+      path: "/admin/reports",
+      permission: "report:read",
+    },
+    {
+      name: "System Settings",
+      icon: faCog,
+      path: "/admin/system-settings",
+      permission: "system-settings:read",
+    },
+    { name: "Team Chat", icon: faComments, path: "/admin/team-chat" },
+  ],
+  patient: [
+    { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
+    {
+      name: "Appointments",
+      icon: faCalendarAlt,
+      path: "/patient/appointments",
+    },
+    {
+      name: "Prescriptions",
+      icon: faPrescriptionBottleAlt,
+      path: "/patient/prescriptions",
+      permission: "prescription:read",
+    },
+    {
+      name: "Medical Records",
+      icon: faHistory,
+      path: "/patient/medical-records",
+      permission: "medical-record:read",
+    },
+    { name: "Messages", icon: faComments, path: "/patient/messages" },
+    { name: "Settings", icon: faCog, path: "/patient/settings" },
+  ],
+};
 
 function Sidebar({ userRole = "doctor" }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const menuItemsByRole = {
-    doctor: [
-      { name: "Dashboard", icon: faChartLine, path: "/doctor/dashboard" },
-      {
-        name: "Patient Records",
-        icon: faUsers,
-        path: "/doctor/patient-records",
-      },
-      {
-        name: "Appointments",
-        icon: faCalendarAlt,
-        path: "/doctor/appointments",
-      },
-      {
-        name: "Prescriptions",
-        icon: faPrescriptionBottleAlt,
-        path: "/doctor/prescriptions",
-      },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/doctor/reports" },
-      { name: "Settings", icon: faCog, path: "/doctor/settings" },
-    ],
-    nurse: [
-      { name: "Dashboard", icon: faChartLine, path: "/nurse/dashboard" },
-      { name: "My Patients", icon: faProcedures, path: "/nurse/my-patients" },
-      { name: "Tasks", icon: faTasks, path: "/nurse/tasks" },
-      { name: "Medications", icon: faPills, path: "/nurse/medications" },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/nurse/reports" },
-      { name: "Team Chat", icon: faComments, path: "/nurse/team-chat" },
-      { name: "Settings", icon: faCog, path: "/nurse/settings" },
-    ],
-    admin: [
-      { name: "Dashboard", icon: faChartLine, path: "/admin/dashboard" },
-      {
-        name: "User Management",
-        icon: faUsersCog,
-        path: "/admin/user-management",
-      },
-      {
-        name: "Department Settings",
-        icon: faHospital,
-        path: "/admin/department-settings",
-      },
-      { name: "Reports", icon: faFileMedicalAlt, path: "/admin/reports" },
-      { name: "System Settings", icon: faCog, path: "/admin/system-settings" },
-    ],
-    patient: [
-      { name: "Dashboard", icon: faChartLine, path: "/patient/dashboard" },
-      {
-        name: "Appointments",
-        icon: faCalendarAlt,
-        path: "/patient/appointments",
-      },
-      {
-        name: "Prescriptions",
-        icon: faPrescriptionBottleAlt,
-        path: "/patient/prescriptions",
-      },
-      {
-        name: "Medical Records",
-        icon: faHistory,
-        path: "/patient/medical-records",
-      },
-      { name: "Settings", icon: faCog, path: "/patient/settings" },
-    ],
-  };
-
-  const menuItems = menuItemsByRole[userRole] || menuItemsByRole.doctor;
+  const { can } = useAuth();
+  const menuItems = (
+    MENU_ITEMS_BY_ROLE[userRole] || MENU_ITEMS_BY_ROLE.doctor
+  ).filter((item) => !item.permission || can(item.permission));
 
   return (
     <>
       {/* Desktop Sidebar (Hidden on small screens) */}
       <div
-        className={`hidden md:flex min-h-screen bg-[#f8faff] ${
+        className={`hidden md:flex min-h-screen bg-surface ${
           isCollapsed ? "w-20" : "w-fit"
         } transition-all duration-300 shadow-lg z-[100] overflow-y-auto`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 flex items-center justify-between border-b border-[#e1e8ff]">
+          <div className="p-4 flex items-center justify-between border-b border-line">
             {!isCollapsed && (
-              <h1 className="text-[#2c4ecf] font-poppins font-bold text-xl">
+              <h1 className="text-primary font-poppins font-bold text-xl">
                 CureCloud
               </h1>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="text-[#2c4ecf] hover:text-[#1a3baf] p-2 rounded-lg"
+              className="text-primary hover:text-primary-dark p-2 rounded-lg"
             >
               <FontAwesomeIcon
                 icon={isCollapsed ? faAngleRight : faAngleLeft}
@@ -125,8 +181,8 @@ function Sidebar({ userRole = "doctor" }) {
                     className={({ isActive }) =>
                       `flex items-center p-3 rounded-lg transition-all duration-200 ${
                         isActive
-                          ? "bg-[#2c4ecf] text-white"
-                          : "text-[#4a5568] hover:bg-[#e1e8ff]"
+                          ? "bg-primary text-white"
+                          : "text-ink hover:bg-line"
                       }`
                     }
                   >
@@ -152,8 +208,8 @@ function Sidebar({ userRole = "doctor" }) {
               className={({ isActive }) =>
                 `flex flex-col items-center text-sm p-2 ${
                   isActive
-                    ? "text-[#2c4ecf]"
-                    : "text-gray-500 hover:text-[#1a3baf]"
+                    ? "text-primary"
+                    : "text-gray-500 hover:text-primary-dark"
                 }`
               }
             >
@@ -161,32 +217,6 @@ function Sidebar({ userRole = "doctor" }) {
               <span className="text-xs">{item.name.split(" ")[0]}</span>
             </NavLink>
           ))}
-        </nav>
-      </div>
-
-      {/* Mobile Bottom Navigation (Hidden on larger screens) */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white shadow-lg border-t border-gray-300 p-2">
-        <nav className="flex justify-around">
-          {menuItems.slice(0, 4).map(
-            (
-              item // Show only 4 items for space
-            ) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex flex-col items-center text-sm p-2 ${
-                    isActive
-                      ? "text-[#2c4ecf]"
-                      : "text-gray-500 hover:text-[#1a3baf]"
-                  }`
-                }
-              >
-                <FontAwesomeIcon icon={item.icon} className="text-lg" />
-                <span className="text-xs">{item.name.split(" ")[0]}</span>
-              </NavLink>
-            )
-          )}
         </nav>
       </div>
     </>

@@ -1,10 +1,20 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard } from "@fortawesome/free-solid-svg-icons";
+import { labelFor } from "../../utils/format";
 import { Card, SectionTitle } from "../common/Card";
 import InfoItem from "./InfoItem";
 
-const ContactInformationSection = ({ profileData }) => {
+// Contact data. For patients it comes from the Patient record (with a separate contact email);
+// for staff from the User. The sign-in email is always read-only (§2.1).
+const ContactInformationSection = ({
+  signInEmail,
+  contactEmail,
+  phone,
+  emergencyContact,
+  address,
+  isPatient,
+}) => {
   return (
     <Card>
       <SectionTitle spacing="lg">
@@ -12,16 +22,39 @@ const ContactInformationSection = ({ profileData }) => {
         Contact Information
       </SectionTitle>
       <div className="space-y-4">
-        <InfoItem label="Email" value={profileData.email} />
-        <InfoItem label="Phone" value={profileData.phone} />
-        <InfoItem label="Office Location" value={profileData.office} />
+        <InfoItem label="Sign-in email" value={signInEmail ?? "—"} />
+        {isPatient && (
+          <InfoItem label="Contact email" value={contactEmail ?? "—"} />
+        )}
+        <InfoItem label="Phone" value={phone ?? "—"} />
+        {isPatient && (
+          <InfoItem
+            label="Address"
+            value={
+              address
+                ? [
+                    address.line1,
+                    address.line2,
+                    address.suburb,
+                    address.city,
+                    labelFor(address.province),
+                    address.postalCode,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")
+                : "—"
+            }
+          />
+        )}
         <InfoItem
           label="Emergency Contact"
-          value={profileData?.emergency?.name}
+          value={emergencyContact?.name ?? "—"}
         >
-          <p className="font-poppins text-sm text-ink">
-            {profileData?.emergency?.relation} • {profileData?.emergency?.phone}
-          </p>
+          {emergencyContact && (
+            <p className="font-poppins text-sm text-ink">
+              {emergencyContact.relationship} • {emergencyContact.phone}
+            </p>
+          )}
         </InfoItem>
       </div>
     </Card>
@@ -29,16 +62,16 @@ const ContactInformationSection = ({ profileData }) => {
 };
 
 ContactInformationSection.propTypes = {
-  profileData: PropTypes.shape({
-    email: PropTypes.string,
+  signInEmail: PropTypes.string,
+  contactEmail: PropTypes.string,
+  phone: PropTypes.string,
+  emergencyContact: PropTypes.shape({
+    name: PropTypes.string,
+    relationship: PropTypes.string,
     phone: PropTypes.string,
-    office: PropTypes.string,
-    emergency: PropTypes.shape({
-      name: PropTypes.string,
-      relation: PropTypes.string,
-      phone: PropTypes.string,
-    }),
-  }).isRequired,
+  }),
+  address: PropTypes.object,
+  isPatient: PropTypes.bool,
 };
 
 export default ContactInformationSection;

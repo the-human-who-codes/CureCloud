@@ -1,178 +1,191 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
 import {
+  faExternalLinkAlt,
   faKey,
-  faShieldAlt,
-  faHistory,
-  faSun,
-  faMoon,
+  faSave,
 } from "@fortawesome/free-solid-svg-icons";
-import { PageHeader, PageShell } from "../common/PageShell";
-import { ActionList } from "../common/QuickActions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthProvider";
+import { useAction, useApi } from "../../hooks/useApi";
+import { auth } from "../../firebaseConfig";
+import { labelFor, setDisplayTimeZone } from "../../utils/format";
+import AsyncContent, { ErrorMessage } from "../common/AsyncContent";
+import { Button } from "../common/Button";
 import { Card, SectionTitle } from "../common/Card";
+import { Checkbox, FormField } from "../common/FormField";
+import { PageHeader, PageShell } from "../common/PageShell";
 
-const SECURITY_ACTIONS = [
-  { name: "Change Password", icon: faKey },
-  { name: "Enable Two-Factor Authentication", icon: faShieldAlt },
-  { name: "View Login History", icon: faHistory },
+const LANGUAGES = ["en", "af", "zu", "xh"];
+const TIME_ZONES = [
+  ["Africa/Johannesburg", "South Africa (SAST, UTC+2)"],
+  ["Africa/Harare", "Central Africa (CAT, UTC+2)"],
+  ["Africa/Nairobi", "East Africa (EAT, UTC+3)"],
+  ["Africa/Lagos", "West Africa (WAT, UTC+1)"],
+  ["Europe/London", "United Kingdom"],
+  ["UTC", "UTC"],
+];
+const CHANNELS = [
+  ["inApp", "In-app notifications", null],
+  ["email", "Email notifications", "Not yet delivered"],
+  ["sms", "SMS notifications", "Not yet delivered"],
 ];
 
+// The caller's preferences (GET / PATCH /me/preferences) and account security.
 function SettingsPage() {
-  const [notifications, setNotifications] = useState({
-    email: true,
-    sms: false,
-    app: true,
+  const { user, firebaseUser } = useAuth();
+  const preferences = useApi(() => api.getPreferences());
+  const [form, setForm] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  useEffect(() => {
+    if (preferences.data) setForm(preferences.data);
+  }, [preferences.data]);
+
+  const save = useAction(async () => {
+    const next = await api.updatePreferences({
+      notifications: form.notifications,
+      language: form.language,
+      timeZone: form.timeZone,
+    });
+    preferences.setData(next);
+    setDisplayTimeZone(next.timeZone);
+    setSaved(true);
   });
-  const [language, setLanguage] = useState("en");
-  const [timezone, setTimezone] = useState("UTC-5");
-  const [theme, setTheme] = useState("light");
-  const [calendarView, setCalendarView] = useState("week");
-  const [defaultView, setDefaultView] = useState("grid");
+  const reset = useAction(async () => {
+    await sendPasswordResetEmail(auth, user.email);
+    setResetSent(true);
+  });
+
+  const change = (patch) => {
+    setSaved(false);
+    setForm((f) => ({ ...f, ...patch }));
+  };
+  const providers = (firebaseUser?.providerData ?? []).map((p) => p.providerId);
+  const passwordAccount = providers.includes("password");
 
   return (
     <PageShell>
       <PageHeader title="Settings" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-8">
-          <Card>
-            <SectionTitle spacing="lg">General Settings</SectionTitle>
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Notification Preferences
-                </h3>
-                <div className="space-y-3">
-                  {Object.entries(notifications).map(([key, value]) => (
-                    <div key={key} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={key}
-                        checked={value}
-                        onChange={(e) =>
-                          setNotifications((prev) => ({
-                            ...prev,
-                            [key]: e.target.checked,
-                          }))
+        <Card>
+          <SectionTitle spacing="lg">Preferences</SectionTitle>
+          <AsyncContent
+            loading={preferences.loading || !form}
+            error={preferences.error}
+          >
+            {form && (
+              <form
+                className="space-y-6"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  save.run();
+                }}
+              >
+                <ErrorMessage error={save.error} />
+                <div>
+                  <h3 className="font-poppins text-ink font-medium mb-4">
+                    Notification Preferences
+                  </h3>
+                  <div className="space-y-3">
+                    {CHANNELS.map(([key, label, hint]) => (
+                      <Checkbox
+                        key={key}
+                        label={label}
+                        hint={hint}
+                        checked={form.notifications[key]}
+                        onChange={(on) =>
+                          change({
+                            notifications: { ...form.notifications, [key]: on },
+                          })
                         }
-                        className="w-4 h-4 text-primary border-line rounded focus:ring-primary"
                       />
-                      <label
-                        htmlFor={key}
-                        className="ml-2 font-poppins text-ink"
-                      >
-                        {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                        Notifications
-                      </label>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Language Settings
-                </h3>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                <FormField
+                  as="select"
+                  label="Language"
+                  hint="English only for now."
+                  value={form.language}
+                  onChange={(e) => change({ language: e.target.value })}
                 >
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                </select>
-              </div>
-
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Time Zone Settings
-                </h3>
-                <select
-                  value={timezone}
-                  onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="UTC-5">Eastern Time (UTC-5)</option>
-                  <option value="UTC-6">Central Time (UTC-6)</option>
-                  <option value="UTC-7">Mountain Time (UTC-7)</option>
-                  <option value="UTC-8">Pacific Time (UTC-8)</option>
-                </select>
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <SectionTitle spacing="lg">Security Settings</SectionTitle>
-
-            <ActionList className="space-y-6" actions={SECURITY_ACTIONS} />
-          </Card>
-        </div>
-
-        <div>
-          <Card>
-            <SectionTitle spacing="lg">System Preferences</SectionTitle>
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Theme Settings
-                </h3>
-                <div className="flex gap-4">
-                  {["light", "dark"].map((themeOption) => (
-                    <button
-                      key={themeOption}
-                      onClick={() => setTheme(themeOption)}
-                      className={`flex-1 px-4 py-3 rounded-lg font-poppins ${
-                        theme === themeOption
-                          ? "bg-primary text-white"
-                          : "bg-surface text-ink hover:bg-line"
-                      } transition-colors duration-200`}
-                    >
-                      <FontAwesomeIcon
-                        icon={themeOption === "light" ? faSun : faMoon}
-                        className="mr-2"
-                      />
-                      {themeOption.charAt(0).toUpperCase() +
-                        themeOption.slice(1)}
-                    </button>
+                  {LANGUAGES.map((l) => (
+                    <option key={l} value={l}>
+                      {labelFor(l)}
+                    </option>
                   ))}
+                </FormField>
+                <FormField
+                  as="select"
+                  label="Time zone"
+                  hint="Dates and times in CureCloud are shown in this zone."
+                  value={form.timeZone}
+                  onChange={(e) => change({ timeZone: e.target.value })}
+                >
+                  {TIME_ZONES.some(([tz]) => tz === form.timeZone) ? null : (
+                    <option value={form.timeZone}>{form.timeZone}</option>
+                  )}
+                  {TIME_ZONES.map(([tz, label]) => (
+                    <option key={tz} value={tz}>
+                      {label}
+                    </option>
+                  ))}
+                </FormField>
+                <div className="flex items-center gap-4">
+                  <Button type="submit" icon={faSave} disabled={save.busy}>
+                    {save.busy ? "Saving…" : "Save"}
+                  </Button>
+                  {saved && (
+                    <span className="font-poppins text-sm text-green-700">
+                      Saved.
+                    </span>
+                  )}
                 </div>
-              </div>
+              </form>
+            )}
+          </AsyncContent>
+        </Card>
 
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Calendar Preferences
-                </h3>
-                <select
-                  value={calendarView}
-                  onChange={(e) => setCalendarView(e.target.value)}
-                  className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+        <Card>
+          <SectionTitle spacing="lg">Security</SectionTitle>
+          <div className="space-y-4">
+            <ErrorMessage error={reset.error} />
+            <p className="font-poppins text-sm text-ink">
+              Signed in as <span className="text-primary">{user?.email}</span>
+            </p>
+            {passwordAccount ? (
+              <>
+                <Button
+                  variant="secondary"
+                  icon={faKey}
+                  disabled={reset.busy || resetSent}
+                  onClick={() => reset.run()}
                 >
-                  <option value="day">Daily View</option>
-                  <option value="week">Weekly View</option>
-                  <option value="month">Monthly View</option>
-                </select>
-              </div>
-
-              <div>
-                <h3 className="font-poppins text-ink font-medium mb-4">
-                  Default View Settings
-                </h3>
-                <select
-                  value={defaultView}
-                  onChange={(e) => setDefaultView(e.target.value)}
-                  className="w-full p-3 border border-line rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="grid">Grid View</option>
-                  <option value="list">List View</option>
-                  <option value="table">Table View</option>
-                </select>
-              </div>
-            </div>
-          </Card>
-        </div>
+                  Change Password
+                </Button>
+                {resetSent && (
+                  <p className="font-poppins text-sm text-green-700">
+                    We sent a password reset link to your email.
+                  </p>
+                )}
+              </>
+            ) : (
+              <a
+                href="https://myaccount.google.com/security"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-surface text-primary rounded-lg font-poppins hover:bg-line"
+              >
+                <FontAwesomeIcon icon={faExternalLinkAlt} />
+                Manage your Google account security
+              </a>
+            )}
+          </div>
+        </Card>
       </div>
     </PageShell>
   );

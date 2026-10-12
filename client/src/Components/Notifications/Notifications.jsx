@@ -1,65 +1,85 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
-import { useApi } from "../../hooks/useApi";
-import AsyncContent from "../common/AsyncContent";
+import { useAuth } from "../../auth/AuthProvider";
+import { useAction, usePagedApi } from "../../hooks/useApi";
+import { pathForResource } from "../../utils/notifications";
+import AsyncContent, { ErrorMessage, LoadMore } from "../common/AsyncContent";
+import { PageShell } from "../common/PageShell";
 import NotificationList from "./NotificationList";
 import FilterSortControls from "./FilterSortControls";
 
 function Notifications() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("newest");
-  const { data, error, loading, setData } = useApi(() =>
-    api.listNotifications({ limit: 100 })
+  // The unread filter runs on the server; oldest-first only reorders the loaded pages.
+  const notifications = usePagedApi(
+    (cursor) =>
+      api.listNotifications({
+        unread: filter === "unread" ? true : undefined,
+        cursor,
+      }),
+    [filter]
   );
-  const notifications = data?.notifications ?? [];
 
-  const handleMarkAsRead = async (id) => {
+  const markRead = useAction(async (id) => {
     await api.markNotificationRead(id);
-    setData({
-      notifications: notifications.map((n) =>
-        n.id === id ? { ...n, read: true } : n
-      ),
-    });
+    notifications.setItems((items) =>
+      filter === "unread"
+        ? items.filter((n) => n.id !== id)
+        : items.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  });
+  const markAll = useAction(async () => {
+    await api.markAllNotificationsRead();
+    notifications.reload();
+  });
+
+  const linkFor = (n) => pathForResource(n.resource, user.role);
+  const open = async (n) => {
+    if (!n.read) await markRead.run(n.id);
+    navigate(linkFor(n));
   };
 
-  const filteredNotifications = notifications
-    .filter((notification) => {
-      if (filter === "read") return notification.read;
-      if (filter === "unread") return !notification.read;
-      return true;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return sort === "newest" ? dateB - dateA : dateA - dateB;
-    });
+  const sorted =
+    sort === "newest"
+      ? notifications.items
+      : [...notifications.items].reverse();
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-surface to-surface-tint">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-4xl mx-auto">
-            <FilterSortControls
-              filter={filter}
-              setFilter={setFilter}
-              sort={sort}
-              setSort={setSort}
-            />
-            <AsyncContent
-              loading={loading}
-              error={error}
-              empty={filteredNotifications.length === 0}
-              emptyText="No notifications."
-            >
-              <NotificationList
-                notifications={filteredNotifications}
-                handleMarkAsRead={handleMarkAsRead}
-              />
-            </AsyncContent>
-          </div>
-        </div>
+    <PageShell className="bg-gradient-to-br from-surface to-surface-tint">
+      <div className="max-w-4xl mx-auto">
+        <FilterSortControls
+          filter={filter}
+          setFilter={setFilter}
+          sort={sort}
+          setSort={setSort}
+          onMarkAllRead={() => markAll.run()}
+        />
+        <ErrorMessage
+          error={markRead.error ?? markAll.error}
+          className="mb-4"
+        />
+        <AsyncContent
+          loading={notifications.loading}
+          error={notifications.error}
+          empty={sorted.length === 0}
+          emptyText={
+            filter === "unread" ? "You're all caught up." : "No notifications."
+          }
+        >
+          <NotificationList
+            notifications={sorted}
+            handleMarkAsRead={(id) => markRead.run(id)}
+            linkFor={linkFor}
+            onOpen={open}
+          />
+          <LoadMore {...notifications} />
+        </AsyncContent>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

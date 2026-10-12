@@ -1,25 +1,14 @@
+import PropTypes from "prop-types";
+import { formatDateTime } from "../../utils/format";
 import NotificationIcon from "./NotificationIcon";
 import { Card } from "../common/Card";
 
-import PropTypes from "prop-types";
-
-function NotificationItem({ notification, handleMarkAsRead }) {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
+// One notification. `onOpen` is set when the notification links to a page.
+function NotificationItem({ notification, handleMarkAsRead, onOpen }) {
   return (
     <Card
       className={`${!notification.read ? "border-l-4" : ""} ${
-        notification.priority === "urgent"
-          ? "border-l-red-500"
-          : notification.priority === "important"
+        notification.priority === "important"
           ? "border-l-yellow-500"
           : "border-l-primary"
       }`}
@@ -33,9 +22,19 @@ function NotificationItem({ notification, handleMarkAsRead }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-poppins font-semibold text-primary">
-                  {notification.title}
-                </h3>
+                {onOpen ? (
+                  <button
+                    type="button"
+                    onClick={onOpen}
+                    className="font-poppins font-semibold text-primary hover:underline text-left"
+                  >
+                    {notification.title}
+                  </button>
+                ) : (
+                  <h3 className="font-poppins font-semibold text-primary">
+                    {notification.title}
+                  </h3>
+                )}
                 {!notification.read && (
                   <span className="w-2 h-2 rounded-full bg-primary"></span>
                 )}
@@ -43,18 +42,14 @@ function NotificationItem({ notification, handleMarkAsRead }) {
               <p className="font-poppins text-sm text-ink mt-1">
                 {notification.description}
               </p>
-              {notification.senderName && (
-                <p className="font-poppins text-xs text-ink mt-2">
-                  From: {notification.senderName}
-                </p>
-              )}
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-poppins text-xs text-ink">
-                {formatDate(notification.createdAt)}
+              <span className="font-poppins text-xs text-ink whitespace-nowrap">
+                {formatDateTime(notification.createdAt)}
               </span>
               {!notification.read && (
                 <button
+                  type="button"
                   onClick={() => handleMarkAsRead(notification.id)}
                   className="mt-2 text-sm text-primary hover:text-primary-dark"
                 >
@@ -77,10 +72,10 @@ NotificationItem.propTypes = {
     type: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    senderName: PropTypes.string,
     createdAt: PropTypes.string.isRequired,
   }).isRequired,
   handleMarkAsRead: PropTypes.func.isRequired,
+  onOpen: PropTypes.func,
 };
 
 export default NotificationItem;

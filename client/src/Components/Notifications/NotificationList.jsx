@@ -1,8 +1,12 @@
+import PropTypes from "prop-types";
 import NotificationItem from "./NotificationItem";
 
-import PropTypes from "prop-types";
-
-function NotificationList({ notifications, handleMarkAsRead }) {
+function NotificationList({
+  notifications,
+  handleMarkAsRead,
+  linkFor,
+  onOpen,
+}) {
   return (
     <div className="space-y-4">
       {notifications.map((notification) => (
@@ -10,6 +14,9 @@ function NotificationList({ notifications, handleMarkAsRead }) {
           key={notification.id}
           notification={notification}
           handleMarkAsRead={handleMarkAsRead}
+          onOpen={
+            linkFor(notification) ? () => onOpen(notification) : undefined
+          }
         />
       ))}
     </div>
@@ -23,6 +30,8 @@ NotificationList.propTypes = {
     })
   ).isRequired,
   handleMarkAsRead: PropTypes.func.isRequired,
+  linkFor: PropTypes.func.isRequired,
+  onOpen: PropTypes.func.isRequired,
 };
 
 export default NotificationList;

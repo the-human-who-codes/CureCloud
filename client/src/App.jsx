@@ -7,7 +7,6 @@ import DashboardLayout from "./Layouts/DashboardLayout";
 import AdminDashboard from "./Components/AdminDashboard/AdminDashboard";
 import UserManagement from "./Components/AdminDashboard/UserManagement";
 import DepartmentSettings from "./Components/AdminDashboard/DepartmentSettings";
-import AdminReports from "./Components/AdminDashboard/AdminReports";
 import SystemSettings from "./Components/AdminDashboard/SystemSettings";
 
 // Doctor Pages
@@ -15,7 +14,6 @@ import DoctorDashboard from "./Components/DoctorDashboard/DoctorDashboard";
 import PatientRecords from "./Components/DoctorDashboard/PatientRecords";
 import AppointmentsPage from "./Pages/AppointmentsPage";
 import Prescriptions from "./Pages/Prescriptions";
-import ReportsPage from "./Components/DoctorDashboard/ReportsPage"; // Role-aware
 import TeamChat from "./Components/TeamChat/TeamChat";
 
 // Nurse Pages
@@ -37,6 +35,7 @@ import StaffSignUp from "./Pages/StaffSignUp";
 import Notifications from "./Components/Notifications/Notifications";
 import Profile from "./Components/ProfilePage/Profile";
 import Settings from "./Components/Settings/Settings"; // Role-aware
+import ReportsPage from "./Components/Reports/ReportsPage"; // Role-aware
 
 // Auth
 import { AuthProvider } from "./auth/AuthProvider";
@@ -67,7 +66,7 @@ const AppRouter = () => {
               path="department-settings"
               element={<DepartmentSettings />}
             />
-            <Route path="reports" element={<AdminReports role="admin" />} />
+            <Route path="reports" element={<ReportsPage />} />
             <Route path="system-settings" element={<SystemSettings />} />
             <Route path="settings" element={<Settings role="admin" />} />
             <Route path="notifications" element={<Notifications />} />
@@ -86,12 +85,9 @@ const AppRouter = () => {
           >
             <Route index path="dashboard" element={<DoctorDashboard />} />
             <Route path="patient-records" element={<PatientRecords />} />
-            <Route
-              path="appointments"
-              element={<AppointmentsPage role="doctor" />}
-            />
+            <Route path="appointments" element={<AppointmentsPage />} />
             <Route path="prescriptions" element={<Prescriptions />} />
-            <Route path="reports" element={<ReportsPage role="doctor" />} />
+            <Route path="reports" element={<ReportsPage />} />
             <Route path="team-chat" element={<TeamChat />} />
             <Route path="settings" element={<Settings role="doctor" />} />
             <Route path="notifications" element={<Notifications />} />
@@ -111,7 +107,7 @@ const AppRouter = () => {
             <Route path="my-patients" element={<MyPatients />} />
             <Route path="tasks" element={<Tasks />} />
             <Route path="medications" element={<Medications />} />
-            <Route path="reports" element={<ReportsPage role="nurse" />} />
+            <Route path="reports" element={<ReportsPage />} />
             <Route path="team-chat" element={<TeamChat />} />
             <Route path="settings" element={<Settings role="nurse" />} />
             <Route path="notifications" element={<Notifications />} />

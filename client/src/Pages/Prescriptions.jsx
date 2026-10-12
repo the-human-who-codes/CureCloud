@@ -1,338 +1,230 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserInjured,
-  faTasks,
-  faPills,
-  faHeartbeat,
-  faFileMedical,
-  faSyncAlt,
-  faBell,
-  faNotesMedical,
-  faPhone,
-} from "@fortawesome/free-solid-svg-icons";
-import { PageShell } from "../Components/common/PageShell";
-import TableHead from "../Components/common/TableHead";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { api } from "../api/client";
+import { useAuth } from "../auth/AuthProvider";
+import { useAction, usePagedApi } from "../hooks/useApi";
+import { formatDate, labelFor } from "../utils/format";
+import { PRESCRIPTION_STATUSES, frequencyLabel } from "../utils/prescriptions";
+import AsyncContent, { LoadMore } from "../Components/common/AsyncContent";
+import { Button } from "../Components/common/Button";
+import { Card } from "../Components/common/Card";
+import { FilterSelect } from "../Components/common/FormField";
+import { PageHeader, PageShell } from "../Components/common/PageShell";
+import ReasonModal from "../Components/common/ReasonModal";
 import StatusBadge from "../Components/common/StatusBadge";
-import { Card, SectionTitle } from "../Components/common/Card";
+import { DataTable, Td } from "../Components/common/TableHead";
+import PrescriptionForm from "../Components/Prescriptions/PrescriptionForm";
 
+// Hold / resume / stop / edit / entered-in-error for one prescription (transitions in §2.8).
+function PrescriptionActions({ prescription, onChanged }) {
+  const { user } = useAuth();
+  const [dialog, setDialog] = useState(null);
+  const resume = useAction(async () =>
+    onChanged(
+      await api.updatePrescription(prescription.id, { status: "active" })
+    )
+  );
+  const { status } = prescription;
+  const open = status === "active" || status === "on-hold";
+  const prescriber = prescription.prescriberId === user.id;
+  const setStatus = (next) => async (statusReason) =>
+    onChanged(
+      await api.updatePrescription(prescription.id, {
+        status: next,
+        statusReason,
+      })
+    );
+
+  if (!open) return null;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {status === "active" && (
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => setDialog("on-hold")}
+        >
+          Hold
+        </Button>
+      )}
+      {status === "on-hold" && (
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={resume.busy}
+          onClick={() => resume.run()}
+        >
+          Resume
+        </Button>
+      )}
+      <Button size="sm" variant="secondary" onClick={() => setDialog("edit")}>
+        Edit
+      </Button>
+      <Button size="sm" variant="danger" onClick={() => setDialog("stopped")}>
+        Stop
+      </Button>
+      {prescriber && (
+        <Button
+          size="sm"
+          variant="danger"
+          onClick={() => setDialog("entered-in-error")}
+        >
+          Entered in error
+        </Button>
+      )}
+      {resume.error && (
+        <p className="font-poppins text-xs text-red-600">
+          {resume.error.message}
+        </p>
+      )}
+      {dialog === "edit" && (
+        <PrescriptionForm
+          prescription={prescription}
+          onClose={() => setDialog(null)}
+          onSaved={onChanged}
+        />
+      )}
+      {["on-hold", "stopped", "entered-in-error"].includes(dialog) && (
+        <ReasonModal
+          title={`${
+            dialog === "on-hold"
+              ? "Hold"
+              : dialog === "stopped"
+              ? "Stop"
+              : "Retract"
+          } ${prescription.medication}`}
+          confirmLabel={labelFor(dialog)}
+          onClose={() => setDialog(null)}
+          onSubmit={setStatus(dialog)}
+        />
+      )}
+    </div>
+  );
+}
+
+PrescriptionActions.propTypes = {
+  prescription: PropTypes.object.isRequired,
+  onChanged: PropTypes.func.isRequired,
+};
+
+// The prescriber's own prescriptions (GET /prescriptions?prescriberId=me).
 function Prescriptions() {
-  const nurseStats = {
-    activePatients: 12,
-    pendingTasks: 8,
-    medicationsDue: 5,
-    criticalCases: 2,
-  };
+  const { can } = useAuth();
+  const [params, setParams] = useSearchParams();
+  const [status, setStatus] = useState("active,on-hold");
+  const creating = params.get("new") === "1";
+  const prescriptions = usePagedApi(
+    (cursor) =>
+      api.listPrescriptions({
+        prescriberId: "me",
+        status: status === "all" ? undefined : status,
+        cursor,
+      }),
+    [status]
+  );
 
-  const assignedPatients = [
-    {
-      id: "P1001",
-      name: "John Smith",
-      image: "/patient1.png",
-      roomNumber: "201",
-      lastVitals: { temp: "98.6°F", bp: "120/80", pulse: "72" },
-      status: "Stable",
-      nextAction: "Medication at 2:00 PM",
-    },
-    {
-      id: "P1002",
-      name: "Mary Johnson",
-      image: "/patient2.png",
-      roomNumber: "205",
-      lastVitals: { temp: "99.1°F", bp: "130/85", pulse: "80" },
-      status: "Critical",
-      nextAction: "Check vitals in 30 mins",
-    },
-    {
-      id: "P1003",
-      name: "Robert Davis",
-      image: "/patient3.png",
-      roomNumber: "210",
-      lastVitals: { temp: "98.2°F", bp: "118/75", pulse: "68" },
-      status: "Stable",
-      nextAction: "Doctor round at 3:00 PM",
-    },
-  ];
-
-  const upcomingTasks = [
-    {
-      time: "2:00 PM",
-      patient: "John Smith",
-      action: "Administer Pain Medication",
-      priority: "Normal",
-      type: "medication",
-    },
-    {
-      time: "2:30 PM",
-      patient: "Mary Johnson",
-      action: "Check Vital Signs",
-      priority: "High",
-      type: "vitals",
-    },
-    {
-      time: "3:00 PM",
-      patient: "Robert Davis",
-      action: "Assist Doctor Round",
-      priority: "Normal",
-      type: "doctor",
-    },
-  ];
-
-  const recentUpdates = [
-    {
-      type: "vitals",
-      patient: "John Smith",
-      time: "1:45 PM",
-      detail: "BP: 120/80, Temp: 98.6°F",
-    },
-    {
-      type: "medication",
-      patient: "Mary Johnson",
-      time: "1:30 PM",
-      detail: "Administered Pain Medication",
-    },
-    {
-      type: "order",
-      patient: "Robert Davis",
-      time: "1:15 PM",
-      detail: "New diet order from Dr. Wilson",
-    },
-    {
-      type: "request",
-      patient: "James Smith",
-      time: "1:00 PM",
-      detail: "Requested pain assessment",
-    },
-  ];
-
-  const getCurrentTime = () => {
-    return new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const replace = (rx) =>
+    prescriptions.setItems((items) =>
+      items.some((x) => x.id === rx.id)
+        ? items.map((x) => (x.id === rx.id ? rx : x))
+        : [rx, ...items]
+    );
 
   return (
     <PageShell>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {Object.entries(nurseStats).map(([key, value]) => (
-          <div
-            key={key}
-            className="bg-white p-6 rounded-xl shadow-sm border border-line relative overflow-hidden"
+      <PageHeader
+        title="Prescriptions"
+        subtitle="Medication you have prescribed"
+        actions={
+          can("prescription:create") && (
+            <Button icon={faPlus} onClick={() => setParams({ new: "1" })}>
+              New Prescription
+            </Button>
+          )
+        }
+      />
+      <div className="mb-6 flex">
+        <FilterSelect
+          label="Status"
+          value={status}
+          onChange={setStatus}
+          options={[
+            { value: "active,on-hold", label: "Current (active or on hold)" },
+            { value: "all", label: "All" },
+            ...PRESCRIPTION_STATUSES.map((s) => ({
+              value: s,
+              label: labelFor(s),
+            })),
+          ]}
+        />
+      </div>
+      <AsyncContent
+        loading={prescriptions.loading}
+        error={prescriptions.error}
+        empty={prescriptions.items.length === 0}
+        emptyText="No prescriptions match this filter."
+      >
+        <Card padded={false}>
+          <DataTable
+            columns={[
+              "Patient",
+              "Medication",
+              "Frequency",
+              "Dates",
+              "Refills",
+              "Status",
+              "Actions",
+            ]}
           >
-            <div
-              className={`w-16 h-16 rounded-full absolute -right-4 -top-4 opacity-50 ${
-                key === "activePatients"
-                  ? "bg-blue-100"
-                  : key === "pendingTasks"
-                  ? "bg-yellow-100"
-                  : key === "medicationsDue"
-                  ? "bg-green-100"
-                  : "bg-red-100"
-              }`}
-            />
-            <FontAwesomeIcon
-              icon={
-                key === "activePatients"
-                  ? faUserInjured
-                  : key === "pendingTasks"
-                  ? faTasks
-                  : key === "medicationsDue"
-                  ? faPills
-                  : faHeartbeat
-              }
-              className={`text-2xl mb-4 ${
-                key === "activePatients"
-                  ? "text-primary"
-                  : key === "pendingTasks"
-                  ? "text-yellow-600"
-                  : key === "medicationsDue"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            />
-            <h3 className="font-poppins text-lg font-semibold text-ink">
-              {key.replace(/([A-Z])/g, " $1").trim()}
-            </h3>
-            <p
-              className={`font-poppins text-2xl font-bold ${
-                key === "activePatients"
-                  ? "text-primary"
-                  : key === "pendingTasks"
-                  ? "text-yellow-600"
-                  : key === "medicationsDue"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-6 mb-8">
-        <div className="lg:w-2/3">
-          <Card padded={false}>
-            <div className="px-6 py-4 border-b border-line">
-              <SectionTitle spacing="none">Current Patients</SectionTitle>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <TableHead
-                  columns={[
-                    "Patient",
-                    "Room",
-                    "Last Vitals",
-                    "Status",
-                    "Next Due",
-                    "Actions",
-                  ]}
-                />
-                <tbody>
-                  {assignedPatients.map((patient) => (
-                    <tr key={patient.id} className="border-t border-line">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <img
-                            src={patient.image}
-                            alt={patient.name}
-                            className="w-8 h-8 rounded-full mr-3"
-                          />
-                          <span className="font-poppins text-ink">
-                            {patient.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 font-poppins text-ink">
-                        {patient.roomNumber}
-                      </td>
-                      <td className="px-6 py-4 font-poppins text-ink">
-                        {patient.lastVitals.temp}°C, {patient.lastVitals.bp}
-                      </td>
-                      <td className="px-6 py-4">
-                        <StatusBadge status={patient.status} />
-                      </td>
-                      <td className="px-6 py-4 font-poppins text-ink">
-                        {patient.nextAction}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-primary hover:text-primary-dark mr-3">
-                          <FontAwesomeIcon icon={faFileMedical} />
-                        </button>
-                        <button className="text-primary hover:text-primary-dark">
-                          <FontAwesomeIcon icon={faPills} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
-        <div className="lg:w-1/3">
-          <Card padded={false}>
-            <div className="px-6 py-4 border-b border-line flex justify-between items-center">
-              <SectionTitle spacing="none">Upcoming Tasks</SectionTitle>
-              <span className="font-poppins text-sm text-ink">
-                {getCurrentTime()}
-              </span>
-            </div>
-            <div className="p-6">
-              <div className="space-y-6">
-                {upcomingTasks.map((task, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-16 font-poppins text-sm text-ink">
-                      {task.time}
-                    </div>
-                    <div
-                      className={`flex-grow pl-4 ml-4 border-l-2 ${
-                        task.type === "medication"
-                          ? "border-blue-400"
-                          : task.type === "vitals"
-                          ? "border-green-400"
-                          : "border-yellow-400"
-                      }`}
-                    >
-                      <p className="font-poppins font-medium text-ink">
-                        {task.patient}
-                      </p>
-                      <p className="font-poppins text-sm text-ink-muted">
-                        {task.action}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      <Card>
-        <div className="flex justify-between items-center mb-6">
-          <SectionTitle spacing="none">Recent Updates</SectionTitle>
-          <button className="text-primary">
-            <FontAwesomeIcon icon={faSyncAlt} />
-          </button>
-        </div>
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 place-content-center my-auto margin-auto">
-          {recentUpdates.map((update, index) => (
-            <div key={index} className="bg-surface p-4 rounded-lg">
-              <div className="flex items-center mb-2">
-                <FontAwesomeIcon
-                  icon={
-                    update.type === "vitals"
-                      ? faHeartbeat
-                      : update.type === "medication"
-                      ? faPills
-                      : update.type === "order"
-                      ? faFileMedical
-                      : faBell
-                  }
-                  className={
-                    update.type === "vitals"
-                      ? "text-blue-500 mr-3"
-                      : update.type === "medication"
-                      ? "text-green-500 mr-3"
-                      : update.type === "order"
-                      ? "text-yellow-500 mr-3"
-                      : "text-red-500 mr-3"
-                  }
-                />
-                <span className="font-poppins text-sm text-ink">
-                  {update.time}
-                </span>
-              </div>
-              <p className="font-poppins font-medium text-ink mb-1">
-                {update.patient}
-              </p>
-              <p className="font-poppins text-sm text-ink-muted">
-                {update.detail}
-              </p>
-            </div>
-          ))}
-        </div>{" "}
-      </Card>
-
-      <div className="fixed bottom-6 right-6 flex flex-col gap-4 md:flex-row">
-        <button className="bg-primary text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-primary-dark">
-          <FontAwesomeIcon icon={faFileMedical} className="md:mr-2" />
-          <span className="hidden md:inline font-poppins">Record Vitals</span>
-        </button>
-        <button className="bg-green-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-green-600">
-          <FontAwesomeIcon icon={faPills} className="md:mr-2" />
-          <span className="hidden md:inline font-poppins">Give Medication</span>
-        </button>
-        <button className="bg-yellow-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-yellow-600">
-          <FontAwesomeIcon icon={faNotesMedical} className="md:mr-2" />
-          <span className="hidden md:inline font-poppins">Add Notes</span>
-        </button>
-        <button className="bg-red-500 text-white rounded-full w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 flex items-center justify-center shadow-lg hover:bg-red-600">
-          <FontAwesomeIcon icon={faPhone} className="md:mr-2" />
-          <span className="hidden md:inline font-poppins">Call Doctor</span>
-        </button>
-      </div>
+            {prescriptions.items.map((rx) => (
+              <tr key={rx.id}>
+                <Td>
+                  {rx.patientName}
+                  <span className="block text-xs">{labelFor(rx.category)}</span>
+                </Td>
+                <Td>
+                  <span className="font-medium text-primary">
+                    {rx.medication}
+                  </span>
+                  <span className="block text-sm">
+                    {rx.dose} · {labelFor(rx.route)}
+                  </span>
+                </Td>
+                <Td className="text-sm">
+                  {frequencyLabel(rx)}
+                  {rx.administrationTimes?.length > 0 && (
+                    <span className="block text-xs">
+                      {rx.administrationTimes.join(", ")}
+                    </span>
+                  )}
+                </Td>
+                <Td className="text-sm">
+                  {formatDate(rx.startDate)}
+                  {rx.endDate && ` – ${formatDate(rx.endDate)}`}
+                </Td>
+                <Td>{rx.refills}</Td>
+                <Td>
+                  <StatusBadge status={rx.status} />
+                  {rx.statusReason && (
+                    <span className="block text-xs mt-1">
+                      {rx.statusReason}
+                    </span>
+                  )}
+                </Td>
+                <Td>
+                  <PrescriptionActions prescription={rx} onChanged={replace} />
+                </Td>
+              </tr>
+            ))}
+          </DataTable>
+          <LoadMore {...prescriptions} />
+        </Card>
+      </AsyncContent>
+      {creating && (
+        <PrescriptionForm onClose={() => setParams({})} onSaved={replace} />
+      )}
     </PageShell>
   );
 }
